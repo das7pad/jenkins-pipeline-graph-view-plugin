@@ -41,7 +41,11 @@ export function useStepsPoller(props: RunPollerProps) {
       while (stepBuffer.pending) {
         const { promise, startByte: otherStartByte } = stepBuffer.pending;
         const response = await promise;
-        if (startByte === otherStartByte && response) {
+        if (
+          startByte === otherStartByte &&
+          response &&
+          !response.nodeIsActive // Only reuse if completed
+        ) {
           return; // deduplicated fetch operation
         }
       }
@@ -162,13 +166,21 @@ export function useStepsPoller(props: RunPollerProps) {
       const usedUrl = parseUrlParams(steps);
       if (!usedUrl) {
         const defaultStep = getDefaultSelectedStep(steps);
-        if (defaultStep) {
+        if (defaultStep?.stageId) {
           setOpenStage(defaultStep.stageId);
-
-          if (defaultStep.stageId) {
-            setExpandedSteps((prev) => [...prev, defaultStep.id]);
-            updateStepConsoleOffset(defaultStep.id, false, 0 - LOG_FETCH_SIZE);
-          }
+          setExpandedSteps((prev) => {
+            if (prev.includes(defaultStep.id)) return prev;
+            if (prev.length > 0) {
+              const lastStepId = prev[prev.length - 1];
+              const lastStep = steps.find((s) => s.id === lastStepId);
+              if (lastStep?.stageId === defaultStep.stageId) {
+                // Ensure that we fetched the console output of the last step in full -- but only if we are still in the same stage to avoid wasting bandwidth on steps in stages that are no longer displayed.
+                updateStepConsoleOffset(lastStepId, false, 0 - LOG_FETCH_SIZE);
+              }
+            }
+            return [...prev, defaultStep.id];
+          });
+          updateStepConsoleOffset(defaultStep.id, false, 0 - LOG_FETCH_SIZE);
         }
       }
     }
