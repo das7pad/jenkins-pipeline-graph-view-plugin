@@ -48,6 +48,7 @@ export interface StepLogBufferInfo {
     startByte: number;
     promise: Promise<ConsoleLogData | null>;
   };
+  lastFetched?: number;
   fullyFetched?: boolean;
   exceptionText?: string[];
   pendingExceptionText?: Promise<string[]>;

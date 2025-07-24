@@ -49,7 +49,15 @@ export function useStepsPoller(props: RunPollerProps) {
       }
       if (stepBuffer.fullyFetched) return; // Already fetched in full.
       if (stepBuffer.startByte > 0 && !forceUpdate) return;
-      const promise = getConsoleTextOffset(stepId, startByte);
+      const backOff = stepBuffer.lastFetched
+        ? POLL_INTERVAL - (performance.now() - stepBuffer.lastFetched)
+        : 0;
+      const promise = new Promise((resolve) => {
+        setTimeout(resolve, backOff);
+      }).then(() => {
+        stepBuffer.lastFetched = performance.now();
+        return getConsoleTextOffset(stepId, startByte);
+      });
       stepBuffer.pending = { promise, startByte };
       let response;
       try {
