@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useRunPoller from "../../../../common/tree-api.ts";
 import {
   getConsoleTextOffset,
+  getExceptionText,
   getRunSteps,
   LOG_FETCH_SIZE,
   POLL_INTERVAL,
@@ -60,10 +61,19 @@ export function useStepsPoller(props: RunPollerProps) {
 
       const newLogLines = response.text.trim().split("\n") || [];
 
+      const exceptionText = stepBuffer.exceptionText || [];
       if (stepBuffer.endByte > 0 && stepBuffer.endByte <= startByte) {
-        stepBuffer.lines = [...stepBuffer.lines, ...newLogLines];
+        const withoutExceptionText = stepBuffer.lines.slice(
+          0,
+          stepBuffer.lines.length - exceptionText.length,
+        );
+        stepBuffer.lines = [
+          ...withoutExceptionText,
+          ...newLogLines,
+          ...exceptionText,
+        ];
       } else {
-        stepBuffer.lines = newLogLines;
+        stepBuffer.lines = newLogLines.concat(exceptionText);
         stepBuffer.startByte = response.startByte;
       }
 
@@ -77,6 +87,31 @@ export function useStepsPoller(props: RunPollerProps) {
     },
     [],
   );
+
+  const fetchExceptionText = useCallback(async (stepId: string) => {
+    const stepBuffers = stepBuffersRef.current;
+    let stepBuffer = stepBuffers.get(stepId);
+    if (!stepBuffer) {
+      stepBuffer = { lines: [], startByte: 0 - LOG_FETCH_SIZE, endByte: -1 };
+      stepBuffers.set(stepId, stepBuffer);
+    }
+    while (stepBuffer.pendingExceptionText) {
+      await stepBuffer.pendingExceptionText;
+    }
+    if (stepBuffer.exceptionText?.length) return; // Already fetched
+    const promise = getExceptionText(stepId);
+    stepBuffer.pendingExceptionText = promise;
+    try {
+      stepBuffer.exceptionText = await promise;
+    } finally {
+      delete stepBuffer.pending;
+    }
+
+    stepBuffer.lines = stepBuffer.lines.concat(stepBuffer.exceptionText);
+
+    stepBuffersRef.current = new Map(stepBuffers).set(stepId, stepBuffer);
+    setStepBuffers(stepBuffersRef.current);
+  }, []);
 
   const parseUrlParams = useCallback(
     (steps: StepInfo[]): boolean => {
@@ -262,6 +297,7 @@ export function useStepsPoller(props: RunPollerProps) {
     handleStageSelect,
     onStepToggle,
     onMoreConsoleClick,
+    fetchExceptionText,
     loading,
   };
 }

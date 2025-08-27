@@ -50,6 +50,7 @@ describe("ConsoleLogStream", () => {
     onMoreConsoleClick: () => {
       console.log("onMoreConsoleClick triggered");
     },
+    fetchExceptionText: () => {},
   } as ConsoleLogStreamProps;
 
   it("renders step console", async () => {
