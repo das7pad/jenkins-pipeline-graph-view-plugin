@@ -5,6 +5,7 @@ import {
   getConsoleTextOffset,
   getExceptionText,
   getRunSteps,
+  INCREMENTAL_FETCH,
   LOG_FETCH_SIZE,
   POLL_INTERVAL,
   Result,
@@ -35,58 +36,75 @@ export function useStepsPoller(props: RunPollerProps) {
       if (!stepBuffer) {
         stepBuffer = {
           lines: [],
-          startByte: 0 - LOG_FETCH_SIZE,
-          endByte: -1,
+          startByte: INCREMENTAL_FETCH,
+          endByte: INCREMENTAL_FETCH,
         };
         stepBuffers.set(stepId, stepBuffer);
       }
-      while (stepBuffer.pending) {
-        const { promise, startByte: otherStartByte } = stepBuffer.pending;
-        const response = await promise;
-        if (startByte === otherStartByte && response) {
-          return; // deduplicated fetch operation
-        }
+      while (stepBuffer.pending) await stepBuffer.pending;
+      if (stepBuffer.startByte <= startByte && startByte < stepBuffer.endByte) {
+        return null; // already fetched
       }
       if (stepBuffer.fullyFetched) return; // Already fetched in full.
       if (stepBuffer.startByte > 0 && !forceUpdate) return;
       const backOff = stepBuffer.lastFetched
         ? POLL_INTERVAL - (performance.now() - stepBuffer.lastFetched)
         : 0;
-      const promise = new Promise((resolve) => {
+      stepBuffer.pending = new Promise((resolve) => {
         setTimeout(resolve, backOff);
       }).then(() => {
         stepBuffer.lastFetched = performance.now();
-        return getConsoleTextOffset(stepId, startByte);
+        let consoleAnnotator: string;
+        let start: number;
+        if (startByte === INCREMENTAL_FETCH) {
+          start = stepBuffer.endByte;
+          consoleAnnotator = stepBuffer.consoleAnnotator || "";
+        } else {
+          start = startByte;
+          consoleAnnotator = "";
+        }
+        return getConsoleTextOffset(stepId, start, consoleAnnotator);
       });
-      stepBuffer.pending = { promise, startByte };
       let response;
       try {
-        response = await promise;
+        response = await stepBuffer.pending;
       } finally {
         delete stepBuffer.pending;
       }
       if (!response) return;
 
-      const newLogLines = response.text.trim().split("\n") || [];
+      if (response.text) {
+        const exceptionText = stepBuffer.exceptionText || [];
+        const newLogLines = response.text.split(/\r?\n/g);
+        const incomingTrailingNewLine =
+          newLogLines.length > 0 && newLogLines[newLogLines.length - 1] === "";
+        if (incomingTrailingNewLine) newLogLines.pop();
 
-      const exceptionText = stepBuffer.exceptionText || [];
-      if (stepBuffer.endByte > 0 && stepBuffer.endByte <= startByte) {
-        const withoutExceptionText = stepBuffer.lines.slice(
-          0,
-          stepBuffer.lines.length - exceptionText.length,
-        );
-        stepBuffer.lines = [
-          ...withoutExceptionText,
-          ...newLogLines,
-          ...exceptionText,
-        ];
-      } else {
-        stepBuffer.lines = newLogLines.concat(exceptionText);
-        stepBuffer.startByte = response.startByte;
+        if (stepBuffer.endByte === response.startByte) {
+          const oldLogLines = stepBuffer.lines.slice(
+            0,
+            stepBuffer.lines.length - exceptionText.length,
+          );
+          if (!stepBuffer.hasTrailingNewLine) {
+            // Combine a previously broken up line back together.
+            oldLogLines[oldLogLines.length - 1] += newLogLines.shift();
+          }
+          stepBuffer.lines = [...oldLogLines, ...newLogLines, ...exceptionText];
+        } else {
+          stepBuffer.lines = newLogLines.concat(exceptionText);
+          stepBuffer.startByte = response.startByte;
+        }
+        stepBuffer.endByte = response.endByte;
+        stepBuffer.hasTrailingNewLine = incomingTrailingNewLine;
+      } else if (stepBuffer.endByte === INCREMENTAL_FETCH) {
+        stepBuffer.startByte = 0;
+        stepBuffer.endByte = 0;
       }
 
-      stepBuffer.endByte = response.endByte;
-      if (response.startByte === 0 && !response.nodeIsActive) {
+      if (response.consoleAnnotator) {
+        stepBuffer.consoleAnnotator = response.consoleAnnotator;
+      }
+      if (stepBuffer.startByte === 0 && !response.nodeIsActive) {
         stepBuffer.fullyFetched = true;
       }
 
@@ -138,11 +156,22 @@ export function useStepsPoller(props: RunPollerProps) {
           return [...prev, step.id];
         });
 
-        updateStepConsoleOffset(
-          step.id,
-          false,
-          parseInt(params.get("start-byte") || `${0 - LOG_FETCH_SIZE}`),
-        );
+        const maybeStartByte = params.get("start-byte");
+        if (maybeStartByte) {
+          const startByte = parseInt(maybeStartByte, 10);
+          if (stepBuffersRef.current.get(step.id)?.startByte !== startByte) {
+            stepBuffersRef.current = new Map(stepBuffersRef.current).set(
+              step.id,
+              {
+                lines: [],
+                startByte,
+                endByte: startByte,
+              },
+            );
+            setStepBuffers(stepBuffersRef.current);
+            updateStepConsoleOffset(step.id, true, startByte);
+          }
+        }
       }
 
       setOpenStage(selected);
@@ -209,7 +238,7 @@ export function useStepsPoller(props: RunPollerProps) {
 
           if (defaultStep.stageId) {
             setExpandedSteps((prev) => [...prev, defaultStep.id]);
-            updateStepConsoleOffset(defaultStep.id, false, 0 - LOG_FETCH_SIZE);
+            updateStepConsoleOffset(defaultStep.id, false, INCREMENTAL_FETCH);
           }
         }
       }
@@ -244,7 +273,7 @@ export function useStepsPoller(props: RunPollerProps) {
       setOpenStage(nodeId);
       if (lastStep && !collapsedSteps.current.has(lastStep.id)) {
         setExpandedSteps((prev) => [...prev, lastStep.id]);
-        updateStepConsoleOffset(lastStep.id, false, 0 - LOG_FETCH_SIZE);
+        updateStepConsoleOffset(lastStep.id, false, INCREMENTAL_FETCH);
       }
     },
     [openStage, steps, updateStepConsoleOffset],
@@ -254,7 +283,7 @@ export function useStepsPoller(props: RunPollerProps) {
     if (!expandedSteps.includes(nodeId)) {
       collapsedSteps.current.delete(nodeId);
       setExpandedSteps((prev) => [...prev, nodeId]);
-      updateStepConsoleOffset(nodeId, false, 0 - LOG_FETCH_SIZE);
+      updateStepConsoleOffset(nodeId, false, INCREMENTAL_FETCH);
     } else {
       collapsedSteps.current.add(nodeId);
       setExpandedSteps((prev) => prev.filter((id) => id !== nodeId));

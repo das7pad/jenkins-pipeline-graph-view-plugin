@@ -41,13 +41,12 @@ export interface StepInfo {
 
 // Internal representation of console log.
 export interface StepLogBufferInfo {
+  consoleAnnotator?: string;
   lines: string[];
   startByte: number;
   endByte: number;
-  pending?: {
-    startByte: number;
-    promise: Promise<ConsoleLogData | null>;
-  };
+  pending?: Promise<ConsoleLogData | null>;
+  hasTrailingNewLine?: boolean;
   lastFetched?: number;
   fullyFetched?: boolean;
   exceptionText?: string[];
@@ -60,6 +59,7 @@ export interface ConsoleLogData {
   startByte: number;
   endByte: number;
   nodeIsActive: boolean;
+  consoleAnnotator: string;
 }
 
 export async function getRunStatusFromPath(
@@ -93,14 +93,38 @@ export async function getRunSteps(): Promise<AllStepsData | null> {
 export async function getConsoleTextOffset(
   stepId: string,
   startByte: number,
+  consoleAnnotator: string,
 ): Promise<ConsoleLogData | null> {
+  const headers = new Headers({ "X-Streaming": "true" });
+  if (consoleAnnotator) headers.set("X-ConsoleAnnotator", consoleAnnotator);
   try {
     const response = await fetch(
-      `consoleOutput?nodeId=${stepId}&startByte=${startByte}`,
+      `streamConsoleOutput?nodeId=${stepId}&start=${startByte}`,
+      { headers },
     );
     if (!response.ok) throw response.statusText;
-    const json = await response.json();
-    return json.data;
+    const text = await response.text();
+    if (response.headers.get("X-Streaming") === "true") {
+      const idx = text.lastIndexOf("\n");
+      const { start, end, completed, consoleAnnotator } = JSON.parse(
+        text.slice(idx + 1),
+      );
+      return {
+        startByte: start,
+        endByte: end,
+        text: text.slice(0, idx),
+        nodeIsActive: !completed,
+        consoleAnnotator,
+      };
+    } else {
+      return {
+        text,
+        startByte,
+        endByte: parseInt(response.headers.get("X-Text-Size") || "0", 10),
+        nodeIsActive: response.headers.get("X-More-Data") === "true",
+        consoleAnnotator: response.headers.get("X-ConsoleAnnotator") || "",
+      };
+    }
   } catch (e) {
     console.error(`Caught error when fetching console: '${e}'`);
     return null;

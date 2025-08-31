@@ -2,7 +2,10 @@ import "./stage-steps.scss";
 
 import { StepInfo, StepLogBufferInfo } from "../../../common/RestClient.tsx";
 import ConsoleLogCard from "./ConsoleLogCard.tsx";
-import { LOG_FETCH_SIZE, StageInfo } from "./PipelineConsoleModel.tsx";
+import {
+  INCREMENTAL_FETCH,
+  StageInfo,
+} from "./PipelineConsoleModel.tsx";
 
 export default function StageSteps({
   stage,
@@ -27,12 +30,11 @@ export default function StageSteps({
           <ConsoleLogCard
             step={stepItemData}
             stepBuffer={
-              stepBuffers.get(stepItemData.id) ??
-              ({
-                lines: [] as string[],
-                startByte: 0 - LOG_FETCH_SIZE,
-                endByte: -1,
-              } as StepLogBufferInfo)
+              stepBuffers.get(stepItemData.id) ?? {
+                lines: [],
+                startByte: INCREMENTAL_FETCH,
+                endByte: INCREMENTAL_FETCH,
+              }
             }
             onStepToggle={onStepToggle}
             isExpanded={expandedSteps.includes(stepItemData.id)}

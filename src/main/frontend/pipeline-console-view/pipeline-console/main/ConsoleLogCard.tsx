@@ -15,6 +15,7 @@ import { classNames } from "../../../common/utils/classnames.ts";
 import { linkifyJsOptions } from "../../../common/utils/linkify-js.ts";
 import LiveTotal from "../../../common/utils/live-total.tsx";
 import {
+  INCREMENTAL_FETCH,
   LOG_FETCH_SIZE,
   StepInfo,
   StepLogBufferInfo,
@@ -33,7 +34,7 @@ export default function ConsoleLogCard({
 }: ConsoleLogCardProps) {
   useEffect(() => {
     if (isExpanded) {
-      onMoreConsoleClick(step.id, stepBuffer.startByte);
+      onMoreConsoleClick(step.id, INCREMENTAL_FETCH);
     }
   }, [isExpanded, onMoreConsoleClick, step.id, stepBuffer]);
 

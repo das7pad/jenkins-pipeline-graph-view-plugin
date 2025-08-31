@@ -12,6 +12,7 @@ import hudson.model.Queue;
 import hudson.model.Result;
 import hudson.security.Permission;
 import hudson.util.HttpResponses;
+import hudson.util.VersionNumber;
 import io.jenkins.plugins.pipelinegraphview.Messages;
 import io.jenkins.plugins.pipelinegraphview.PipelineGraphViewConfiguration;
 import io.jenkins.plugins.pipelinegraphview.cards.RunDetailsCard;
@@ -187,6 +188,39 @@ public class PipelineConsoleViewAction implements Action, IconSpec {
         String nodeId = req.getParameter("nodeId");
         if (nodeId == null) return HttpResponses.error(400, "missing ?nodeId");
         return HttpResponses.text(getNodeExceptionText(nodeId));
+    }
+
+    // TODO: update version after landing tailing support.
+    private final boolean hasTailingSupport = Jenkins.getVersion() != null && Jenkins.getVersion().isNewerThanOrEqualTo(new VersionNumber("99999999.9"));
+
+    @GET
+    @WebMethod(name = "streamConsoleOutput")
+    public void streamConsoleOutput(StaplerRequest2 req, StaplerResponse2 rsp) throws IOException, ServletException {
+        String nodeId = req.getParameter("nodeId");
+        if (nodeId == null) {
+            HttpResponses.error(400, "missing ?nodeId").generateResponse(req, rsp, null);
+            return;
+        }
+        AnnotatedLargeText<? extends FlowNode> text = getLogForNode(nodeId);
+        if (text == null) {
+            HttpResponses.error(404, "?nodeId not found").generateResponse(req, rsp, null);
+            return;
+        }
+        if (!hasTailingSupport) {
+            String s = req.getParameter("start");
+            long start = s != null ? Long.parseLong(s) : 0L;
+            if (start < 0) {
+                long length = text.length();
+                if (length > -start) {
+                    start = length + start;
+                } else {
+                    start = 0;
+                }
+                rsp.sendRedirect(302,"streamConsoleOutput?nodeId=" + nodeId + "&start=" + start);
+                return;
+            }
+        }
+        text.doProgressiveHtml(req, rsp);
     }
 
     /*

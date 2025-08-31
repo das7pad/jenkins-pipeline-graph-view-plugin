@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { ConsoleLine } from "./ConsoleLine.tsx";
 import {
+  INCREMENTAL_FETCH,
   POLL_INTERVAL,
   Result,
   StepInfo,
@@ -75,7 +76,7 @@ export default function ConsoleLogStream({
     if (stickToBottom && shouldRequestMoreLogs) {
       if (!appendInterval.current) {
         appendInterval.current = window.setInterval(() => {
-          onMoreConsoleClick(step.id, logBuffer.startByte);
+          onMoreConsoleClick(step.id, INCREMENTAL_FETCH);
         }, POLL_INTERVAL);
       }
     } else if (appendInterval.current) {
