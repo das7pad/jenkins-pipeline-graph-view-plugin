@@ -294,9 +294,12 @@ public class PipelineConsoleViewAction implements Action, IconSpec {
         FlowExecution execution = run.getExecution();
         if (execution != null) {
             logger.debug("getNodeException found execution.");
-            return PipelineNodeUtil.getExceptionText(execution.getNode(nodeId));
+            String text = PipelineNodeUtil.getExceptionText(execution.getNode(nodeId));
+            if (text != null) {
+                return text;
+            }
         }
-        return null;
+        return "";
     }
 
     private boolean isUnhandledException(String nodeId) throws IOException {
