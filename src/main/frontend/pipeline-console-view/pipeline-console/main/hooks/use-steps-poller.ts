@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import useRunPoller from "../../../../common/tree-api.ts";
 import { usePolling } from "../../../../common/utils/use-polling.ts";
@@ -261,16 +261,21 @@ export function useStepsPoller(props: RunPollerProps) {
     [openStageId, steps, updateStepConsoleOffset],
   );
 
-  const onStepToggle = (nodeId: string) => {
-    if (!expandedSteps.includes(nodeId)) {
-      collapsedSteps.current.delete(nodeId);
-      setExpandedSteps((prev) => [...prev, nodeId]);
-      updateStepConsoleOffset(nodeId, false, TAIL_CONSOLE_LOG);
-    } else {
-      collapsedSteps.current.add(nodeId);
-      setExpandedSteps((prev) => prev.filter((id) => id !== nodeId));
-    }
-  };
+  const onStepToggle = useCallback(
+    (nodeId: string) => {
+      setExpandedSteps((expandedSteps) => {
+        if (!expandedSteps.includes(nodeId)) {
+          collapsedSteps.current.delete(nodeId);
+          updateStepConsoleOffset(nodeId, false, TAIL_CONSOLE_LOG);
+          return [...expandedSteps, nodeId];
+        } else {
+          collapsedSteps.current.add(nodeId);
+          return expandedSteps.filter((id) => id !== nodeId);
+        }
+      });
+    },
+    [updateStepConsoleOffset],
+  );
 
   const onMoreConsoleClick = useCallback(
     (nodeId: string, startByte: number) => {
@@ -279,21 +284,21 @@ export function useStepsPoller(props: RunPollerProps) {
     [updateStepConsoleOffset],
   );
 
-  const getStageSteps = (stageId: string) => {
-    return steps.filter((step) => step.stageId === stageId);
-  };
+  const openStageSteps = useMemo(() => {
+    return steps.filter((step) => step.stageId === openStageId);
+  }, [openStageId, steps]);
 
-  const getStageStepBuffers = (stageId: string) => {
+  const openStageStepBuffers = useMemo(() => {
     const buffers = new Map<string, StepLogBufferInfo>();
     steps.forEach((step) => {
-      if (step.stageId === stageId && stepBuffers.has(step.id)) {
+      if (step.stageId === openStageId && stepBuffers.has(step.id)) {
         buffers.set(step.id, stepBuffers.get(step.id)!);
       }
     });
     return buffers;
-  };
+  }, [openStageId, stepBuffers, steps]);
 
-  const getOpenStage = (): StageInfo | null => {
+  const openStage = useMemo((): StageInfo | null => {
     const findStage = (stages: StageInfo[]): StageInfo | null => {
       for (const stage of stages) {
         if (String(stage.id) === openStageId) return stage;
@@ -305,12 +310,12 @@ export function useStepsPoller(props: RunPollerProps) {
       return null;
     };
     return openStageId ? findStage(run.stages) : null;
-  };
+  }, [openStageId, run.stages]);
 
   return {
-    openStage: getOpenStage(),
-    openStageSteps: getStageSteps(openStageId),
-    openStageStepBuffers: getStageStepBuffers(openStageId),
+    openStage,
+    openStageSteps,
+    openStageStepBuffers,
     expandedSteps,
     stages: run.stages,
     handleStageSelect,
