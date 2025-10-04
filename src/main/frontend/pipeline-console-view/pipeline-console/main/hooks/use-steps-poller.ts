@@ -95,7 +95,7 @@ export function useStepsPoller(props: RunPollerProps) {
     runIsComplete: false,
   });
 
-  const [openStage, setOpenStage] = useState("");
+  const [openStageId, setOpenStageId] = useState("");
   const [expandedSteps, setExpandedSteps] = useState<string[]>([]);
   const collapsedSteps = useRef(new Set<string>());
   const [stepBuffers, setStepBuffers] = useState(
@@ -180,7 +180,7 @@ export function useStepsPoller(props: RunPollerProps) {
         );
       }
 
-      setOpenStage(selected);
+      setOpenStageId(selected);
       return true;
     },
     [updateStepConsoleOffset],
@@ -232,7 +232,7 @@ export function useStepsPoller(props: RunPollerProps) {
     if (!usedUrl) {
       const defaultStep = getDefaultSelectedStep(steps);
       if (defaultStep) {
-        setOpenStage(defaultStep.stageId);
+        setOpenStageId(defaultStep.stageId);
 
         if (defaultStep.stageId) {
           setExpandedSteps((prev) => [...prev, defaultStep.id]);
@@ -245,20 +245,20 @@ export function useStepsPoller(props: RunPollerProps) {
   const handleStageSelect = useCallback(
     (nodeId: string) => {
       if (!nodeId) return;
-      if (nodeId === openStage) return; // skip if already selected
+      if (nodeId === openStageId) return; // skip if already selected
 
       const stepsForStage = steps.filter((step) => step.stageId === nodeId);
       const lastStep = stepsForStage[stepsForStage.length - 1];
 
       history.replaceState({}, "", `?selected-node=` + nodeId);
 
-      setOpenStage(nodeId);
+      setOpenStageId(nodeId);
       if (lastStep && !collapsedSteps.current.has(lastStep.id)) {
         setExpandedSteps((prev) => [...prev, lastStep.id]);
         updateStepConsoleOffset(lastStep.id, false, TAIL_CONSOLE_LOG);
       }
     },
-    [openStage, steps, updateStepConsoleOffset],
+    [openStageId, steps, updateStepConsoleOffset],
   );
 
   const onStepToggle = (nodeId: string) => {
@@ -296,7 +296,7 @@ export function useStepsPoller(props: RunPollerProps) {
   const getOpenStage = (): StageInfo | null => {
     const findStage = (stages: StageInfo[]): StageInfo | null => {
       for (const stage of stages) {
-        if (String(stage.id) === openStage) return stage;
+        if (String(stage.id) === openStageId) return stage;
         if (stage.children.length > 0) {
           const result = findStage(stage.children);
           if (result) return result;
@@ -304,13 +304,13 @@ export function useStepsPoller(props: RunPollerProps) {
       }
       return null;
     };
-    return openStage ? findStage(run.stages) : null;
+    return openStageId ? findStage(run.stages) : null;
   };
 
   return {
     openStage: getOpenStage(),
-    openStageSteps: getStageSteps(openStage),
-    openStageStepBuffers: getStageStepBuffers(openStage),
+    openStageSteps: getStageSteps(openStageId),
+    openStageStepBuffers: getStageStepBuffers(openStageId),
     expandedSteps,
     stages: run.stages,
     handleStageSelect,
