@@ -30,7 +30,7 @@ export default function PipelineConsole() {
   const {
     openStage,
     openStageSteps,
-    openStageStepBuffers,
+    stepBuffers,
     expandedSteps,
     stages,
     handleStageSelect,
@@ -134,7 +134,7 @@ export default function PipelineConsole() {
                 <StageView
                   stage={openStage}
                   steps={openStageSteps}
-                  stepBuffers={openStageStepBuffers}
+                  stepBuffers={stepBuffers}
                   expandedSteps={expandedSteps}
                   onStepToggle={onStepToggle}
                   onMoreConsoleClick={onMoreConsoleClick}

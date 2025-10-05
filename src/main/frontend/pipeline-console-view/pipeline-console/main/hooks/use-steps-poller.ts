@@ -98,13 +98,13 @@ export function useStepsPoller(props: RunPollerProps) {
   const [openStageId, setOpenStageId] = useState("");
   const [expandedSteps, setExpandedSteps] = useState<string[]>([]);
   const collapsedSteps = useRef(new Set<string>());
-  const stepBuffersRef = useRef(new Map<string, StepLogBufferInfo>());
+  const { current: stepBuffers } = useRef(new Map<string, StepLogBufferInfo>());
   const updateStepConsoleOffset = useCallback(
     async (stepId: string, forceUpdate: boolean, startByte: number) => {
-      let stepBuffer = stepBuffersRef.current.get(stepId);
+      let stepBuffer = stepBuffers.get(stepId);
       if (!stepBuffer) {
         stepBuffer = { lines: [], startByte: 0, endByte: TAIL_CONSOLE_LOG };
-        stepBuffersRef.current.set(stepId, stepBuffer);
+        stepBuffers.set(stepId, stepBuffer);
       }
 
       // Cheap FIFO queue to avoid duplicate fetches.
@@ -122,31 +122,34 @@ export function useStepsPoller(props: RunPollerProps) {
 
       return { ...stepBuffer };
     },
-    [],
+    [stepBuffers],
   );
 
-  const fetchExceptionText = useCallback(async (stepId: string) => {
-    let stepBuffer = stepBuffersRef.current.get(stepId);
-    if (!stepBuffer) {
-      stepBuffer = { lines: [], startByte: 0, endByte: TAIL_CONSOLE_LOG };
-      stepBuffersRef.current.set(stepId, stepBuffer);
-    }
-    while (stepBuffer.pendingExceptionText) {
-      await stepBuffer.pendingExceptionText;
-    }
-    if (stepBuffer.exceptionText?.length) return { ...stepBuffer }; // Already fetched
-    const promise = getExceptionText(stepId);
-    stepBuffer.pendingExceptionText = promise;
-    try {
-      stepBuffer.exceptionText = await promise;
-    } finally {
-      delete stepBuffer.pendingExceptionText;
-    }
+  const fetchExceptionText = useCallback(
+    async (stepId: string) => {
+      let stepBuffer = stepBuffers.get(stepId);
+      if (!stepBuffer) {
+        stepBuffer = { lines: [], startByte: 0, endByte: TAIL_CONSOLE_LOG };
+        stepBuffers.set(stepId, stepBuffer);
+      }
+      while (stepBuffer.pendingExceptionText) {
+        await stepBuffer.pendingExceptionText;
+      }
+      if (stepBuffer.exceptionText?.length) return { ...stepBuffer }; // Already fetched
+      const promise = getExceptionText(stepId);
+      stepBuffer.pendingExceptionText = promise;
+      try {
+        stepBuffer.exceptionText = await promise;
+      } finally {
+        delete stepBuffer.pendingExceptionText;
+      }
 
-    stepBuffer.lines = stepBuffer.lines.concat(stepBuffer.exceptionText);
+      stepBuffer.lines = stepBuffer.lines.concat(stepBuffer.exceptionText);
 
-    return { ...stepBuffer };
-  }, []);
+      return { ...stepBuffer };
+    },
+    [stepBuffers],
+  );
 
   const parseUrlParams = useCallback(
     (steps: StepInfo[]): boolean => {
@@ -297,7 +300,7 @@ export function useStepsPoller(props: RunPollerProps) {
   return {
     openStage,
     openStageSteps,
-    openStageStepBuffers: stepBuffersRef.current,
+    stepBuffers,
     expandedSteps,
     stages: run.stages,
     handleStageSelect,
