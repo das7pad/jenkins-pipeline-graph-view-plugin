@@ -29,6 +29,9 @@ export interface StageViewProps {
   stepBuffers: Map<string, StepLogBufferInfo>;
   expandedSteps: string[];
   onStepToggle: (nodeId: string) => void;
-  onMoreConsoleClick: (nodeId: string, startByte: number) => void;
-  fetchExceptionText: (nodeId: string) => void;
+  onMoreConsoleClick: (
+    nodeId: string,
+    startByte: number,
+  ) => Promise<StepLogBufferInfo>;
+  fetchExceptionText: (nodeId: string) => Promise<StepLogBufferInfo>;
 }

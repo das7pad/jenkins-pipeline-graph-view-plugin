@@ -46,10 +46,12 @@ describe("ConsoleLogStream", () => {
     step: baseStep,
     logBuffer: baseBuffer,
     isExpanded: false,
-    onMoreConsoleClick: () => {
+    setLogBuffer: () => {},
+    onMoreConsoleClick: async () => {
       console.log("onMoreConsoleClick triggered");
+      return baseBuffer;
     },
-    fetchExceptionText: vi.fn(),
+    fetchExceptionText: vi.fn().mockResolvedValue(baseBuffer),
   } as ConsoleLogStreamProps;
 
   it("renders step console", async () => {

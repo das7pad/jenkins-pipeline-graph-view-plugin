@@ -9,6 +9,8 @@ import StageView from "./StageView.tsx";
 
 (globalThis as any).TextEncoder = TextEncoder;
 
+const mockBuffer = { lines: [], startByte: 0, endByte: 0 };
+
 const mockStage: StageInfo = {
   id: 1,
   name: "Build Stage",
@@ -50,8 +52,8 @@ describe("StageView", () => {
           stepBuffers={new Map()}
           expandedSteps={["step-1"]}
           onStepToggle={vi.fn()}
-          onMoreConsoleClick={vi.fn()}
-          fetchExceptionText={vi.fn()}
+          onMoreConsoleClick={async () => mockBuffer}
+          fetchExceptionText={async () => mockBuffer}
         />,
       );
     });

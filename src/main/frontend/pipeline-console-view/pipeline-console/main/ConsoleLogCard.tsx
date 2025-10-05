@@ -6,6 +6,7 @@ import {
   MouseEvent as ReactMouseEvent,
   Suspense,
   useEffect,
+  useState,
 } from "react";
 
 import StatusIcon from "../../../common/components/status-icon.tsx";
@@ -26,15 +27,24 @@ const ConsoleLogStream = lazy(() => import("./ConsoleLogStream.tsx"));
 
 export default function ConsoleLogCard({
   step,
-  stepBuffer,
+  stepBuffers,
   isExpanded,
   onMoreConsoleClick,
   onStepToggle,
   fetchExceptionText,
 }: ConsoleLogCardProps) {
+  const [stepBuffer, setStepBuffer] = useState<StepLogBufferInfo>(
+    stepBuffers.get(step.id) || {
+      lines: [],
+      startByte: 0,
+      endByte: TAIL_CONSOLE_LOG,
+    },
+  );
   useEffect(() => {
     if (isExpanded) {
-      onMoreConsoleClick(step.id, TAIL_CONSOLE_LOG);
+      onMoreConsoleClick(step.id, TAIL_CONSOLE_LOG)
+        .then(setStepBuffer)
+        .catch(console.error);
     }
   }, [isExpanded, onMoreConsoleClick, step.id, stepBuffer]);
 
@@ -144,6 +154,7 @@ export default function ConsoleLogCard({
         <ConsoleLogBody
           step={step}
           stepBuffer={stepBuffer}
+          setStepBuffer={setStepBuffer}
           onMoreConsoleClick={onMoreConsoleClick}
           fetchExceptionText={fetchExceptionText}
           isExpanded={false}
@@ -157,9 +168,10 @@ export default function ConsoleLogCard({
 function ConsoleLogBody({
   step,
   stepBuffer,
+  setStepBuffer,
   onMoreConsoleClick,
   fetchExceptionText,
-}: ConsoleLogCardProps) {
+}: ConsoleLogCardBodyProps) {
   const prettySizeString = (size: number) => {
     const kib = 1024;
     const mib = 1024 * 1024;
@@ -173,7 +185,9 @@ function ConsoleLogBody({
   const showMoreLogs = () => {
     let startByte = stepBuffer.startByte - LOG_FETCH_SIZE;
     if (startByte < 0) startByte = 0;
-    onMoreConsoleClick(step.id, startByte);
+    onMoreConsoleClick(step.id, startByte)
+      .then(setStepBuffer)
+      .catch(console.error);
   };
 
   const getTruncatedLogWarning = () => {
@@ -199,6 +213,7 @@ function ConsoleLogBody({
       <Suspense>
         <ConsoleLogStream
           logBuffer={stepBuffer}
+          setLogBuffer={setStepBuffer}
           onMoreConsoleClick={onMoreConsoleClick}
           fetchExceptionText={fetchExceptionText}
           step={step}
@@ -210,9 +225,25 @@ function ConsoleLogBody({
 
 export type ConsoleLogCardProps = {
   step: StepInfo;
-  stepBuffer: StepLogBufferInfo;
+  stepBuffers: Map<string, StepLogBufferInfo>;
   isExpanded: boolean;
   onStepToggle: (nodeId: string) => void;
-  onMoreConsoleClick: (nodeId: string, startByte: number) => void;
-  fetchExceptionText: (nodeId: string) => void;
+  onMoreConsoleClick: (
+    nodeId: string,
+    startByte: number,
+  ) => Promise<StepLogBufferInfo>;
+  fetchExceptionText: (nodeId: string) => Promise<StepLogBufferInfo>;
+};
+
+export type ConsoleLogCardBodyProps = {
+  step: StepInfo;
+  stepBuffer: StepLogBufferInfo;
+  setStepBuffer: (step: StepLogBufferInfo) => void;
+  isExpanded: boolean;
+  onStepToggle: (nodeId: string) => void;
+  onMoreConsoleClick: (
+    nodeId: string,
+    startByte: number,
+  ) => Promise<StepLogBufferInfo>;
+  fetchExceptionText: (nodeId: string) => Promise<StepLogBufferInfo>;
 };

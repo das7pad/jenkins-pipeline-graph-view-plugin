@@ -17,6 +17,7 @@ function canStickToBottom() {
 export default function ConsoleLogStream({
   step,
   logBuffer,
+  setLogBuffer,
   onMoreConsoleClick,
   fetchExceptionText,
 }: ConsoleLogStreamProps) {
@@ -33,9 +34,9 @@ export default function ConsoleLogStream({
 
   useEffect(() => {
     if (step.state === Result.failure) {
-      fetchExceptionText(step.id);
+      fetchExceptionText(step.id).then(setLogBuffer).catch(console.error);
     }
-  }, [step.id, step.state, fetchExceptionText]);
+  }, [step.id, step.state, fetchExceptionText, setLogBuffer]);
 
   useEffect(() => {
     if (stickToBottom && logBuffer.lines.length > 0 && canStickToBottom()) {
@@ -76,14 +77,16 @@ export default function ConsoleLogStream({
     if (stickToBottom && shouldRequestMoreLogs) {
       if (!appendInterval.current) {
         appendInterval.current = window.setInterval(() => {
-          onMoreConsoleClick(step.id, TAIL_CONSOLE_LOG);
+          onMoreConsoleClick(step.id, TAIL_CONSOLE_LOG)
+            .then(setLogBuffer)
+            .catch(console.error);
         }, POLL_INTERVAL);
       }
     } else if (appendInterval.current) {
       clearInterval(appendInterval.current);
       appendInterval.current = null;
     }
-  }, [stickToBottom, step, logBuffer, onMoreConsoleClick]);
+  }, [stickToBottom, step, logBuffer, onMoreConsoleClick, setLogBuffer]);
 
   const [scrollToLogLine, setScrollToLogLine] = useState<boolean>(
     window.location.hash.startsWith("#log-"),
@@ -133,7 +136,11 @@ export default function ConsoleLogStream({
 
 export interface ConsoleLogStreamProps {
   logBuffer: StepLogBufferInfo;
-  onMoreConsoleClick: (nodeId: string, startByte: number) => void;
-  fetchExceptionText: (nodeId: string) => void;
+  setLogBuffer: (logBuffer: StepLogBufferInfo) => void;
+  onMoreConsoleClick: (
+    nodeId: string,
+    startByte: number,
+  ) => Promise<StepLogBufferInfo>;
+  fetchExceptionText: (nodeId: string) => Promise<StepLogBufferInfo>;
   step: StepInfo;
 }

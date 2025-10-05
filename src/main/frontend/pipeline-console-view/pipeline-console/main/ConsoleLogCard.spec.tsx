@@ -42,18 +42,19 @@ describe("ConsoleLogCard", () => {
     endByte: 13,
   };
 
-  const DefaultTestProps = {
+  const DefaultTestProps: ConsoleLogCardProps = {
     step: baseStep,
-    stepBuffer: baseBuffer,
+    stepBuffers: new Map().set(baseStep.id, baseBuffer),
     isExpanded: false,
     onStepToggle: () => {
       console.log("onStepToggle triggered");
     },
-    onMoreConsoleClick: () => {
+    onMoreConsoleClick: async () => {
       console.log("onMoreConsoleClick triggered");
+      return baseBuffer;
     },
-    fetchExceptionText: () => {},
-  } as ConsoleLogCardProps;
+    fetchExceptionText: async () => baseBuffer,
+  };
 
   it("renders step header only when not expanded", async () => {
     const { getByText } = render(<ConsoleLogCard {...DefaultTestProps} />);
