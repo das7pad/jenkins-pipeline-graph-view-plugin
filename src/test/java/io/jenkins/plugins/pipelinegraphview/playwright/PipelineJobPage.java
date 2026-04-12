@@ -6,6 +6,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import java.net.URI;
+import java.util.regex.Pattern;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,14 @@ public class PipelineJobPage extends JenkinsPage<PipelineJobPage> {
     public PipelineBuild nthBuild(int index) {
         log.info("Getting the {} build for the job {}", index, jobName);
         Locator build = getPipelineSection().locator(".pgv-single-run").nth(index);
+        assertThat(build).isVisible();
+
+        return new PipelineBuild(this, build);
+    }
+
+    public PipelineBuild buildByAlias(String alias) {
+        log.info("Getting the build by alias {} for the job {}", alias, jobName);
+        Locator build = getPipelineSection().getByText(Pattern.compile(alias));
         assertThat(build).isVisible();
 
         return new PipelineBuild(this, build);

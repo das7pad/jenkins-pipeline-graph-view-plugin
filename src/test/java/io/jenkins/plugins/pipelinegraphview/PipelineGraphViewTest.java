@@ -1,5 +1,7 @@
 package io.jenkins.plugins.pipelinegraphview;
 
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.junit.UsePlaywright;
 import hudson.model.Result;
@@ -11,6 +13,7 @@ import io.jenkins.plugins.pipelinegraphview.playwright.PipelineJobPage;
 import io.jenkins.plugins.pipelinegraphview.playwright.PlaywrightConfig;
 import io.jenkins.plugins.pipelinegraphview.utils.PipelineState;
 import io.jenkins.plugins.pipelinegraphview.utils.TestUtils;
+import java.util.regex.Pattern;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.test.steps.SemaphoreStep;
 import org.junit.jupiter.api.Test;
@@ -201,5 +204,25 @@ class PipelineGraphViewTest {
                 .selectStageInGraph("Stage")
                 .stageHasSteps("Error signal")
                 .stepDoesNotContainText("Error signal", "null");
+    }
+
+    @Issue("GH#1047")
+    @Test
+    @ConfiguredWithCode("configure-appearance.yml")
+    void resolveLastXXX(Page p, JenkinsConfiguredWithCodeRule j) throws Exception {
+        String name = "gh1047";
+        WorkflowRun run = TestUtils.createAndRunJob(j, name, "simpleError.jenkinsfile", Result.FAILURE);
+
+        var overview = new PipelineJobPage(p, run.getParent())
+                .goTo()
+                .hasBuilds(1)
+                .buildByAlias("Last build")
+                .goToBuild()
+                .goToPipelineOverview()
+                .hasStagesInGraph(1, "Stage");
+        assertThat(p).hasURL(Pattern.compile("/lastBuild/stages/"));
+        overview.selectStageInGraph("A");
+        assertThat(p).hasURL(Pattern.compile("/" + run.getNumber() + "/stages/"));
+        overview.stageHasSteps("Error signal").stepContainsText("Error signal", "This is an error");
     }
 }
