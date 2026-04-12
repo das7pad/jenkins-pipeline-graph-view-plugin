@@ -378,7 +378,6 @@ export function useStepsPoller(props: RunPollerProps) {
     setTailStage(nodeId);
     setOpenStageId((openStageId) => {
       if (nodeId === openStageId) return openStageId; // skip if already selected
-      history.replaceState({}, "", `?selected-node=` + nodeId);
       return nodeId;
     });
   }, []);
