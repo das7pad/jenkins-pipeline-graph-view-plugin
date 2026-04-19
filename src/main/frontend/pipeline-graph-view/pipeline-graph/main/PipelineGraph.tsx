@@ -7,7 +7,7 @@ import {
   CompositeConnection,
   defaultLayout,
   LayoutInfo,
-  NodeColumn,
+  NodeInfo,
   NodeLabelInfo,
   StageInfo,
 } from "./PipelineGraphModel.tsx";
@@ -27,7 +27,7 @@ export function PipelineGraph({
   collapsed,
   onStageSelect,
 }: Props) {
-  const [nodeColumns, setNodeColumns] = useState<NodeColumn[]>([]);
+  const [nodes, setNodes] = useState<NodeInfo[]>([]);
   const [connections, setConnections] = useState<CompositeConnection[]>([]);
   const [bigLabels, setBigLabels] = useState<NodeLabelInfo[]>([]);
   const [timings, setTimings] = useState<NodeLabelInfo[]>([]);
@@ -54,7 +54,11 @@ export function PipelineGraph({
       showNames,
       showDurations,
     );
-    setNodeColumns(newLayout.nodeColumns);
+    setNodes(
+      newLayout.nodeColumns.flatMap((column) => {
+        return column.rows.flatMap((row) => row);
+      }),
+    );
     setConnections(newLayout.connections);
     setBigLabels(newLayout.bigLabels);
     setSmallLabels(newLayout.smallLabels);
@@ -71,10 +75,6 @@ export function PipelineGraph({
     [selectedStage],
   );
 
-  const nodes = nodeColumns.flatMap((column) => {
-    return column.rows.flatMap((row) => row);
-  });
-
   const outerDivStyle = {
     position: "relative" as const,
     overflow: "visible" as const,
@@ -88,7 +88,7 @@ export function PipelineGraph({
 
           <SelectionHighlight
             layout={fullLayout}
-            nodeColumns={nodeColumns}
+            nodes={nodes}
             isStageSelected={stageIsSelected}
           />
         </svg>

@@ -10,12 +10,7 @@ import Tooltip from "../../../../common/components/tooltip.tsx";
 import { classNames } from "../../../../common/utils/classnames.ts";
 import LiveTotal from "../../../../common/utils/live-total.tsx";
 import { CounterNodeInfo } from "../PipelineGraphLayout.ts";
-import {
-  LayoutInfo,
-  NodeColumn,
-  NodeInfo,
-  StageInfo,
-} from "../PipelineGraphModel.tsx";
+import { LayoutInfo, NodeInfo, StageInfo } from "../PipelineGraphModel.tsx";
 
 type SVGChildren = Array<any>; // Fixme: Maybe refine this? Not sure what should go here, we have working code I can't make typecheck
 
@@ -185,7 +180,7 @@ export function Node({
 
 interface SelectionHighlightProps {
   layout: LayoutInfo;
-  nodeColumns: Array<NodeColumn>;
+  nodes: Array<NodeInfo>;
   isStageSelected: (stage: StageInfo) => boolean;
 }
 
@@ -194,7 +189,7 @@ interface SelectionHighlightProps {
  */
 export function SelectionHighlight({
   layout,
-  nodeColumns,
+  nodes,
   isStageSelected,
 }: SelectionHighlightProps) {
   const { nodeRadius, connectorStrokeWidth } = layout;
@@ -203,13 +198,9 @@ export function SelectionHighlight({
   );
 
   const selectedNode: NodeInfo | undefined = (() => {
-    for (const column of nodeColumns) {
-      for (const row of column.rows) {
-        for (const node of row) {
-          if (!node.isPlaceholder && isStageSelected(node.stage)) {
-            return node;
-          }
-        }
+    for (const node of nodes) {
+      if (!node.isPlaceholder && isStageSelected(node.stage)) {
+        return node;
       }
     }
     return undefined;
