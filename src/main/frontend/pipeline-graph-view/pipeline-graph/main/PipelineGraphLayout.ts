@@ -128,7 +128,6 @@ export function layoutGraph2(
   const computeConnectionsSeq = (nodes: GraphNode[]) => {
     for (let i = 0; i < nodes.length - 1; i++) {
       const current = nodes[i];
-      flushLocalEnd(current);
       flushFinalEnd(current);
       const next = nodes[i + 1];
       computeConnections(current, next);
@@ -143,18 +142,20 @@ export function layoutGraph2(
       // Add first entry to final map. This will result in a duplicate horizontal line, which is fine.
       addToMapArray(byDestinationFinal, node.key, closing[0]);
       byDestination.delete(node.key);
-      connections.push({
-        sourceNodes: closing,
-        destinationNodes: [node],
-        skippedNodes: [],
-        hasBranchLabels: false,
-      });
+      if (closing.length > 1) {
+        connections.push({
+          sourceNodes: closing,
+          destinationNodes: [node],
+          skippedNodes: [],
+          hasBranchLabels: false,
+        });
+      }
     }
   };
 
   const flushFinalEnd = (node: GraphNode) => {
     const closing = byDestinationFinal.get(node.key);
-    if (closing && closing.length > 1) {
+    if (closing) {
       byDestinationFinal.delete(node.key);
       connections.push({
         sourceNodes: closing,
@@ -180,13 +181,6 @@ export function layoutGraph2(
       for (const child of current.children) {
         computeConnections(child, next);
       }
-      const closing = byDestination.get(next.key);
-      if (closing && closing.length === 1) {
-        byDestination.delete(next.key);
-        addToMapArray(byDestinationFinal, next.key, closing[0]);
-      } else {
-        flushLocalEnd(next);
-      }
     } else {
       if (current.children.length > 0) {
         connections.push({
@@ -196,15 +190,11 @@ export function layoutGraph2(
           hasBranchLabels: false,
         });
         computeConnectionsSeq([...current.children, next]);
-        const closing = byDestination.get(next.key);
-        if (closing && closing.length === 1) {
-          byDestination.delete(next.key);
-          addToMapArray(byDestinationFinal, next.key, closing[0]);
-        }
       } else {
         addToMapArray(byDestination, next.key, current);
       }
     }
+    flushLocalEnd(next);
   };
   console.log(graph.root);
   computeConnectionsSeq(graph.root.children);
