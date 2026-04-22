@@ -575,14 +575,14 @@ describe("PipelineGraphLayout", () => {
                                 stage('B-1-2') {
                                     echo "Starting Branch B-1-2"
                                     parallel(
-                                        'B-1-1-1': {
-                                            stage('B-1-1-1') {
-                                                echo "Doing work in B-1-1-1"
+                                        'B-1-2-1': {
+                                            stage('B-1-2-1') {
+                                                echo "Doing work in B-1-2-1"
                                             }
                                         },
-                                        'B-1-1-2': {
-                                            stage('B-1-1-2') {
-                                                echo "Doing work in B-1-1-2"
+                                        'B-1-2-2': {
+                                            stage('B-1-2-2') {
+                                                echo "Doing work in B-1-2-2"
                                             }
                                         }
                                     )

@@ -30,10 +30,10 @@ export function layoutGraph2(
     limit: collapsed ? maxColumnsWhenCollapsed : -1,
     root: {
       x: layout.nodeSpacingH / 2,
-      y: 0,
+      y: layout.ypStart,
       maxWidth: 0,
       maxDepth: 0,
-      name: "",
+      name: "Root",
       id: -42,
       key: "root",
       isPlaceholder: true,
@@ -208,8 +208,10 @@ export function layoutGraph2(
   };
   recurse(graph.root);
   console.table(table);
+  nodes.shift();
 
   const smallLabels: NodeLabelInfo[] = nodes
+    .filter(() => !collapsed)
     .filter((node) => !node.isPlaceholder)
     .filter((node) => node.type !== "parallel" || node.children.length === 0)
     .map((node) => {
@@ -217,13 +219,14 @@ export function layoutGraph2(
         x: node.x,
         y: node.y,
         text: node.name,
-        key: "l_s_" + node.key,
+        key: "l_small_" + node.key,
         node,
         stage: node.stage,
       };
     });
 
   const branchLabels: NodeLabelInfo[] = nodes
+    .filter(() => !collapsed)
     .filter((node) => !node.isPlaceholder)
     .filter((node) => node.type === "parallel" && node.children.length > 0)
     .map((node) => {
@@ -231,9 +234,33 @@ export function layoutGraph2(
         // TODO
         x: node.x - sequentialStagesLabelOffset,
         y: node.y,
-        key: "l_b_" + node.key,
+        key: "l_branch_" + node.key,
         node,
         text: node.stage.name,
+      };
+    });
+
+  const bigLabels: NodeLabelInfo[] = nodes
+    .filter(() => !(collapsed && !showNames))
+    .filter((node) => node.type !== "counter")
+    .filter(
+      (node) =>
+        node.isPlaceholder ||
+        (node.children.length > 0 && node.children[0].type === "parallel"),
+    )
+    .map((node) => {
+      return {
+        // TODO
+        x: node.isPlaceholder
+          ? node.x
+          : node.x +
+            (node.maxWidth * layout.nodeSpacingH) / 2 +
+            (node.type === "parallel" ? sequentialStagesLabelOffset / 2 : 0),
+        y: node.y,
+        key: "l_big_" + node.key,
+        node,
+        stage: "stage" in node ? node.stage : undefined,
+        text: node.name,
       };
     });
 
@@ -244,6 +271,7 @@ export function layoutGraph2(
     nodes,
     connections,
     smallLabels,
+    bigLabels,
     branchLabels,
     measuredWidth,
     measuredHeight,
@@ -316,10 +344,6 @@ function collectNested(node: GraphNode, stages: StageInfo[]) {
   }
 }
 
-function addToMapArray<K, V>(m: Map<K, V[]>, key: K, node: V) {
-  m.set(key, [...(m.get(key) ?? []), node]);
-}
-
 /**
  * Main process for laying out the graph. Creates and positions markers for each component, but creates no components.
  *
@@ -337,15 +361,6 @@ export function layoutGraph(
   showNames: boolean,
   showDurations: boolean,
 ): PositionedGraph {
-  layoutGraph2(
-    newStages,
-    layout,
-    collapsed,
-    messages,
-    showNames,
-    showDurations,
-  );
-
   const stageNodeColumns = createNodeColumns(newStages);
   const { nodeSpacingH, ypStart } = layout;
 

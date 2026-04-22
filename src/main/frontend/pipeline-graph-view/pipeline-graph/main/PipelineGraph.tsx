@@ -58,9 +58,21 @@ export function PipelineGraph({
       setNodes(layout2.nodes);
       setConnections(layout2.connections);
       setSmallLabels(layout2.smallLabels);
+      setBigLabels(layout2.bigLabels);
       setBranchLabels(layout2.branchLabels);
       setMeasuredWidth(layout2.measuredWidth);
       setMeasuredHeight(layout2.measuredHeight);
+
+      const newLayout = layoutGraph(
+        stages,
+        fullLayout,
+        collapsed ?? false,
+        messages,
+        showNames,
+        showDurations,
+      );
+      console.log(layout2.nodes);
+      console.log(newLayout.nodeColumns);
       return;
     }
 
