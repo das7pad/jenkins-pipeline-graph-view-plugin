@@ -10,11 +10,365 @@ import {
   Result,
   StageInfo,
   StageNodeInfo,
+  StageType,
 } from "./PipelineGraphModel.tsx";
 
 export const sequentialStagesLabelOffset = 80;
 
 const maxColumnsWhenCollapsed = 13;
+
+export function layoutGraph2(
+  newStages: Array<StageInfo>,
+  layout: LayoutInfo,
+  collapsed: boolean,
+  messages: Messages,
+  showNames: boolean,
+  showDurations: boolean,
+) {
+  const graph: Graph = {
+    limit: collapsed ? maxColumnsWhenCollapsed : -1,
+    root: {
+      x: layout.nodeSpacingH / 2,
+      y: 0,
+      maxWidth: 0,
+      maxDepth: 0,
+      name: "",
+      id: -42,
+      key: "root",
+      isPlaceholder: true,
+      type: "root",
+      children: [
+        {
+          x: 0,
+          y: 0,
+          maxWidth: 1,
+          maxDepth: 1,
+          name: messages.format(LocalizedMessageKey.start),
+          id: -1,
+          isPlaceholder: true,
+          key: "start-node",
+          type: "start",
+          children: [],
+        },
+      ],
+    },
+    counterNode: {
+      x: 0,
+      y: 0,
+      maxWidth: 1,
+      maxDepth: 1,
+      name: "Counter",
+      id: -2,
+      isPlaceholder: true,
+      key: "counter-node",
+      type: "counter",
+      stages: [],
+      children: [],
+    },
+  };
+  if (collapsed) {
+    collectCollapsed(newStages, graph);
+    if (graph.counterNode.stages.length > 0) {
+      graph.root.maxWidth += 1;
+      graph.root.children.push(graph.counterNode);
+    }
+  } else {
+    collectNested(graph.root, newStages);
+    if (
+      graph.root.children.length > 1 &&
+      graph.root.children[1].type === "parallel-block-start"
+    ) {
+      // Inline Parallel block if it's the first one.
+      const { children, maxWidth, maxDepth } = graph.root.children[1];
+      graph.root.children[0] = {
+        ...graph.root.children[0],
+        children,
+        maxWidth,
+        maxDepth,
+      };
+      graph.root.children.splice(1, 1);
+    }
+  }
+  graph.root.maxWidth += 1;
+  graph.root.children.push({
+    x: 0,
+    y: 0,
+    maxWidth: 1,
+    maxDepth: 1,
+    name: messages.format(LocalizedMessageKey.end),
+    id: -3,
+    isPlaceholder: true,
+    key: "end-node",
+    type: "end",
+    children: [],
+  });
+
+  const computePositions = (node: GraphNode) => {
+    let xP = node.x;
+    let yP = node.y;
+    if (node.children.length > 0 && node.children[0].type === "parallel") {
+      xP += layout.nodeSpacingH; //+ sequentialStagesLabelOffset;
+    }
+    for (const child of node.children) {
+      child.x = xP;
+      child.y = yP;
+      if (child.type === "parallel") {
+        yP += layout.nodeSpacingV * child.maxDepth;
+      } else {
+        xP += layout.nodeSpacingH * child.maxWidth;
+      }
+      computePositions(child);
+    }
+  };
+  computePositions(graph.root);
+  graph.root.children[graph.root.children.length - 1].x -=
+    layout.nodeSpacingH / 2;
+
+  const connections: CompositeConnection[] = [];
+  const computeConnectionsSeq = (nodes: GraphNode[]) => {
+    for (let i = 0; i < nodes.length - 1; i++) {
+      const current = nodes[i];
+      flushLocalEnd(current);
+      flushFinalEnd(current);
+      const next = nodes[i + 1];
+      computeConnections(current, next);
+    }
+  };
+  const byDestination = new Map<string, GraphNode[]>();
+  const byDestinationFinal = new Map<string, GraphNode[]>();
+
+  const flushLocalEnd = (node: GraphNode) => {
+    const closing = byDestination.get(node.key);
+    if (closing) {
+      // Add first entry to final map. This will result in a duplicate horizontal line, which is fine.
+      addToMapArray(byDestinationFinal, node.key, closing[0]);
+      byDestination.delete(node.key);
+      connections.push({
+        sourceNodes: closing,
+        destinationNodes: [node],
+        skippedNodes: [],
+        hasBranchLabels: false,
+      });
+    }
+  };
+
+  const flushFinalEnd = (node: GraphNode) => {
+    const closing = byDestinationFinal.get(node.key);
+    if (closing && closing.length > 1) {
+      byDestinationFinal.delete(node.key);
+      connections.push({
+        sourceNodes: closing,
+        destinationNodes: [node],
+        skippedNodes: [],
+        hasBranchLabels: false,
+      });
+    }
+  };
+
+  const computeConnections = (current: GraphNode, next: GraphNode) => {
+    // TODO: handle skipped
+    if (
+      current.children.length > 0 &&
+      current.children[0].type === "parallel"
+    ) {
+      connections.push({
+        sourceNodes: [current],
+        destinationNodes: current.children,
+        skippedNodes: [],
+        hasBranchLabels: false,
+      });
+      for (const child of current.children) {
+        computeConnections(child, next);
+      }
+      flushLocalEnd(next);
+    } else {
+      if (current.children.length > 0) {
+        connections.push({
+          sourceNodes: [current],
+          destinationNodes: [current.children[0]],
+          skippedNodes: [],
+          hasBranchLabels: false,
+        });
+        computeConnectionsSeq([...current.children, next]);
+        const closing = byDestination.get(next.key);
+        if (closing && closing.length === 1) {
+          byDestination.delete(next.key);
+          addToMapArray(byDestinationFinal, next.key, closing[0]);
+        }
+      } else {
+        addToMapArray(byDestination, next.key, current);
+      }
+      // for (let i = 0; i < current.children.length; i++) {
+      //   const a = current.children[i];
+      //   if (i < current.children.length-1) {
+      //     const b = current.children[i+1];
+      //     connections.push({
+      //       sourceNodes: [a],
+      //       destinationNodes: [b],
+      //       skippedNodes: [],
+      //       hasBranchLabels: false,
+      //     });
+      //   }
+      // }
+    }
+  };
+  console.log(graph.root);
+  computeConnectionsSeq(graph.root.children);
+  flushLocalEnd(graph.root.children[graph.root.children.length - 1]);
+  flushFinalEnd(graph.root.children[graph.root.children.length - 1]);
+  const nodes: GraphNode[] = [];
+  const table: {
+    indent: number;
+    maxWidth: number;
+    maxDepth: number;
+    x: number;
+    y: number;
+    key: string;
+    type: string;
+    stage: false | StageType;
+    name: string;
+  }[] = [];
+  const recurse = (node: GraphNode, indent = 0) => {
+    nodes.push(node);
+    table.push({
+      indent,
+      maxWidth: node.maxWidth,
+      maxDepth: node.maxDepth,
+      x: node.x,
+      y: node.y,
+      key: node.key,
+      type: node.type,
+      stage: "stage" in node && node.stage.type,
+      name: node.name,
+    });
+    // console.log(
+    //   indent,
+    //   "width",
+    //   node.maxWidth,
+    //   "depth",
+    //   node.maxDepth,
+    //   "=".repeat(indent),
+    //   node.key,
+    //   "stage" in node && node.stage.type,
+    //   node.name,
+    // );
+    for (const child of node.children) {
+      recurse(child, indent + 1);
+    }
+  };
+  recurse(graph.root);
+  console.table(table);
+
+  const smallLabels: NodeLabelInfo[] = nodes
+    .filter((node) => !node.isPlaceholder)
+    .filter((node) => node.type !== "parallel" || node.children.length === 0)
+    .map((node) => {
+      return {
+        x: node.x,
+        y: node.y,
+        text: node.name,
+        key: "l_s_" + node.key,
+        node,
+        stage: node.stage,
+      };
+    });
+
+  const branchLabels: NodeLabelInfo[] = nodes
+    .filter((node) => !node.isPlaceholder)
+    .filter((node) => node.type === "parallel" && node.children.length > 0)
+    .map((node) => {
+      return {
+        // TODO
+        x: node.x - sequentialStagesLabelOffset,
+        y: node.y,
+        key: "l_b_" + node.key,
+        node,
+        text: node.stage.name,
+      };
+    });
+
+  const measuredWidth = (graph.root.maxWidth + 1) * layout.nodeSpacingH;
+  const measuredHeight = (graph.root.maxDepth + 2) * layout.nodeSpacingV;
+
+  return {
+    nodes,
+    connections,
+    smallLabels,
+    branchLabels,
+    measuredWidth,
+    measuredHeight,
+  };
+}
+
+type GraphNode = {
+  children: GraphNode[];
+  maxWidth: number;
+  maxDepth: number;
+} & (
+  | ({ type: "parallel" | "parallel-block-start" | "other" } & StageNodeInfo)
+  | PlaceholderNodeInfo
+);
+
+type Graph = {
+  limit: number;
+  root: GraphNode;
+  counterNode: GraphNode & CounterNodeInfo;
+};
+
+function collectCollapsed(stages: StageInfo[], graph: Graph) {
+  for (const stage of stages) {
+    if (graph.limit === 0) {
+      graph.counterNode.stages.push(stage);
+      continue;
+    }
+    graph.limit--;
+    if (stage.type !== "PARALLEL_BLOCK") {
+      // Hide "Parallel" stages
+      graph.root.children.push({
+        ...makeNodeForStage(stage),
+        type: "other",
+        maxWidth: 0,
+        maxDepth: 0,
+        children: [],
+      });
+    }
+    collectCollapsed(stage.children, graph);
+  }
+}
+
+function collectNested(node: GraphNode, stages: StageInfo[]) {
+  for (const stage of stages) {
+    const childNode: GraphNode = {
+      ...makeNodeForStage(
+        stage,
+        stage.type === "PARALLEL" ? stage.name : undefined,
+      ),
+      type:
+        stage.type === "PARALLEL_BLOCK"
+          ? "parallel-block-start"
+          : stage.type === "PARALLEL"
+            ? "parallel"
+            : "other",
+      maxWidth: 1,
+      maxDepth: 1,
+      children: [],
+    };
+    collectNested(childNode, stage.children);
+    node.children.push(childNode);
+    node.maxWidth = Math.max(node.maxWidth, childNode.maxWidth);
+    node.maxDepth = Math.max(node.maxDepth, childNode.maxDepth);
+  }
+  if (stages.length > 0 && stages[0].type === "PARALLEL") {
+    node.maxWidth += 1;
+    node.maxDepth += 1;
+  } else {
+    node.maxWidth += node.children.length;
+  }
+}
+
+function addToMapArray<K, V>(m: Map<K, V[]>, key: K, node: V) {
+  m.set(key, [...(m.get(key) ?? []), node]);
+}
 
 /**
  * Main process for laying out the graph. Creates and positions markers for each component, but creates no components.
@@ -33,6 +387,15 @@ export function layoutGraph(
   showNames: boolean,
   showDurations: boolean,
 ): PositionedGraph {
+  layoutGraph2(
+    newStages,
+    layout,
+    collapsed,
+    messages,
+    showNames,
+    showDurations,
+  );
+
   const stageNodeColumns = createNodeColumns(newStages);
   const { nodeSpacingH, ypStart } = layout;
 
@@ -174,6 +537,22 @@ export interface CounterNodeInfo extends PlaceholderNodeInfo {
   stages: StageInfo[];
 }
 
+function makeNodeForStage(
+  stage: StageInfo,
+  seqContainerName: string | undefined = undefined,
+): StageNodeInfo {
+  return {
+    x: 0, // Layout is done later
+    y: 0,
+    name: stage.name,
+    id: stage.id,
+    stage,
+    seqContainerName,
+    isPlaceholder: false,
+    key: "n_" + stage.id,
+  };
+}
+
 /**
  * Generate an array of columns, based on the top-level stages
  */
@@ -181,23 +560,6 @@ export function createNodeColumns(
   topLevelStages: Array<StageInfo> = [],
 ): Array<NodeColumn> {
   const nodeColumns: Array<NodeColumn> = [];
-
-  const makeNodeForStage = (
-    stage: StageInfo,
-    seqContainerName: string | undefined = undefined,
-  ): NodeInfo => {
-    return {
-      x: 0, // Layout is done later
-      y: 0,
-      name: stage.name,
-      id: stage.id,
-      stage,
-      seqContainerName,
-      isPlaceholder: false,
-      key: "n_" + stage.id,
-    };
-  };
-
   const processTopStage = (topStage: StageInfo, willRecurse: boolean) => {
     // If stage has children, we don't draw a node for it, just its children
     const stagesForColumn =
@@ -287,16 +649,7 @@ function positionNodes(
 
     if (previousTopNode) {
       // Advance X position
-      if (previousTopNode.isPlaceholder || topNode.isPlaceholder) {
-        // Don't space placeholder nodes (start/end) as wide as normal.
-        if (topNode.key === "counter-node") {
-          xp += nodeSpacingH;
-        } else {
-          xp += Math.floor(nodeSpacingH * 0.7);
-        }
-      } else {
-        xp += nodeSpacingH;
-      }
+      xp += nodeSpacingH;
     }
 
     let widestRow = 0;

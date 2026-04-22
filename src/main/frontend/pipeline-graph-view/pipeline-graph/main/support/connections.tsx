@@ -368,6 +368,7 @@ export class GraphConnections extends Component {
     const x2 = rightNode.x - rightNodeRadius + nodeStrokeWidth / 2;
     const y = leftNode.y;
 
+    console.log(leftNode.key, "->", rightNode.key);
     svgElements.push(
       <line {...connectorStroke} key={key} x1={x1} y1={y} x2={x2} y2={y} />,
     );
@@ -384,6 +385,7 @@ export class GraphConnections extends Component {
     midPointX: number,
     svgElements: SVGChildren,
   ) {
+    console.log(leftNode.key, "~>", rightNode.key);
     const { nodeRadius, terminalRadius, curveRadius, connectorStrokeWidth } =
       this.props.layout;
     const leftNodeRadius = leftNode.isPlaceholder ? terminalRadius : nodeRadius;

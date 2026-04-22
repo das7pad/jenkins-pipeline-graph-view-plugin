@@ -84,7 +84,7 @@ export interface PlaceholderNodeInfo extends BaseNodeInfo {
   isPlaceholder: true;
 
   // -- Unique
-  type: "start" | "end" | "counter";
+  type: "start" | "end" | "counter" | "root";
 }
 
 export type NodeInfo = StageNodeInfo | PlaceholderNodeInfo;

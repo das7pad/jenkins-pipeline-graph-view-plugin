@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { I18NContext } from "../../../common/i18n/index.ts";
 import { useUserPreferences } from "../../../common/user/user-preferences-provider.tsx";
-import { layoutGraph } from "./PipelineGraphLayout";
+import { layoutGraph, layoutGraph2 } from "./PipelineGraphLayout";
 import {
   CompositeConnection,
   defaultLayout,
@@ -46,6 +46,24 @@ export function PipelineGraph({
   const messages = useContext(I18NContext);
 
   useEffect(() => {
+    if (window.location.search.includes("new-layout=true")) {
+      const layout2 = layoutGraph2(
+        stages,
+        fullLayout,
+        collapsed ?? false,
+        messages,
+        showNames,
+        showDurations,
+      );
+      setNodes(layout2.nodes);
+      setConnections(layout2.connections);
+      setSmallLabels(layout2.smallLabels);
+      setBranchLabels(layout2.branchLabels);
+      setMeasuredWidth(layout2.measuredWidth);
+      setMeasuredHeight(layout2.measuredHeight);
+      return;
+    }
+
     const newLayout = layoutGraph(
       stages,
       fullLayout,
@@ -67,6 +85,20 @@ export function PipelineGraph({
     setMeasuredWidth(newLayout.measuredWidth);
     setMeasuredHeight(newLayout.measuredHeight);
   }, [stages, fullLayout, collapsed, messages, showNames, showDurations]);
+
+  useEffect(() => {
+    if (connections.length === 0) return;
+    console.table(
+      connections.map((connection) => ({
+        sourceNode: connection.sourceNodes
+          .map((node) => `${node.key} (${node.name})`)
+          .join(","),
+        destinationNode: connection.destinationNodes
+          .map((node) => `${node.key} (${node.name})`)
+          .join(","),
+      })),
+    );
+  }, [connections]);
 
   const stageIsSelected = useCallback(
     (stage?: StageInfo): boolean => {
