@@ -75,15 +75,17 @@ export class GraphConnections extends Component {
       strokeWidth: connectorStrokeWidth,
     };
 
-    this.renderHorizontalConnection(
-      sourceNodes[0],
-      destinationNodes[0],
-      connectorStroke,
-      svgElements,
-    );
-
-    if (sourceNodes.length === 1 && destinationNodes.length === 1) {
-      return; // No curves needed.
+    const sameBase = sourceNodes[0].y === destinationNodes[0].y;
+    if (sameBase) {
+      this.renderHorizontalConnection(
+        sourceNodes[0],
+        destinationNodes[0],
+        connectorStroke,
+        svgElements,
+      );
+      if (sourceNodes.length === 1 && destinationNodes.length === 1) {
+        return; // No curves needed.
+      }
     }
 
     // Work out the extents of source and dest space
@@ -103,7 +105,7 @@ export class GraphConnections extends Component {
 
     // Collapse from previous node(s) to top column node
     const collapseMidPointX = Math.round(rightmostSource + halfSpacingH);
-    for (const previousNode of sourceNodes.slice(1)) {
+    for (const previousNode of sourceNodes.slice(sameBase ? 1 : 0)) {
       this.renderBasicCurvedConnection(
         previousNode,
         destinationNodes[0],

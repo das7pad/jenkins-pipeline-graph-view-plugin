@@ -180,7 +180,13 @@ export function layoutGraph2(
       for (const child of current.children) {
         computeConnections(child, next);
       }
-      flushLocalEnd(next);
+      const closing = byDestination.get(next.key);
+      if (closing && closing.length === 1) {
+        byDestination.delete(next.key);
+        addToMapArray(byDestinationFinal, next.key, closing[0]);
+      } else {
+        flushLocalEnd(next);
+      }
     } else {
       if (current.children.length > 0) {
         connections.push({
@@ -198,18 +204,6 @@ export function layoutGraph2(
       } else {
         addToMapArray(byDestination, next.key, current);
       }
-      // for (let i = 0; i < current.children.length; i++) {
-      //   const a = current.children[i];
-      //   if (i < current.children.length-1) {
-      //     const b = current.children[i+1];
-      //     connections.push({
-      //       sourceNodes: [a],
-      //       destinationNodes: [b],
-      //       skippedNodes: [],
-      //       hasBranchLabels: false,
-      //     });
-      //   }
-      // }
     }
   };
   console.log(graph.root);
