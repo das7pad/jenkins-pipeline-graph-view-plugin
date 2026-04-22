@@ -25,6 +25,7 @@ export function layoutGraph2(
   showNames: boolean,
   showDurations: boolean,
 ) {
+  console.log(JSON.stringify(newStages));
   const graph: Graph = {
     limit: collapsed ? maxColumnsWhenCollapsed : -1,
     root: {
@@ -112,6 +113,9 @@ export function layoutGraph2(
     for (const child of node.children) {
       child.x = xP;
       child.y = yP;
+      if (child.type === "end") {
+        child.x -= layout.nodeSpacingH / 2;
+      }
       if (child.type === "parallel") {
         yP += layout.nodeSpacingV * child.maxDepth;
       } else {
@@ -121,85 +125,47 @@ export function layoutGraph2(
     }
   };
   computePositions(graph.root);
-  graph.root.children[graph.root.children.length - 1].x -=
-    layout.nodeSpacingH / 2;
 
   const connections: CompositeConnection[] = [];
-  const computeConnectionsSeq = (nodes: GraphNode[]) => {
-    for (let i = 0; i < nodes.length - 1; i++) {
-      const current = nodes[i];
-      flushFinalEnd(current);
-      const next = nodes[i + 1];
-      computeConnections(current, next);
+  const computeConnections = (
+    node: GraphNode,
+    next?: GraphNode,
+  ): GraphNode[] => {
+    if (node.children.length === 0) {
+      return [node];
     }
-  };
-  const byDestination = new Map<string, GraphNode[]>();
-  const byDestinationFinal = new Map<string, GraphNode[]>();
-
-  const flushLocalEnd = (node: GraphNode) => {
-    const closing = byDestination.get(node.key);
-    if (closing) {
-      // Add first entry to final map. This will result in a duplicate horizontal line, which is fine.
-      addToMapArray(byDestinationFinal, node.key, closing[0]);
-      byDestination.delete(node.key);
-      if (closing.length > 1) {
-        connections.push({
-          sourceNodes: closing,
-          destinationNodes: [node],
-          skippedNodes: [],
-          hasBranchLabels: false,
-        });
-      }
-    }
-  };
-
-  const flushFinalEnd = (node: GraphNode) => {
-    const closing = byDestinationFinal.get(node.key);
-    if (closing) {
-      byDestinationFinal.delete(node.key);
+    if (node.children[0].type === "parallel") {
       connections.push({
-        sourceNodes: closing,
-        destinationNodes: [node],
+        sourceNodes: [node],
+        destinationNodes: node.children,
+        skippedNodes: [],
+        hasBranchLabels: false,
+      });
+      return node.children.flatMap((child) => computeConnections(child, next));
+    }
+    if (node.type !== "root") {
+      connections.push({
+        sourceNodes: [node],
+        destinationNodes: [node.children[0]],
         skippedNodes: [],
         hasBranchLabels: false,
       });
     }
-  };
-
-  const computeConnections = (current: GraphNode, next: GraphNode) => {
-    // TODO: handle skipped
-    if (
-      current.children.length > 0 &&
-      current.children[0].type === "parallel"
-    ) {
+    for (let i = 0; i < node.children.length - 1; i++) {
+      const childA = node.children[i];
+      const childB = node.children[i + 1];
       connections.push({
-        sourceNodes: [current],
-        destinationNodes: current.children,
+        sourceNodes: computeConnections(childA, childB),
+        destinationNodes: [childB],
         skippedNodes: [],
         hasBranchLabels: false,
       });
-      for (const child of current.children) {
-        computeConnections(child, next);
-      }
-    } else {
-      if (current.children.length > 0) {
-        connections.push({
-          sourceNodes: [current],
-          destinationNodes: [current.children[0]],
-          skippedNodes: [],
-          hasBranchLabels: false,
-        });
-        computeConnectionsSeq([...current.children, next]);
-      } else {
-        addToMapArray(byDestination, next.key, current);
-      }
     }
-    flushLocalEnd(next);
+    if (!next) return [];
+    const last = node.children[node.children.length - 1];
+    return computeConnections(last, next);
   };
-  console.log(graph.root);
-  computeConnectionsSeq(graph.root.children);
-  flushLocalEnd(graph.root.children[graph.root.children.length - 1]);
-  flushFinalEnd(graph.root.children[graph.root.children.length - 1]);
+  computeConnections(graph.root);
   const nodes: GraphNode[] = [];
   const table: {
     indent: number;
