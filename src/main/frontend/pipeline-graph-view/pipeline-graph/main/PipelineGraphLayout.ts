@@ -31,33 +31,35 @@ export function layoutGraph2(
     root: {
       x: layout.nodeSpacingH / 2,
       y: layout.ypStart,
-      maxWidth: 0,
-      maxDepth: 0,
+      maxWidth: layout.nodeSpacingH,
+      maxDepth: layout.nodeSpacingV,
       name: "Root",
       id: -42,
       key: "root",
       isPlaceholder: true,
+      hasParallel: false,
       type: "root",
       children: [
         {
           x: 0,
           y: 0,
-          maxWidth: 1,
-          maxDepth: 1,
+          maxWidth: layout.nodeSpacingH,
+          maxDepth: layout.nodeSpacingV,
           name: messages.format(LocalizedMessageKey.start),
           id: -1,
           isPlaceholder: true,
           key: "start-node",
           type: "start",
           children: [],
+          hasParallel: false,
         },
       ],
     },
     counterNode: {
       x: 0,
       y: 0,
-      maxWidth: 1,
-      maxDepth: 1,
+      maxWidth: layout.nodeSpacingH,
+      maxDepth: layout.nodeSpacingV,
       name: "Counter",
       id: -2,
       isPlaceholder: true,
@@ -65,32 +67,19 @@ export function layoutGraph2(
       type: "counter",
       stages: [],
       children: [],
+      hasParallel: false,
     },
   };
   if (collapsed) {
     collectCollapsed(newStages, graph);
     if (graph.counterNode.stages.length > 0) {
-      graph.root.maxWidth += 1;
+      graph.root.maxWidth += layout.nodeSpacingH;
       graph.root.children.push(graph.counterNode);
     }
   } else {
-    collectNested(graph.root, newStages);
-    if (
-      graph.root.children.length > 1 &&
-      graph.root.children[1].type === "parallel-block-start"
-    ) {
-      // Inline Parallel block if it's the first one.
-      const { children, maxWidth, maxDepth } = graph.root.children[1];
-      graph.root.children[0] = {
-        ...graph.root.children[0],
-        children,
-        maxWidth,
-        maxDepth,
-      };
-      graph.root.children.splice(1, 1);
-    }
+    collectNested(graph.root, newStages, layout);
   }
-  graph.root.maxWidth += 1;
+  graph.root.maxWidth += layout.nodeSpacingH;
   graph.root.children.push({
     x: 0,
     y: 0,
@@ -102,24 +91,28 @@ export function layoutGraph2(
     key: "end-node",
     type: "end",
     children: [],
+    hasParallel: false,
   });
 
   const computePositions = (node: GraphNode) => {
     let xP = node.x;
     let yP = node.y;
-    if (node.children.length > 0 && node.children[0].type === "parallel") {
-      xP += layout.nodeSpacingH; //+ sequentialStagesLabelOffset;
-    }
     for (const child of node.children) {
+      if (
+        child.hasParallel &&
+        resolveDestination(child).some((c) => c.children.length > 0)
+      ) {
+        xP += sequentialStagesLabelOffset;
+      }
       child.x = xP;
       child.y = yP;
       if (child.type === "end") {
         child.x -= layout.nodeSpacingH / 2;
       }
       if (child.type === "parallel") {
-        yP += layout.nodeSpacingV * child.maxDepth;
+        yP += child.maxDepth;
       } else {
-        xP += layout.nodeSpacingH * child.maxWidth;
+        xP += child.maxWidth;
       }
       computePositions(child);
     }
@@ -134,31 +127,31 @@ export function layoutGraph2(
     if (node.children.length === 0) {
       return [node];
     }
-    if (node.children[0].type === "parallel") {
-      connections.push({
-        sourceNodes: [node],
-        destinationNodes: node.children,
-        skippedNodes: [],
-        hasBranchLabels: false,
-      });
+    if (node.hasParallel) {
       return node.children.flatMap((child) => computeConnections(child, next));
     }
     if (node.type !== "root") {
+      const destinationNodes = resolveDestination(node.children[0]);
       connections.push({
         sourceNodes: [node],
-        destinationNodes: [node.children[0]],
+        destinationNodes,
         skippedNodes: [],
-        hasBranchLabels: false,
+        hasBranchLabels: destinationNodes.some(
+          (n) => n.type === "parallel" && n.children.length > 0,
+        ),
       });
     }
     for (let i = 0; i < node.children.length - 1; i++) {
       const childA = node.children[i];
       const childB = node.children[i + 1];
+      const destinationNodes = resolveDestination(childB);
       connections.push({
         sourceNodes: computeConnections(childA, childB),
-        destinationNodes: [childB],
+        destinationNodes,
         skippedNodes: [],
-        hasBranchLabels: false,
+        hasBranchLabels: destinationNodes.some(
+          (n) => n.type === "parallel" && n.children.length > 0,
+        ),
       });
     }
     if (!next) return [];
@@ -175,6 +168,7 @@ export function layoutGraph2(
     y: number;
     key: string;
     type: string;
+    hasParallel: boolean;
     stage: false | StageType;
     name: string;
   }[] = [];
@@ -188,6 +182,7 @@ export function layoutGraph2(
       y: node.y,
       key: node.key,
       type: node.type,
+      hasParallel: node.hasParallel,
       stage: "stage" in node && node.stage.type,
       name: node.name,
     });
@@ -214,6 +209,7 @@ export function layoutGraph2(
     .filter(() => !collapsed)
     .filter((node) => !node.isPlaceholder)
     .filter((node) => node.type !== "parallel" || node.children.length === 0)
+    .filter((node) => !node.hasParallel)
     .map((node) => {
       return {
         x: node.x,
@@ -243,19 +239,13 @@ export function layoutGraph2(
   const bigLabels: NodeLabelInfo[] = nodes
     .filter(() => !(collapsed && !showNames))
     .filter((node) => node.type !== "counter")
-    .filter(
-      (node) =>
-        node.isPlaceholder ||
-        (node.children.length > 0 && node.children[0].type === "parallel"),
-    )
+    .filter((node) => node.isPlaceholder || node.hasParallel)
     .map((node) => {
       return {
         // TODO
         x: node.isPlaceholder
           ? node.x
-          : node.x +
-            (node.maxWidth * layout.nodeSpacingH) / 2 +
-            (node.type === "parallel" ? sequentialStagesLabelOffset / 2 : 0),
+          : node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
         y: node.y,
         key: "l_big_" + node.key,
         node,
@@ -267,11 +257,11 @@ export function layoutGraph2(
   console.log(newStages);
   console.log(graph);
 
-  const measuredWidth = (graph.root.maxWidth + 1) * layout.nodeSpacingH;
-  const measuredHeight = (graph.root.maxDepth + 2) * layout.nodeSpacingV;
+  const measuredWidth = graph.root.maxWidth;
+  const measuredHeight = graph.root.maxDepth + layout.nodeSpacingV;
 
   return {
-    nodes,
+    nodes: nodes.filter((node) => !node.hasParallel),
     connections,
     smallLabels,
     bigLabels,
@@ -285,6 +275,7 @@ type GraphNode = {
   children: GraphNode[];
   maxWidth: number;
   maxDepth: number;
+  hasParallel: boolean;
 } & (
   | ({ type: "parallel" | "parallel-block-start" | "other" } & StageNodeInfo)
   | PlaceholderNodeInfo
@@ -311,13 +302,25 @@ function collectCollapsed(stages: StageInfo[], graph: Graph) {
         maxWidth: 0,
         maxDepth: 0,
         children: [],
+        hasParallel: false,
       });
     }
     collectCollapsed(stage.children, graph);
   }
 }
 
-function collectNested(node: GraphNode, stages: StageInfo[]) {
+function resolveDestination(node: GraphNode): GraphNode[] {
+  if (node.hasParallel) {
+    return node.children.flatMap((child) => resolveDestination(child));
+  }
+  return [node];
+}
+
+function collectNested(
+  node: GraphNode,
+  stages: StageInfo[],
+  layout: LayoutInfo,
+) {
   for (const stage of stages) {
     const childNode: GraphNode = {
       ...makeNodeForStage(
@@ -330,20 +333,25 @@ function collectNested(node: GraphNode, stages: StageInfo[]) {
           : stage.type === "PARALLEL"
             ? "parallel"
             : "other",
-      maxWidth: 1,
-      maxDepth: 1,
+      hasParallel:
+        stage.children.length > 0 && stage.children[0].type === "PARALLEL",
+      maxWidth: layout.nodeSpacingH,
+      maxDepth: layout.nodeSpacingV,
       children: [],
     };
-    collectNested(childNode, stage.children);
+    collectNested(childNode, stage.children, layout);
     node.children.push(childNode);
     node.maxWidth = Math.max(node.maxWidth, childNode.maxWidth);
     node.maxDepth = Math.max(node.maxDepth, childNode.maxDepth);
   }
-  if (stages.length > 0 && stages[0].type === "PARALLEL") {
-    node.maxWidth += 1;
-    node.maxDepth += node.children.length - 1;
+  if (node.hasParallel) {
+    node.maxDepth += (node.children.length - 1) * layout.nodeSpacingV;
   } else {
-    node.maxWidth += node.children.length;
+    node.maxWidth +=
+      node.children.filter((c) => !c.hasParallel).length * layout.nodeSpacingH;
+  }
+  if (node.children.some((child) => child.children.length > 0)) {
+    node.maxWidth += sequentialStagesLabelOffset;
   }
 }
 

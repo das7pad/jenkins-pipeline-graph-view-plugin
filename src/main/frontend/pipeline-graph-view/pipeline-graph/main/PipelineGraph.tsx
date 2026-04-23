@@ -108,6 +108,10 @@ export function PipelineGraph({
         destinationNode: connection.destinationNodes
           .map((node) => `${node.key} (${node.name})`)
           .join(","),
+        skippedNodes: connection.skippedNodes
+          .map((node) => `${node.key} (${node.name})`)
+          .join(","),
+        hasBranchLabels: connection.hasBranchLabels,
       })),
     );
   }, [connections]);
