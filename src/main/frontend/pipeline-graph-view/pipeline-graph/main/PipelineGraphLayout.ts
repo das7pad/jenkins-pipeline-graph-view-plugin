@@ -264,6 +264,9 @@ export function layoutGraph2(
       };
     });
 
+  console.log(newStages);
+  console.log(graph);
+
   const measuredWidth = (graph.root.maxWidth + 1) * layout.nodeSpacingH;
   const measuredHeight = (graph.root.maxDepth + 2) * layout.nodeSpacingV;
 
@@ -338,7 +341,7 @@ function collectNested(node: GraphNode, stages: StageInfo[]) {
   }
   if (stages.length > 0 && stages[0].type === "PARALLEL") {
     node.maxWidth += 1;
-    node.maxDepth += 1;
+    node.maxDepth += node.children.length - 1;
   } else {
     node.maxWidth += node.children.length;
   }
