@@ -132,6 +132,18 @@ export class GraphConnections extends Component {
     }
   }
 
+  getNodeRadius(node: NodeInfo) {
+    const { nodeRadius, terminalRadius } = this.props.layout;
+    if (node.isPlaceholder) {
+      if (node.type === "stage-end") {
+        return 0;
+      }
+      return terminalRadius;
+    }
+    if (node.stage.type === "PARALLEL") return 0;
+    return nodeRadius;
+  }
+
   /**
    * Renders a more complex connection, that "skips" one or more nodes
    *
@@ -144,14 +156,8 @@ export class GraphConnections extends Component {
     svgElements: SVGChildren,
     hasBranchLabels: boolean,
   ) {
-    const {
-      connectorStrokeWidth,
-      nodeRadius,
-      terminalRadius,
-      curveRadius,
-      nodeSpacingV,
-      nodeSpacingH,
-    } = this.props.layout;
+    const { connectorStrokeWidth, curveRadius, nodeSpacingV, nodeSpacingH } =
+      this.props.layout;
 
     const halfSpacingH = nodeSpacingH / 2;
 
@@ -214,9 +220,7 @@ export class GraphConnections extends Component {
 
     for (leftNode of sourceNodes.slice(1)) {
       const midPointX = Math.round(rightmostSource + halfSpacingH);
-      const leftNodeRadius = leftNode.isPlaceholder
-        ? terminalRadius
-        : nodeRadius;
+      const leftNodeRadius = this.getNodeRadius(leftNode);
       const key = connectorKey(leftNode, rightNode);
 
       const x1 = leftNode.x + leftNodeRadius - nodeStrokeWidth / 2;
@@ -246,9 +250,7 @@ export class GraphConnections extends Component {
     }
 
     for (rightNode of destinationNodes.slice(1)) {
-      const rightNodeRadius = rightNode.isPlaceholder
-        ? terminalRadius
-        : nodeRadius;
+      const rightNodeRadius = this.getNodeRadius(rightNode);
       const key = connectorKey(leftNode, rightNode);
 
       const x1 = expandMidPointX;
@@ -271,10 +273,8 @@ export class GraphConnections extends Component {
     leftNode = sourceNodes[0];
     rightNode = destinationNodes[0];
 
-    const leftNodeRadius = leftNode.isPlaceholder ? terminalRadius : nodeRadius;
-    const rightNodeRadius = rightNode.isPlaceholder
-      ? terminalRadius
-      : nodeRadius;
+    const leftNodeRadius = this.getNodeRadius(leftNode);
+    const rightNodeRadius = this.getNodeRadius(rightNode);
     const key = connectorKey(leftNode, rightNode);
 
     const skipHeight = nodeSpacingV * 0.5;
@@ -358,11 +358,8 @@ export class GraphConnections extends Component {
     connectorStroke: Object,
     svgElements: SVGChildren,
   ) {
-    const { nodeRadius, terminalRadius } = this.props.layout;
-    const leftNodeRadius = leftNode.isPlaceholder ? terminalRadius : nodeRadius;
-    const rightNodeRadius = rightNode.isPlaceholder
-      ? terminalRadius
-      : nodeRadius;
+    const leftNodeRadius = this.getNodeRadius(leftNode);
+    const rightNodeRadius = this.getNodeRadius(rightNode);
 
     const key = connectorKey(leftNode, rightNode);
 
@@ -388,12 +385,9 @@ export class GraphConnections extends Component {
     svgElements: SVGChildren,
   ) {
     console.log(leftNode.key, "~>", rightNode.key);
-    const { nodeRadius, terminalRadius, curveRadius, connectorStrokeWidth } =
-      this.props.layout;
-    const leftNodeRadius = leftNode.isPlaceholder ? terminalRadius : nodeRadius;
-    const rightNodeRadius = rightNode.isPlaceholder
-      ? terminalRadius
-      : nodeRadius;
+    const { curveRadius, connectorStrokeWidth } = this.props.layout;
+    const leftNodeRadius = this.getNodeRadius(leftNode);
+    const rightNodeRadius = this.getNodeRadius(rightNode);
 
     const key = connectorKey(leftNode, rightNode);
 

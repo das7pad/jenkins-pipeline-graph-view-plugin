@@ -101,7 +101,7 @@ export function layoutGraph2(
         xP += sequentialStagesLabelOffset;
       }
       if (i === 0 && node.type === "parallel" && child.isSkipped) {
-        xP += layout.nodeSpacingH - 2 * layout.nodeRadius;
+        xP += layout.nodeSpacingH;
       }
       child.x = xP;
       child.y = yP;
@@ -135,10 +135,7 @@ export function layoutGraph2(
     if (node.type !== "root") {
       const destinationNodes = resolveDestination(node.children[0]);
       if (destinationNodes.length === 1 && destinationNodes[0].isSkipped) {
-        skipped.add({
-          ...node,
-          x: node.x - 2 * layout.nodeRadius,
-        });
+        skipped.add(node);
         skipped.add(destinationNodes[0]);
       } else {
         connections.push({
@@ -189,7 +186,7 @@ export function layoutGraph2(
         destinationNodes = [
           {
             isPlaceholder: true,
-            type: "parallel-end",
+            type: "stage-end",
             key: `pe_${node.key}`,
             x: last.x + layout.nodeSpacingH,
             y: last.y,
@@ -209,12 +206,7 @@ export function layoutGraph2(
       });
       if (last.isSkipped) {
         // Use placeholder to make room for curved connection.
-        return [
-          {
-            ...destinationNodes[0],
-            x: last.x + layout.nodeSpacingH - 2 * layout.nodeRadius,
-          },
-        ];
+        return destinationNodes;
       }
     }
     return computeConnections(last);
@@ -416,14 +408,14 @@ function collectNested(
     node.children.length > 0 &&
     node.children[0].isSkipped
   ) {
-    node.maxWidth += layout.nodeSpacingH - 2 * layout.nodeRadius;
+    node.maxWidth += layout.nodeSpacingH;
   }
   if (
     node.type !== "parallel" &&
     node.children.length > 0 &&
     node.children[node.children.length - 1].isSkipped
   ) {
-    node.maxWidth += layout.nodeSpacingH - 2 * layout.nodeRadius;
+    node.maxWidth += layout.nodeSpacingH;
   }
   if (node.hasParallel) {
     node.maxDepth += (node.children.length - 1) * layout.nodeSpacingV;
