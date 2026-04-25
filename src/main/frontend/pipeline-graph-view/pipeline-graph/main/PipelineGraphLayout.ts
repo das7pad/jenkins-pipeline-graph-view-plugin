@@ -13,8 +13,6 @@ import {
   StageType,
 } from "./PipelineGraphModel.tsx";
 
-export const sequentialStagesLabelOffset = 80;
-
 const maxColumnsWhenCollapsed = 13;
 
 export function layoutGraph2(
@@ -90,33 +88,42 @@ export function layoutGraph2(
     children: [],
   });
 
-  const computePositions = (node: GraphNode) => {
-    let xP = node.x;
+  const computePositions = (node: GraphNode, extraXp: number) => {
+    if (node.children.length === 0) return;
+    if (node.hasParallel && node.children.some((c) => c.children.length > 0)) {
+      extraXp += layout.nodeSpacingH;
+    }
+    let xP = node.x + extraXp;
     let yP = node.y;
-    for (const [i, child] of node.children.entries()) {
-      if (
-        child.hasParallel &&
-        resolveDestination(child).some((c) => c.children.length > 0)
-      ) {
-        xP += sequentialStagesLabelOffset;
-      }
-      if (i === 0 && node.type === "parallel" && child.isSkipped) {
-        xP += layout.nodeSpacingH;
-      }
+    for (const child of node.children) {
       child.x = xP;
       child.y = yP;
       if (child.type === "end") {
         child.x -= layout.nodeSpacingH / 2;
       }
-      if (child.type === "parallel") {
+      if (child.type === "stage-end") {
+        child.x -= layout.nodeSpacingH / 2;
+      }
+      let childExtraXp = 0;
+      if (node.hasParallel) {
         yP += child.maxDepth;
+        childExtraXp =
+          Math.floor(
+            (node.maxWidth - extraXp - child.maxWidth) /
+              2 /
+              layout.nodeSpacingH,
+          ) * layout.nodeSpacingH;
+        if (child.children.length === 0) {
+          child.x += childExtraXp;
+          childExtraXp = 0;
+        }
       } else {
         xP += child.maxWidth;
       }
-      computePositions(child);
+      computePositions(child, childExtraXp);
     }
   };
-  computePositions(graph.root);
+  computePositions(graph.root, 0);
 
   const connections: CompositeConnection[] = [];
   const computeConnections = (node: GraphNode): GraphNode[] => {
@@ -174,40 +181,8 @@ export function layoutGraph2(
       skipped.clear();
     }
     const last = node.children[node.children.length - 1];
-    if (last.isSkipped) {
-      if (node.children.length > 1) {
-        skipped.add(node.children[node.children.length - 2]);
-      }
-      skipped.add(last);
-    }
-    if (skipped.size > 0) {
-      let destinationNodes: GraphNode[] = resolveDestination(last);
-      if (last.isSkipped) {
-        destinationNodes = [
-          {
-            isPlaceholder: true,
-            type: "stage-end",
-            key: `pe_${node.key}`,
-            x: last.x + layout.nodeSpacingH,
-            y: last.y,
-            name: "",
-            id: 1_000_000 + node.id,
-            maxDepth: 1,
-            maxWidth: 1,
-            children: [],
-          },
-        ];
-      }
-      connections.push({
-        sourceNodes: Array.from(skipped).filter((n) => !n.isSkipped),
-        destinationNodes,
-        skippedNodes: Array.from(skipped).filter((n) => n.isSkipped),
-        hasBranchLabels: false,
-      });
-      if (last.isSkipped) {
-        // Use placeholder to make room for curved connection.
-        return destinationNodes;
-      }
+    if (last.isSkipped || skipped.size > 0) {
+      throw new Error("bug: collectNested did not add trailing dummy node");
     }
     return computeConnections(last);
   };
@@ -281,7 +256,7 @@ export function layoutGraph2(
     .map((node) => {
       return {
         // TODO
-        x: node.x - sequentialStagesLabelOffset,
+        x: node.x - layout.nodeSpacingH,
         y: node.y,
         key: "l_branch_" + node.key,
         node,
@@ -292,14 +267,21 @@ export function layoutGraph2(
   const bigLabels: NodeLabelInfo[] = nodes
     .filter(() => !(collapsed && !showNames))
     .filter((node) => node.type !== "counter")
+    .filter((node) => node.type !== "stage-end")
     .filter((node) => node.isPlaceholder || node.hasParallel)
     .map((node) => {
       return {
-        // TODO
         x: node.isPlaceholder
           ? node.x
-          : node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
-        y: node.y,
+          : node.x +
+            (node.maxWidth -
+              layout.nodeSpacingH -
+              (node.hasParallel &&
+              node.children.some((c) => c.children.length > 0)
+                ? layout.nodeSpacingH
+                : 0)) /
+              2,
+        y: node.y, // TODO: negative adjustment
         key: "l_big_" + node.key,
         node,
         stage: "stage" in node ? node.stage : undefined,
@@ -316,6 +298,7 @@ export function layoutGraph2(
   return {
     nodes: nodes.filter(
       (node) =>
+        node.type !== "stage-end" &&
         !node.hasParallel &&
         !(node.type === "parallel" && node.children.length > 0),
     ),
@@ -377,6 +360,7 @@ function collectNested(
   stages: StageInfo[],
   layout: LayoutInfo,
 ) {
+  if (node.isSkipped || stages.length === 0) return;
   for (const stage of stages) {
     const childNode: GraphNode = {
       ...makeNodeForStage(
@@ -396,26 +380,14 @@ function collectNested(
       maxDepth: layout.nodeSpacingV,
       children: [],
     };
-    if (!childNode.isSkipped) {
-      collectNested(childNode, stage.children, layout);
-    }
+    collectNested(childNode, stage.children, layout);
     node.children.push(childNode);
     node.maxWidth = Math.max(node.maxWidth, childNode.maxWidth);
     node.maxDepth = Math.max(node.maxDepth, childNode.maxDepth);
-  }
-  if (
-    node.type === "parallel" &&
-    node.children.length > 0 &&
-    node.children[0].isSkipped
-  ) {
-    node.maxWidth += layout.nodeSpacingH;
-  }
-  if (
-    node.type !== "parallel" &&
-    node.children.length > 0 &&
-    node.children[node.children.length - 1].isSkipped
-  ) {
-    node.maxWidth += layout.nodeSpacingH;
+    if (childNode.hasParallel) {
+      // TODO: new sum of -labelOffsetV?
+      node.maxDepth += layout.labelOffsetV;
+    }
   }
   if (node.hasParallel) {
     node.maxDepth += (node.children.length - 1) * layout.nodeSpacingV;
@@ -423,8 +395,33 @@ function collectNested(
     node.maxWidth +=
       node.children.filter((c) => !c.hasParallel).length * layout.nodeSpacingH;
   }
-  if (node.children.some((child) => child.children.length > 0)) {
-    node.maxWidth += sequentialStagesLabelOffset;
+  if (
+    // Add a dummy node to "close" the shipped curve before closing the stage.
+    (!node.hasParallel && node.children[node.children.length - 1].isSkipped) ||
+    // Add a dummy node to "close" the parallel curve of the given child.
+    (!node.hasParallel && node.children[node.children.length - 1].hasParallel)
+  ) {
+    // In both cases, the dummy node will be the new stage end that is connected to the next node.
+    node.maxWidth += layout.nodeSpacingH / 2;
+    node.children.push({
+      isPlaceholder: true,
+      type: "stage-end",
+      key: `stage_end_${node.key}`,
+      x: 0,
+      y: 0,
+      name: `Stage end (${node.name})`,
+      id: 1_000_000 + node.id,
+      maxWidth: layout.nodeSpacingH / 2,
+      maxDepth: layout.nodeSpacingV,
+      children: [],
+    });
+  }
+  if (
+    node.hasParallel &&
+    node.children.some((child) => child.children.length > 0)
+  ) {
+    // Make space for branch label
+    node.maxWidth += layout.nodeSpacingH;
   }
 }
 
@@ -548,7 +545,12 @@ export function layoutGraph(
 
   positionNodes(allNodeColumns, layout);
 
-  const bigLabels = createBigLabels(allNodeColumns, collapsed, showNames);
+  const bigLabels = createBigLabels(
+    allNodeColumns,
+    collapsed,
+    showNames,
+    layout,
+  );
   const timings = createTimings(allNodeColumns, collapsed, showDurations);
   const smallLabels = createSmallLabels(allNodeColumns, collapsed);
   const branchLabels = createBranchLabels(allNodeColumns, collapsed);
@@ -710,7 +712,7 @@ function positionNodes(
 
     // Make room for row labels
     if (column.hasBranchLabels) {
-      xp += sequentialStagesLabelOffset;
+      xp += nodeSpacingH;
     }
 
     let maxX = xp;
@@ -746,6 +748,7 @@ function createBigLabels(
   columns: Array<NodeColumn>,
   collapsed: boolean,
   showNames: boolean,
+  layout: LayoutInfo,
 ): Array<NodeLabelInfo> {
   const labels: Array<NodeLabelInfo> = [];
 
@@ -766,7 +769,7 @@ function createBigLabels(
     // bigLabel is located above center of column, but offset if there's branch labels
     let x = column.centerX;
     if (column.hasBranchLabels) {
-      x += Math.floor(sequentialStagesLabelOffset / 2);
+      x += Math.floor(layout.nodeSpacingH / 2);
     }
 
     labels.push({

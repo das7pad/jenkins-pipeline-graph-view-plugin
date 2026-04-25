@@ -1,10 +1,10 @@
 import { Component } from "react";
 
-import { sequentialStagesLabelOffset } from "../PipelineGraphLayout.ts";
 import {
   CompositeConnection,
   LayoutInfo,
   NodeInfo,
+  Result,
 } from "../PipelineGraphModel.tsx";
 import { nodeStrokeWidth } from "../support/StatusIcons.tsx";
 
@@ -119,7 +119,7 @@ export class GraphConnections extends Component {
 
     if (hasBranchLabels) {
       // Shift curve midpoint so that there's room for the labels
-      expandMidPointX -= sequentialStagesLabelOffset;
+      expandMidPointX -= nodeSpacingH;
     }
 
     for (const destNode of destinationNodes.slice(1)) {
@@ -132,13 +132,22 @@ export class GraphConnections extends Component {
     }
   }
 
-  getNodeRadius(node: NodeInfo) {
-    const { nodeRadius, terminalRadius } = this.props.layout;
+  getNodeRadius(node: NodeInfo, edge: "left" | "right") {
+    const { nodeRadius, terminalRadius, nodeSpacingH } = this.props.layout;
     if (node.isPlaceholder) {
       if (node.type === "stage-end") {
         return 0;
       }
       return terminalRadius;
+    }
+    if (
+      node.stage.type === "PARALLEL" &&
+      node.stage.children.length > 0 &&
+      node.stage.children[0].state === Result.skipped
+    ) {
+      // Turn half of the regular connecting line into a skipped line.
+      if (edge === "right") return nodeSpacingH / 2;
+      if (edge === "left") return -nodeSpacingH / 2;
     }
     if (node.stage.type === "PARALLEL") return 0;
     return nodeRadius;
@@ -220,7 +229,7 @@ export class GraphConnections extends Component {
 
     for (leftNode of sourceNodes.slice(1)) {
       const midPointX = Math.round(rightmostSource + halfSpacingH);
-      const leftNodeRadius = this.getNodeRadius(leftNode);
+      const leftNodeRadius = this.getNodeRadius(leftNode, "left");
       const key = connectorKey(leftNode, rightNode);
 
       const x1 = leftNode.x + leftNodeRadius - nodeStrokeWidth / 2;
@@ -246,11 +255,11 @@ export class GraphConnections extends Component {
 
     if (hasBranchLabels) {
       // Shift curve midpoint so that there's room for the labels
-      expandMidPointX -= sequentialStagesLabelOffset;
+      expandMidPointX -= nodeSpacingH;
     }
 
     for (rightNode of destinationNodes.slice(1)) {
-      const rightNodeRadius = this.getNodeRadius(rightNode);
+      const rightNodeRadius = this.getNodeRadius(rightNode, "right");
       const key = connectorKey(leftNode, rightNode);
 
       const x1 = expandMidPointX;
@@ -273,8 +282,8 @@ export class GraphConnections extends Component {
     leftNode = sourceNodes[0];
     rightNode = destinationNodes[0];
 
-    const leftNodeRadius = this.getNodeRadius(leftNode);
-    const rightNodeRadius = this.getNodeRadius(rightNode);
+    const leftNodeRadius = this.getNodeRadius(leftNode, "left");
+    const rightNodeRadius = this.getNodeRadius(rightNode, "right");
     const key = connectorKey(leftNode, rightNode);
 
     const skipHeight = nodeSpacingV * 0.5;
@@ -358,8 +367,8 @@ export class GraphConnections extends Component {
     connectorStroke: Object,
     svgElements: SVGChildren,
   ) {
-    const leftNodeRadius = this.getNodeRadius(leftNode);
-    const rightNodeRadius = this.getNodeRadius(rightNode);
+    const leftNodeRadius = this.getNodeRadius(leftNode, "left");
+    const rightNodeRadius = this.getNodeRadius(rightNode, "right");
 
     const key = connectorKey(leftNode, rightNode);
 
@@ -386,8 +395,8 @@ export class GraphConnections extends Component {
   ) {
     console.log(leftNode.key, "~>", rightNode.key);
     const { curveRadius, connectorStrokeWidth } = this.props.layout;
-    const leftNodeRadius = this.getNodeRadius(leftNode);
-    const rightNodeRadius = this.getNodeRadius(rightNode);
+    const leftNodeRadius = this.getNodeRadius(leftNode, "left");
+    const rightNodeRadius = this.getNodeRadius(rightNode, "right");
 
     const key = connectorKey(leftNode, rightNode);
 
