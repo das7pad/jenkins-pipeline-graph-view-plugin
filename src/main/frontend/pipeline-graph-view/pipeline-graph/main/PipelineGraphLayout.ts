@@ -37,7 +37,6 @@ export function layoutGraph2(
       id: -42,
       key: "root",
       isPlaceholder: true,
-      hasParallel: false,
       type: "root",
       children: [
         {
@@ -51,7 +50,6 @@ export function layoutGraph2(
           key: "start-node",
           type: "start",
           children: [],
-          hasParallel: false,
         },
       ],
     },
@@ -67,7 +65,6 @@ export function layoutGraph2(
       type: "counter",
       stages: [],
       children: [],
-      hasParallel: false,
     },
   };
   if (collapsed) {
@@ -91,18 +88,20 @@ export function layoutGraph2(
     key: "end-node",
     type: "end",
     children: [],
-    hasParallel: false,
   });
 
   const computePositions = (node: GraphNode) => {
     let xP = node.x;
     let yP = node.y;
-    for (const child of node.children) {
+    for (const [i, child] of node.children.entries()) {
       if (
         child.hasParallel &&
         resolveDestination(child).some((c) => c.children.length > 0)
       ) {
         xP += sequentialStagesLabelOffset;
+      }
+      if (i === 0 && node.type === "parallel" && child.isSkipped) {
+        xP += layout.nodeSpacingH - 2 * layout.nodeRadius;
       }
       child.x = xP;
       child.y = yP;
@@ -120,43 +119,105 @@ export function layoutGraph2(
   computePositions(graph.root);
 
   const connections: CompositeConnection[] = [];
-  const computeConnections = (
-    node: GraphNode,
-    next?: GraphNode,
-  ): GraphNode[] => {
+  const computeConnections = (node: GraphNode): GraphNode[] => {
     if (node.children.length === 0) {
       return [node];
     }
     if (node.hasParallel) {
-      return node.children.flatMap((child) => computeConnections(child, next));
+      return (
+        node.children
+          .flatMap((child) => computeConnections(child))
+          // Honor skipped state per layer, but not across layers. TODO: still needed?
+          .map((node) => ({ ...node, isSkipped: false }))
+      );
     }
+    const skipped: Set<GraphNode> = new Set();
     if (node.type !== "root") {
       const destinationNodes = resolveDestination(node.children[0]);
-      connections.push({
-        sourceNodes: [node],
-        destinationNodes,
-        skippedNodes: [],
-        hasBranchLabels: destinationNodes.some(
-          (n) => n.type === "parallel" && n.children.length > 0,
-        ),
-      });
+      if (destinationNodes.length === 1 && destinationNodes[0].isSkipped) {
+        skipped.add({
+          ...node,
+          x: node.x - 2 * layout.nodeRadius,
+        });
+        skipped.add(destinationNodes[0]);
+      } else {
+        connections.push({
+          sourceNodes: [node],
+          destinationNodes,
+          skippedNodes: [],
+          hasBranchLabels: destinationNodes.some(
+            (n) => n.type === "parallel" && n.children.length > 0,
+          ),
+        });
+      }
     }
     for (let i = 0; i < node.children.length - 1; i++) {
       const childA = node.children[i];
       const childB = node.children[i + 1];
       const destinationNodes = resolveDestination(childB);
+      if (!destinationNodes.some((n) => !n.isSkipped)) {
+        // TODO: test parallel with all skipped inside
+        for (const node of computeConnections(childA)) {
+          skipped.add(node);
+        }
+        for (const node of destinationNodes) {
+          skipped.add(node);
+        }
+        continue;
+      }
+      const nodes = Array.from(skipped).concat(computeConnections(childA));
       connections.push({
-        sourceNodes: computeConnections(childA, childB),
+        sourceNodes: nodes.filter((n) => !n.isSkipped),
         destinationNodes,
-        skippedNodes: [],
+        skippedNodes: nodes.filter((n) => n.isSkipped),
         hasBranchLabels: destinationNodes.some(
           (n) => n.type === "parallel" && n.children.length > 0,
         ),
       });
+      skipped.clear();
     }
-    if (!next) return [];
     const last = node.children[node.children.length - 1];
-    return computeConnections(last, next);
+    if (last.isSkipped) {
+      if (node.children.length > 1) {
+        skipped.add(node.children[node.children.length - 2]);
+      }
+      skipped.add(last);
+    }
+    if (skipped.size > 0) {
+      let destinationNodes: GraphNode[] = resolveDestination(last);
+      if (last.isSkipped) {
+        destinationNodes = [
+          {
+            isPlaceholder: true,
+            type: "parallel-end",
+            key: `pe_${node.key}`,
+            x: last.x + layout.nodeSpacingH,
+            y: last.y,
+            name: "",
+            id: 1_000_000 + node.id,
+            maxDepth: 1,
+            maxWidth: 1,
+            children: [],
+          },
+        ];
+      }
+      connections.push({
+        sourceNodes: Array.from(skipped).filter((n) => !n.isSkipped),
+        destinationNodes,
+        skippedNodes: Array.from(skipped).filter((n) => n.isSkipped),
+        hasBranchLabels: false,
+      });
+      if (last.isSkipped) {
+        // Use placeholder to make room for curved connection.
+        return [
+          {
+            ...destinationNodes[0],
+            x: last.x + layout.nodeSpacingH - 2 * layout.nodeRadius,
+          },
+        ];
+      }
+    }
+    return computeConnections(last);
   };
   computeConnections(graph.root);
   const nodes: GraphNode[] = [];
@@ -168,7 +229,7 @@ export function layoutGraph2(
     y: number;
     key: string;
     type: string;
-    hasParallel: boolean;
+    hasParallel?: boolean;
     stage: false | StageType;
     name: string;
   }[] = [];
@@ -257,11 +318,15 @@ export function layoutGraph2(
   console.log(newStages);
   console.log(graph);
 
-  const measuredWidth = graph.root.maxWidth;
+  const measuredWidth = graph.root.maxWidth * 1.5; // TODO
   const measuredHeight = graph.root.maxDepth + layout.nodeSpacingV;
 
   return {
-    nodes: nodes.filter((node) => !node.hasParallel),
+    nodes: nodes.filter(
+      (node) =>
+        !node.hasParallel &&
+        !(node.type === "parallel" && node.children.length > 0),
+    ),
     connections,
     smallLabels,
     bigLabels,
@@ -275,7 +340,7 @@ type GraphNode = {
   children: GraphNode[];
   maxWidth: number;
   maxDepth: number;
-  hasParallel: boolean;
+  hasParallel?: boolean;
 } & (
   | ({ type: "parallel" | "parallel-block-start" | "other" } & StageNodeInfo)
   | PlaceholderNodeInfo
@@ -302,7 +367,6 @@ function collectCollapsed(stages: StageInfo[], graph: Graph) {
         maxWidth: 0,
         maxDepth: 0,
         children: [],
-        hasParallel: false,
       });
     }
     collectCollapsed(stage.children, graph);
@@ -333,16 +397,33 @@ function collectNested(
           : stage.type === "PARALLEL"
             ? "parallel"
             : "other",
+      isSkipped: stage.state === Result.skipped,
       hasParallel:
         stage.children.length > 0 && stage.children[0].type === "PARALLEL",
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       children: [],
     };
-    collectNested(childNode, stage.children, layout);
+    if (!childNode.isSkipped) {
+      collectNested(childNode, stage.children, layout);
+    }
     node.children.push(childNode);
     node.maxWidth = Math.max(node.maxWidth, childNode.maxWidth);
     node.maxDepth = Math.max(node.maxDepth, childNode.maxDepth);
+  }
+  if (
+    node.type === "parallel" &&
+    node.children.length > 0 &&
+    node.children[0].isSkipped
+  ) {
+    node.maxWidth += layout.nodeSpacingH - 2 * layout.nodeRadius;
+  }
+  if (
+    node.type !== "parallel" &&
+    node.children.length > 0 &&
+    node.children[node.children.length - 1].isSkipped
+  ) {
+    node.maxWidth += layout.nodeSpacingH - 2 * layout.nodeRadius;
   }
   if (node.hasParallel) {
     node.maxDepth += (node.children.length - 1) * layout.nodeSpacingV;
