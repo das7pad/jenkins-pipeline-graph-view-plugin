@@ -138,7 +138,7 @@ export function layoutGraph2(
       return (
         node.children
           .flatMap((child) => computeConnections(child))
-          // Honor skipped state per layer, but not across layers. TODO: still needed?
+          // Honor skipped state per layer, but not across layers.
           .map((node) => ({ ...node, isSkipped: false }))
       );
     }
@@ -164,7 +164,6 @@ export function layoutGraph2(
       const childB = node.children[i + 1];
       const destinationNodes = resolveDestination(childB);
       if (!destinationNodes.some((n) => !n.isSkipped)) {
-        // TODO: test parallel with all skipped inside
         for (const node of computeConnections(childA)) {
           skipped.add(node);
         }
@@ -220,17 +219,6 @@ export function layoutGraph2(
       stage: "stage" in node && node.stage.type,
       name: node.name,
     });
-    // console.log(
-    //   indent,
-    //   "width",
-    //   node.maxWidth,
-    //   "depth",
-    //   node.maxDepth,
-    //   "=".repeat(indent),
-    //   node.key,
-    //   "stage" in node && node.stage.type,
-    //   node.name,
-    // );
     for (const child of node.children) {
       recurse(child, indent + 1);
     }
