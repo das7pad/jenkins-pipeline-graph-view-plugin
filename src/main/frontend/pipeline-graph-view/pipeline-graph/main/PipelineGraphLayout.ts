@@ -31,6 +31,7 @@ export function layoutGraph2(
       y: layout.ypStart,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
+      maxShift: 0,
       name: "Root",
       id: -42,
       key: "root",
@@ -42,6 +43,7 @@ export function layoutGraph2(
           y: 0,
           maxWidth: layout.nodeSpacingH,
           maxDepth: layout.nodeSpacingV,
+          maxShift: 0,
           name: messages.format(LocalizedMessageKey.start),
           id: -1,
           isPlaceholder: true,
@@ -56,6 +58,7 @@ export function layoutGraph2(
       y: 0,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
+      maxShift: 0,
       name: "Counter",
       id: -2,
       isPlaceholder: true,
@@ -73,13 +76,15 @@ export function layoutGraph2(
     graph.root.maxWidth = graph.root.children.length * layout.nodeSpacingH;
   } else {
     collectNested(graph.root, newStages, layout);
+    graph.root.y += graph.root.maxShift;
   }
-  graph.root.maxWidth += layout.nodeSpacingH / 2;
+  graph.root.maxWidth += layout.nodeSpacingH;
   graph.root.children.push({
     x: 0,
     y: 0,
-    maxWidth: layout.nodeSpacingH / 2,
+    maxWidth: layout.nodeSpacingH,
     maxDepth: layout.nodeSpacingV,
+    maxShift: 0,
     name: messages.format(LocalizedMessageKey.end),
     id: -3,
     isPlaceholder: true,
@@ -95,7 +100,7 @@ export function layoutGraph2(
     }
     let xP = node.x + extraXp;
     let yP = node.y;
-    for (const child of node.children) {
+    for (const [i, child] of node.children.entries()) {
       child.x = xP;
       child.y = yP;
       if (child.type === "stage-end") {
@@ -103,6 +108,7 @@ export function layoutGraph2(
       }
       let childExtraXp = 0;
       if (node.hasParallel) {
+        if (i > 0) child.y += child.maxShift;
         yP += child.maxDepth;
         childExtraXp =
           Math.floor(
@@ -189,6 +195,7 @@ export function layoutGraph2(
     indent: number;
     maxWidth: number;
     maxDepth: number;
+    maxShift: number;
     x: number;
     y: number;
     key: string;
@@ -203,6 +210,7 @@ export function layoutGraph2(
       indent,
       maxWidth: node.maxWidth,
       maxDepth: node.maxDepth,
+      maxShift: node.maxShift,
       x: node.x,
       y: node.y,
       key: node.key,
@@ -267,17 +275,8 @@ export function layoutGraph2(
     .filter((node) => node.isPlaceholder || node.hasParallel)
     .map((node) => {
       return {
-        x: node.isPlaceholder
-          ? node.x
-          : node.x +
-            (node.maxWidth -
-              layout.nodeSpacingH -
-              (node.hasParallel &&
-              node.children.some((c) => c.children.length > 0)
-                ? layout.nodeSpacingH
-                : 0)) /
-              2,
-        y: node.y, // TODO: negative adjustment
+        x: node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
+        y: node.y - node.maxShift,
         key: "l_big_" + node.key,
         node,
         stage: "stage" in node ? node.stage : undefined,
@@ -310,6 +309,7 @@ export function layoutGraph2(
 type GraphNode = {
   children: GraphNode[];
   maxWidth: number;
+  maxShift: number;
   maxDepth: number;
   hasParallel?: boolean;
 } & (
@@ -341,6 +341,7 @@ function collectCollapsed(
         type: "other",
         maxWidth: layout.nodeSpacingH,
         maxDepth: layout.nodeSpacingV,
+        maxShift: 0,
         children: [],
       });
     }
@@ -378,18 +379,36 @@ function collectNested(
         stage.children.length > 0 && stage.children[0].type === "PARALLEL",
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
+      maxShift: 0,
       children: [],
     };
     collectNested(childNode, stage.children, layout);
     node.children.push(childNode);
-    node.maxWidth = Math.max(node.maxWidth, childNode.maxWidth);
-    node.maxDepth = Math.max(node.maxDepth, childNode.maxDepth);
   }
   if (node.hasParallel) {
-    node.maxDepth += (node.children.length - 1) * layout.nodeSpacingV;
+    node.maxDepth = node.children.reduce((sum, c) => sum + c.maxDepth, 0);
+    node.maxWidth = Math.max(
+      node.maxWidth,
+      ...node.children.map((c) => c.maxWidth),
+    );
+    node.maxShift = node.children[0].maxShift;
+    if (node.children.some((child) => child.children.length > 0)) {
+      // Make space for branch label
+      node.maxWidth += layout.nodeSpacingH;
+      // Make space for big label
+      node.maxShift += layout.labelOffsetV;
+    }
+    node.maxDepth += node.maxShift;
   } else {
-    node.maxWidth +=
-      node.children.filter((c) => !c.hasParallel).length * layout.nodeSpacingH;
+    node.maxWidth = node.children.reduce((sum, c) => sum + c.maxWidth, 0);
+    node.maxDepth = Math.max(
+      node.maxDepth,
+      ...node.children.map((c) => c.maxDepth),
+    );
+    node.maxShift = Math.max(
+      node.maxShift,
+      ...node.children.map((c) => c.maxShift),
+    );
   }
   if (
     // Add a dummy node to "close" the shipped curve before closing the stage.
@@ -409,21 +428,9 @@ function collectNested(
       id: 1_000_000 + node.id,
       maxWidth: layout.nodeSpacingH / 2,
       maxDepth: layout.nodeSpacingV,
+      maxShift: 0,
       children: [],
     });
-  }
-  if (
-    node.hasParallel &&
-    node.children.some((child) => child.children.length > 0)
-  ) {
-    // Make space for branch label
-    node.maxWidth += layout.nodeSpacingH;
-  } else if (node.hasParallel) {
-    // Make space for big label
-    node.maxDepth += layout.labelOffsetV;
-  } else {
-    // Make space for small label
-    node.maxDepth += layout.smallLabelOffsetV;
   }
 }
 
