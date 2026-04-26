@@ -49,6 +49,15 @@ export default function SingleRun({ run, currentJobPath }: SingleRunProps) {
       layout.nodeSpacingH = 90;
     }
 
+    layout.ypStart = layout.nodeRadius;
+    layout.nodeSpacingV = layout.nodeRadius;
+    if (showNames) {
+      layout.ypStart += 7 + layout.labelOffsetV;
+    }
+    if (showDurations) {
+      layout.nodeSpacingV += 7 + layout.smallLabelOffsetV;
+    }
+
     return layout;
   }
 

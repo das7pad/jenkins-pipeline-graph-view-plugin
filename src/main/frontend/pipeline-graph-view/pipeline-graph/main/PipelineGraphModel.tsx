@@ -129,3 +129,6 @@ export interface PositionedGraph {
   measuredWidth: number;
   measuredHeight: number;
 }
+
+// Turn on debugging. Use a constant to let tree-shaking remove debug code.
+export const debugPipelineGraph = true;

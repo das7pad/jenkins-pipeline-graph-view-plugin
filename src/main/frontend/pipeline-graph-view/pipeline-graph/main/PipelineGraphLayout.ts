@@ -1,6 +1,7 @@
 import { LocalizedMessageKey, Messages } from "../../../common/i18n/index.ts";
 import {
   CompositeConnection,
+  debugPipelineGraph,
   LayoutInfo,
   NodeColumn,
   NodeInfo,
@@ -10,7 +11,6 @@ import {
   Result,
   StageInfo,
   StageNodeInfo,
-  StageType,
 } from "./PipelineGraphModel.tsx";
 
 const maxColumnsWhenCollapsed = 13;
@@ -23,12 +23,11 @@ export function layoutGraph2(
   showNames: boolean,
   showDurations: boolean,
 ) {
-  console.log(JSON.stringify(newStages));
   const graph: Graph = {
     limit: collapsed ? maxColumnsWhenCollapsed : -1,
     root: {
       x: layout.nodeSpacingH / 2,
-      y: layout.ypStart,
+      y: 0,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
@@ -73,12 +72,13 @@ export function layoutGraph2(
     if (graph.counterNode.stages.length > 0) {
       graph.root.children.push(graph.counterNode);
     }
-    graph.root.maxWidth = graph.root.children.length * layout.nodeSpacingH;
   } else {
-    collectNested(graph.root, newStages, layout);
-    graph.root.y += graph.root.maxShift;
+    collectNested(graph.root, newStages, layout, showNames);
   }
-  graph.root.maxWidth += layout.nodeSpacingH;
+  graph.root.y = Math.max(
+    layout.ypStart,
+    graph.root.maxShift + (showNames ? layout.labelOffsetV : 0),
+  );
   graph.root.children.push({
     x: 0,
     y: 0,
@@ -92,10 +92,11 @@ export function layoutGraph2(
     type: "end",
     children: [],
   });
+  graph.root.maxWidth = sumGraphNodeProp(graph.root, "maxWidth");
 
   const computePositions = (node: GraphNode, extraXp: number) => {
     if (node.children.length === 0) return;
-    if (node.hasParallel && node.children.some((c) => c.children.length > 0)) {
+    if (node.hasParallel && node.children.some((c) => c.hasBranchLabel)) {
       extraXp += layout.nodeSpacingH;
     }
     let xP = node.x + extraXp;
@@ -105,7 +106,6 @@ export function layoutGraph2(
       child.y = yP;
       if (child.type === "stage-end") {
         child.x -= layout.nodeSpacingH / 2;
-        xP -= layout.nodeSpacingH / 2;
       }
       let childExtraXp = 0;
       if (node.hasParallel) {
@@ -153,9 +153,7 @@ export function layoutGraph2(
           sourceNodes: [node],
           destinationNodes,
           skippedNodes: [],
-          hasBranchLabels: destinationNodes.some(
-            (n) => n.type === "parallel" && n.children.length > 0,
-          ),
+          hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
         });
       }
     }
@@ -177,9 +175,7 @@ export function layoutGraph2(
         sourceNodes: nodes.filter((n) => !n.isSkipped),
         destinationNodes,
         skippedNodes: nodes.filter((n) => n.isSkipped),
-        hasBranchLabels: destinationNodes.some(
-          (n) => n.type === "parallel" && n.children.length > 0,
-        ),
+        hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
       });
       skipped.clear();
     }
@@ -190,48 +186,19 @@ export function layoutGraph2(
     return computeConnections(last);
   };
   computeConnections(graph.root);
-  const nodes: GraphNode[] = [];
-  const table: {
-    indent: number;
-    maxWidth: number;
-    maxDepth: number;
-    maxShift: number;
-    x: number;
-    y: number;
-    key: string;
-    type: string;
-    hasParallel?: boolean;
-    stage: false | StageType;
-    name: string;
-  }[] = [];
-  const recurse = (node: GraphNode, indent = 0) => {
-    nodes.push(node);
-    table.push({
-      indent,
-      maxWidth: node.maxWidth,
-      maxDepth: node.maxDepth,
-      maxShift: node.maxShift,
-      x: node.x,
-      y: node.y,
-      key: node.key,
-      type: node.type,
-      hasParallel: node.hasParallel,
-      stage: "stage" in node && node.stage.type,
-      name: node.name,
-    });
-    for (const child of node.children) {
-      recurse(child, indent + 1);
-    }
-  };
-  recurse(graph.root);
-  console.table(table);
-  nodes.shift();
 
-  const smallLabels: NodeLabelInfo[] = nodes
+  const flattenGraph = (node: GraphNode): GraphNode[] => {
+    return node.children.concat(...node.children.map(flattenGraph));
+  };
+  const nodes = flattenGraph(graph.root);
+  const visibleNodes = nodes.filter(
+    (node) =>
+      node.type !== "stage-end" && !node.hasParallel && !node.hasBranchLabel,
+  );
+
+  const smallLabels: NodeLabelInfo[] = visibleNodes
     .filter(() => !collapsed)
-    .filter((node) => !node.isPlaceholder)
-    .filter((node) => !(node.type === "parallel" && node.children.length > 0))
-    .filter((node) => !node.hasParallel)
+    .filter((node) => !node.isPlaceholder && !node.isSkipped)
     .map((node) => {
       return {
         x: node.x,
@@ -239,33 +206,37 @@ export function layoutGraph2(
         text: node.name,
         key: "l_small_" + node.key,
         node,
-        stage: node.stage,
+        stage: "stage" in node ? node.stage : undefined,
       };
     });
 
   const branchLabels: NodeLabelInfo[] = nodes
     .filter(() => !collapsed)
-    .filter((node) => !node.isPlaceholder)
-    .filter((node) => node.type === "parallel" && node.children.length > 0)
+    .filter((node) => !node.isPlaceholder && node.hasBranchLabel)
     .map((node) => {
       return {
         x: node.x - layout.nodeSpacingH,
         y: node.y,
         key: "l_branch_" + node.key,
         node,
-        text: node.stage.name,
+        text: node.name,
       };
     });
 
   const bigLabels: NodeLabelInfo[] = nodes
     .filter(() => !(collapsed && !showNames))
-    .filter((node) => node.type !== "counter")
-    .filter((node) => node.type !== "stage-end")
-    .filter((node) => node.isPlaceholder || collapsed || node.hasParallel)
+    .filter(
+      (node) =>
+        node.type === "start" ||
+        node.type === "end" ||
+        collapsed ||
+        node.hasParallel ||
+        node.isSkipped,
+    )
     .map((node) => {
       return {
         x: node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
-        y: node.y - node.maxShift,
+        y: node.y - (node.isSkipped ? 0 : node.maxShift),
         key: "l_big_" + node.key,
         node,
         stage: "stage" in node ? node.stage : undefined,
@@ -274,7 +245,7 @@ export function layoutGraph2(
     });
 
   const timings: NodeLabelInfo[] = nodes
-    .filter(() => !(!collapsed || !showNames))
+    .filter(() => !(!collapsed || !showDurations))
     .filter((node) => !node.isPlaceholder)
     .map((node) => {
       return {
@@ -287,19 +258,16 @@ export function layoutGraph2(
       };
     });
 
-  console.log(newStages);
-  console.log(graph);
+  const measuredWidth =
+    graph.root.x + graph.root.maxWidth - layout.nodeSpacingH / 2;
+  const measuredHeight =
+    graph.root.y + graph.root.maxDepth - (graph.root.y - layout.ypStart);
 
-  const measuredWidth = graph.root.maxWidth;
-  const measuredHeight = graph.root.maxDepth + layout.ypStart;
-
+  if (debugPipelineGraph) {
+    printDebugInfo(newStages, graph, nodes, connections);
+  }
   return {
-    nodes: nodes.filter(
-      (node) =>
-        node.type !== "stage-end" &&
-        !node.hasParallel &&
-        !(node.type === "parallel" && node.children.length > 0),
-    ),
+    nodes: debugPipelineGraph ? nodes : visibleNodes,
     connections,
     smallLabels,
     bigLabels,
@@ -310,22 +278,71 @@ export function layoutGraph2(
   };
 }
 
+function printDebugInfo(
+  newStages: Array<StageInfo>,
+  graph: Graph,
+  nodes: GraphNode[],
+  connections: CompositeConnection[],
+) {
+  console.log("JSON.stringify(newStages)", JSON.stringify(newStages));
+  console.log("newStages", newStages);
+  console.log("graph", graph);
+  console.table(
+    [graph.root]
+      .concat(nodes)
+      .map((n) => ({ ...n, stage: "stage" in n && n.stage.type })),
+    [
+      "maxWidth",
+      "maxDepth",
+      "maxShift",
+      "x",
+      "y",
+      "key",
+      "type",
+      "hasParallel",
+      "stage",
+      "name",
+    ],
+  );
+  const flatten = (v: NodeInfo[]) => v.map((n) => `${n.key} (${n.name})`);
+  console.table(
+    connections.map((c) => ({
+      sourceNodes: flatten(c.sourceNodes),
+      destinationNodes: flatten(c.destinationNodes),
+      skippedNodes: flatten(c.skippedNodes),
+      hasBranchLabels: c.hasBranchLabels,
+    })),
+  );
+}
+
 type GraphNode = {
   children: GraphNode[];
   maxWidth: number;
   maxShift: number;
   maxDepth: number;
   hasParallel?: boolean;
-} & (
-  | ({ type: "parallel" | "parallel-block-start" | "other" } & StageNodeInfo)
-  | PlaceholderNodeInfo
-);
+  hasBranchLabel?: boolean;
+} & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 type Graph = {
   limit: number;
   root: GraphNode;
   counterNode: GraphNode & CounterNodeInfo;
 };
+
+function sumGraphNodeProp(
+  node: GraphNode,
+  prop: "maxWidth" | "maxShift" | "maxDepth",
+): number {
+  return node.children.reduce((sum, c) => sum + c[prop], 0);
+}
+
+function maxGraphNodeProp(
+  node: GraphNode,
+  prop: "maxWidth" | "maxShift" | "maxDepth",
+): number {
+  return Math.max(node[prop], ...node.children.map((c) => c[prop]));
+}
 
 function collectCollapsed(
   stages: StageInfo[],
@@ -364,55 +381,53 @@ function collectNested(
   node: GraphNode,
   stages: StageInfo[],
   layout: LayoutInfo,
+  showNames: boolean,
 ) {
   if (node.isSkipped || stages.length === 0) return;
   for (const stage of stages) {
     const childNode: GraphNode = {
-      ...makeNodeForStage(
-        stage,
-        stage.type === "PARALLEL" ? stage.name : undefined,
-      ),
-      type:
-        stage.type === "PARALLEL_BLOCK"
-          ? "parallel-block-start"
-          : stage.type === "PARALLEL"
-            ? "parallel"
-            : "other",
+      ...makeNodeForStage(stage),
+      type: "other",
       isSkipped: stage.state === Result.skipped,
       hasParallel:
         stage.children.length > 0 && stage.children[0].type === "PARALLEL",
+      hasBranchLabel: stage.type === "PARALLEL" && stage.children.length > 0,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
       children: [],
     };
-    collectNested(childNode, stage.children, layout);
+    if (
+      stage.type === "PARALLEL" &&
+      stage.children.length === 0 &&
+      stage.state === Result.skipped
+    ) {
+      // Make space for big label, do not extend depth: we skip the small label.
+      childNode.maxShift += layout.labelOffsetV;
+    }
+    collectNested(childNode, stage.children, layout, showNames);
     node.children.push(childNode);
   }
   if (node.hasParallel) {
-    node.maxDepth = node.children.reduce((sum, c) => sum + c.maxDepth, 0);
-    node.maxWidth = Math.max(
-      node.maxWidth,
-      ...node.children.map((c) => c.maxWidth),
-    );
+    node.maxDepth = sumGraphNodeProp(node, "maxDepth");
+    node.maxWidth = maxGraphNodeProp(node, "maxWidth");
     node.maxShift = node.children[0].maxShift;
-    if (node.children.some((child) => child.children.length > 0)) {
+    if (node.children.some((child) => child.hasBranchLabel)) {
       // Make space for branch label
       node.maxWidth += layout.nodeSpacingH;
+    }
+  } else {
+    node.maxWidth = sumGraphNodeProp(node, "maxWidth");
+    node.maxDepth = maxGraphNodeProp(node, "maxDepth");
+    node.maxShift = maxGraphNodeProp(node, "maxShift");
+    if (
+      showNames &&
+      node.children.some((child) => child.hasParallel || child.isSkipped)
+    ) {
       // Make space for big label
       node.maxShift += layout.labelOffsetV;
+      node.maxDepth += layout.labelOffsetV;
     }
-    node.maxDepth += node.maxShift;
-  } else {
-    node.maxWidth = node.children.reduce((sum, c) => sum + c.maxWidth, 0);
-    node.maxDepth = Math.max(
-      node.maxDepth,
-      ...node.children.map((c) => c.maxDepth),
-    );
-    node.maxShift = Math.max(
-      node.maxShift,
-      ...node.children.map((c) => c.maxShift),
-    );
   }
   if (
     // Add a dummy node to "close" the shipped curve before closing the stage.
@@ -430,7 +445,7 @@ function collectNested(
       y: 0,
       name: `Stage end (${node.name})`,
       id: 1_000_000 + node.id,
-      maxWidth: layout.nodeSpacingH / 2,
+      maxWidth: 0,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
       children: [],

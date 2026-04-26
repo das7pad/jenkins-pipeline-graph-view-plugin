@@ -1,10 +1,18 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  CSSProperties,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { I18NContext } from "../../../common/i18n/index.ts";
 import { useUserPreferences } from "../../../common/user/user-preferences-provider.tsx";
 import { layoutGraph, layoutGraph2 } from "./PipelineGraphLayout";
 import {
   CompositeConnection,
+  debugPipelineGraph,
   defaultLayout,
   LayoutInfo,
   NodeInfo,
@@ -52,7 +60,7 @@ export function PipelineGraph({
         fullLayout,
         collapsed ?? false,
         messages,
-        showNames,
+        showNames || !collapsed,
         showDurations,
       );
       setNodes(layout2.nodes);
@@ -99,24 +107,6 @@ export function PipelineGraph({
     setMeasuredHeight(newLayout.measuredHeight);
   }, [stages, fullLayout, collapsed, messages, showNames, showDurations]);
 
-  useEffect(() => {
-    if (connections.length === 0) return;
-    console.table(
-      connections.map((connection) => ({
-        sourceNode: connection.sourceNodes
-          .map((node) => `${node.key} (${node.name})`)
-          .join(","),
-        destinationNode: connection.destinationNodes
-          .map((node) => `${node.key} (${node.name})`)
-          .join(","),
-        skippedNodes: connection.skippedNodes
-          .map((node) => `${node.key} (${node.name})`)
-          .join(","),
-        hasBranchLabels: connection.hasBranchLabels,
-      })),
-    );
-  }, [connections]);
-
   const stageIsSelected = useCallback(
     (stage?: StageInfo): boolean => {
       return (selectedStage && stage && selectedStage.id === stage.id) || false;
@@ -124,10 +114,13 @@ export function PipelineGraph({
     [selectedStage],
   );
 
-  const outerDivStyle = {
-    position: "relative" as const,
-    overflow: "visible" as const,
+  const outerDivStyle: CSSProperties = {
+    position: "relative",
+    overflow: "visible",
   };
+  if (debugPipelineGraph) {
+    outerDivStyle.border = "1px solid red";
+  }
 
   return (
     <div className="PWGx-PipelineGraph-container">
