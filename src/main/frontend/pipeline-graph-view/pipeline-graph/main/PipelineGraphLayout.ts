@@ -66,20 +66,20 @@ export function layoutGraph2(
     },
   };
   if (collapsed) {
-    collectCollapsed(newStages, graph);
+    collectCollapsed(newStages, graph, layout);
     if (graph.counterNode.stages.length > 0) {
-      graph.root.maxWidth += layout.nodeSpacingH;
       graph.root.children.push(graph.counterNode);
     }
+    graph.root.maxWidth = graph.root.children.length * layout.nodeSpacingH;
   } else {
     collectNested(graph.root, newStages, layout);
   }
-  graph.root.maxWidth += layout.nodeSpacingH;
+  graph.root.maxWidth += layout.nodeSpacingH / 2;
   graph.root.children.push({
     x: 0,
     y: 0,
-    maxWidth: 1,
-    maxDepth: 1,
+    maxWidth: layout.nodeSpacingH / 2,
+    maxDepth: layout.nodeSpacingV,
     name: messages.format(LocalizedMessageKey.end),
     id: -3,
     isPlaceholder: true,
@@ -98,9 +98,6 @@ export function layoutGraph2(
     for (const child of node.children) {
       child.x = xP;
       child.y = yP;
-      if (child.type === "end") {
-        child.x -= layout.nodeSpacingH / 2;
-      }
       if (child.type === "stage-end") {
         child.x -= layout.nodeSpacingH / 2;
       }
@@ -255,7 +252,6 @@ export function layoutGraph2(
     .filter((node) => node.type === "parallel" && node.children.length > 0)
     .map((node) => {
       return {
-        // TODO
         x: node.x - layout.nodeSpacingH,
         y: node.y,
         key: "l_branch_" + node.key,
@@ -292,8 +288,8 @@ export function layoutGraph2(
   console.log(newStages);
   console.log(graph);
 
-  const measuredWidth = graph.root.maxWidth * 1.5; // TODO
-  const measuredHeight = graph.root.maxDepth + layout.nodeSpacingV;
+  const measuredWidth = graph.root.maxWidth;
+  const measuredHeight = graph.root.maxDepth + layout.ypStart;
 
   return {
     nodes: nodes.filter(
@@ -327,7 +323,11 @@ type Graph = {
   counterNode: GraphNode & CounterNodeInfo;
 };
 
-function collectCollapsed(stages: StageInfo[], graph: Graph) {
+function collectCollapsed(
+  stages: StageInfo[],
+  graph: Graph,
+  layout: LayoutInfo,
+) {
   for (const stage of stages) {
     if (graph.limit === 0) {
       graph.counterNode.stages.push(stage);
@@ -339,12 +339,12 @@ function collectCollapsed(stages: StageInfo[], graph: Graph) {
       graph.root.children.push({
         ...makeNodeForStage(stage),
         type: "other",
-        maxWidth: 0,
-        maxDepth: 0,
+        maxWidth: layout.nodeSpacingH,
+        maxDepth: layout.nodeSpacingV,
         children: [],
       });
     }
-    collectCollapsed(stage.children, graph);
+    collectCollapsed(stage.children, graph, layout);
   }
 }
 
@@ -384,10 +384,6 @@ function collectNested(
     node.children.push(childNode);
     node.maxWidth = Math.max(node.maxWidth, childNode.maxWidth);
     node.maxDepth = Math.max(node.maxDepth, childNode.maxDepth);
-    if (childNode.hasParallel) {
-      // TODO: new sum of -labelOffsetV?
-      node.maxDepth += layout.labelOffsetV;
-    }
   }
   if (node.hasParallel) {
     node.maxDepth += (node.children.length - 1) * layout.nodeSpacingV;
@@ -422,6 +418,12 @@ function collectNested(
   ) {
     // Make space for branch label
     node.maxWidth += layout.nodeSpacingH;
+  } else if (node.hasParallel) {
+    // Make space for big label
+    node.maxDepth += layout.labelOffsetV;
+  } else {
+    // Make space for small label
+    node.maxDepth += layout.smallLabelOffsetV;
   }
 }
 
