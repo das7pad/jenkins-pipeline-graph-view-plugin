@@ -105,6 +105,7 @@ export function layoutGraph2(
       child.y = yP;
       if (child.type === "stage-end") {
         child.x -= layout.nodeSpacingH / 2;
+        xP -= layout.nodeSpacingH / 2;
       }
       let childExtraXp = 0;
       if (node.hasParallel) {
