@@ -200,7 +200,10 @@ export function layoutGraph2(
 
   const smallLabels: NodeLabelInfo[] = visibleNodes
     .filter(() => !collapsed)
-    .filter((node) => !node.isPlaceholder && !node.isSkipped)
+    .filter(
+      (node) =>
+        !node.isPlaceholder && !(node.isSkipped && node.type !== "parallel"),
+    )
     .map((node) => {
       return {
         x: node.x,
@@ -233,7 +236,7 @@ export function layoutGraph2(
         node.type === "end" ||
         collapsed ||
         node.hasParallel ||
-        node.isSkipped,
+        (node.isSkipped && node.type !== "parallel"),
     )
     .map((node) => {
       return {
@@ -325,7 +328,7 @@ type GraphNode = {
   maxDepth: number;
   hasParallel?: boolean;
   hasBranchLabel?: boolean;
-} & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
+} & (({ type: "other" | "parallel" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 type Graph = {
   limit: number;
@@ -390,7 +393,7 @@ function collectNested(
   for (const stage of stages) {
     const childNode: GraphNode = {
       ...makeNodeForStage(stage),
-      type: "other",
+      type: stage.type === "PARALLEL" ? "parallel" : "other",
       isSkipped: stage.state === Result.skipped,
       hasParallel:
         stage.children.length > 0 && stage.children[0].type === "PARALLEL",
@@ -400,15 +403,6 @@ function collectNested(
       maxShift: 0,
       children: [],
     };
-    if (
-      stage.type === "PARALLEL" &&
-      stage.children.length === 0 &&
-      stage.state === Result.skipped
-    ) {
-      // Make space for big label, do not extend depth: we skip the small label.
-      childNode.maxShift += layout.labelOffsetV;
-      childNode.maxDepth -= layout.smallLabelOffsetV;
-    }
     collectNested(childNode, stage.children, layout, showNames);
     node.children.push(childNode);
   }
@@ -426,19 +420,20 @@ function collectNested(
     node.maxShift = maxGraphNodeProp(node, "maxShift");
     if (
       showNames &&
-      node.children.some((child) => child.hasParallel || child.isSkipped)
+      node.children.some(
+        (child) =>
+          child.hasParallel || (child.isSkipped && child.type !== "parallel"),
+      )
     ) {
       // Make space for big label
       node.maxShift += layout.labelOffsetV;
       node.maxDepth += layout.labelOffsetV;
     }
   }
-  if (
-    // Add a dummy node to "close" the shipped curve before closing the stage.
-    (!node.hasParallel && node.children[node.children.length - 1].isSkipped) ||
-    // Add a dummy node to "close" the parallel curve of the given child.
-    (!node.hasParallel && node.children[node.children.length - 1].hasParallel)
-  ) {
+  const last = node.children[node.children.length - 1];
+  if (!node.hasParallel && (last.isSkipped || last.hasParallel)) {
+    // - Add a dummy node to "close" the skipped curve before closing the stage.
+    // - Add a dummy node to "close" the parallel curve of the child.
     // In both cases, the dummy node will be the new stage end that is connected to the next node.
     node.maxWidth += layout.nodeSpacingH / 2;
     node.children.push({

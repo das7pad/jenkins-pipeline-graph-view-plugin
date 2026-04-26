@@ -176,14 +176,13 @@ export class GraphConnections extends Component {
     let leftNode, rightNode;
 
     //--------------------------------------------------------------------------
-    //  Draw the "ghost" connections to/from/between skipped nodes
+    //  Draw the "ghost" connections between skipped nodes
 
-    leftNode = sourceNodes[0];
+    leftNode = skippedNodes[0];
     for (rightNode of skippedNodes) {
       this.renderHorizontalConnection(leftNode, rightNode, svgElements);
       leftNode = rightNode;
     }
-    this.renderHorizontalConnection(leftNode, destinationNodes[0], svgElements);
 
     //--------------------------------------------------------------------------
     //  Work out the extents of source and dest space
@@ -331,7 +330,7 @@ export class GraphConnections extends Component {
     const p8x = rightNode.x - rightNodeRadius + nodeStrokeWidth / 2;
     const p8y = rightNode.y;
 
-    // 1st horizontal
+    // Source side half of the 1st horizontal
     svgElements.push(
       <line
         {...this.getConnectorStroke(leftNode.isSkipped)}
@@ -340,6 +339,18 @@ export class GraphConnections extends Component {
         y1={p1y}
         x2={p2x}
         y2={p2y}
+        fill="none"
+      />,
+    );
+    // Skipped side half of the 1st horizontal
+    svgElements.push(
+      <line
+        {...this.getConnectorStroke(skippedNodes[0].isSkipped)}
+        key={key}
+        x1={p2x}
+        y1={p2y}
+        x2={skippedNodes[0].x}
+        y2={skippedNodes[0].y}
         fill="none"
       />,
     );
@@ -353,6 +364,7 @@ export class GraphConnections extends Component {
       `C ${c7x} ${c7y} ${c8x} ${c8y} ${p7x} ${p7y}` + // Curve up (upper)
       "";
 
+    // Skipped curve
     svgElements.push(
       <path
         {...this.getConnectorStroke(false)}
@@ -362,7 +374,20 @@ export class GraphConnections extends Component {
       />,
     );
 
-    // Last horizontal
+    // Skipped side of the last horizontal
+    svgElements.push(
+      <line
+        {...this.getConnectorStroke(lastSkippedNode.isSkipped)}
+        key={key}
+        x1={lastSkippedNode.x}
+        y1={lastSkippedNode.y}
+        x2={p7x}
+        y2={p7y}
+        fill="none"
+      />,
+    );
+
+    // Destination side of the last horizontal
     svgElements.push(
       <line
         {...this.getConnectorStroke(rightNode.isSkipped)}
