@@ -90,6 +90,15 @@ export interface PlaceholderNodeInfo extends BaseNodeInfo {
 
 export type NodeInfo = StageNodeInfo | PlaceholderNodeInfo;
 
+export type GraphNode = {
+  children: GraphNode[];
+  maxWidth: number;
+  maxShift: number;
+  maxDepth: number;
+  hasParallel?: boolean;
+  hasBranchLabel?: boolean;
+} & (({ type: "other" | "parallel" } & StageNodeInfo) | PlaceholderNodeInfo);
+
 export interface NodeColumn {
   topStage?: StageInfo; // Top-most stage for this column, which will have no rendered nodes if it's parallel
   rows: Array<Array<NodeInfo>>;
@@ -131,4 +140,4 @@ export interface PositionedGraph {
 }
 
 // Turn on debugging. Use a constant to let tree-shaking remove debug code.
-export const debugPipelineGraph = true;
+export const debugPipelineGraph = false;

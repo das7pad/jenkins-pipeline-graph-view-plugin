@@ -14,6 +14,7 @@ import {
   CompositeConnection,
   debugPipelineGraph,
   defaultLayout,
+  GraphNode,
   LayoutInfo,
   NodeInfo,
   NodeLabelInfo,
@@ -26,7 +27,7 @@ import {
   SmallLabel,
   TimingsLabel,
 } from "./support/labels.tsx";
-import { Node, SelectionHighlight } from "./support/nodes.tsx";
+import { DebugOutlines, Node, SelectionHighlight } from "./support/nodes.tsx";
 
 export function PipelineGraph({
   stages = [],
@@ -35,6 +36,7 @@ export function PipelineGraph({
   collapsed,
   onStageSelect,
 }: Props) {
+  const [allGraphNodes, setAllGraphNodes] = useState<GraphNode[]>([]);
   const [nodes, setNodes] = useState<NodeInfo[]>([]);
   const [connections, setConnections] = useState<CompositeConnection[]>([]);
   const [bigLabels, setBigLabels] = useState<NodeLabelInfo[]>([]);
@@ -64,6 +66,7 @@ export function PipelineGraph({
         showDurations,
       );
       setNodes(layout2.nodes);
+      setAllGraphNodes(layout2.allGraphNodes);
       setConnections(layout2.connections);
       setSmallLabels(layout2.smallLabels);
       setBigLabels(layout2.bigLabels);
@@ -71,17 +74,6 @@ export function PipelineGraph({
       setTimings(layout2.timings);
       setMeasuredWidth(layout2.measuredWidth);
       setMeasuredHeight(layout2.measuredHeight);
-
-      const newLayout = layoutGraph(
-        stages,
-        fullLayout,
-        collapsed ?? false,
-        messages,
-        showNames,
-        showDurations,
-      );
-      console.log(layout2.nodes);
-      console.log(newLayout.nodeColumns);
       return;
     }
 
@@ -119,7 +111,7 @@ export function PipelineGraph({
     overflow: "visible",
   };
   if (debugPipelineGraph) {
-    outerDivStyle.border = "1px solid red";
+    outerDivStyle.border = "1px dashed red";
   }
 
   return (
@@ -133,6 +125,8 @@ export function PipelineGraph({
             nodes={nodes}
             isStageSelected={stageIsSelected}
           />
+
+          {debugPipelineGraph && <DebugOutlines nodes={allGraphNodes} />}
         </svg>
 
         {nodes.map((node) => (

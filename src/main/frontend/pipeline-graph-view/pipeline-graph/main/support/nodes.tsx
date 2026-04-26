@@ -1,6 +1,6 @@
 import "./nodes.scss";
 
-import { CSSProperties, ReactElement } from "react";
+import { CSSProperties, ReactElement, useState } from "react";
 
 import {
   resultToColor,
@@ -10,7 +10,12 @@ import Tooltip from "../../../../common/components/tooltip.tsx";
 import { classNames } from "../../../../common/utils/classnames.ts";
 import LiveTotal from "../../../../common/utils/live-total.tsx";
 import { CounterNodeInfo } from "../PipelineGraphLayout.ts";
-import { LayoutInfo, NodeInfo, StageInfo } from "../PipelineGraphModel.tsx";
+import {
+  GraphNode,
+  LayoutInfo,
+  NodeInfo,
+  StageInfo,
+} from "../PipelineGraphModel.tsx";
 
 type SVGChildren = Array<any>; // Fixme: Maybe refine this? Not sure what should go here, we have working code I can't make typecheck
 
@@ -218,5 +223,57 @@ export function SelectionHighlight({
     >
       <circle r={highlightRadius} strokeWidth={connectorStrokeWidth} />
     </g>
+  );
+}
+
+interface DebugOutlinesProps {
+  nodes: Array<GraphNode>;
+}
+
+export function DebugOutlines({ nodes }: DebugOutlinesProps) {
+  return nodes.map((node) => <DebugOutline node={node} key={node.id} />);
+}
+
+function DebugOutline({ node }: { node: GraphNode }) {
+  const [visible, setVisible] = useState(true);
+  if (!visible) return null;
+  return (
+    <>
+      <Tooltip content={`${node.id} (${node.name})`}>
+        <rect
+          x={node.x}
+          y={node.y}
+          width={node.maxWidth || 1}
+          height={node.maxDepth}
+          strokeWidth={2}
+          stroke={"red"}
+          fill="red"
+          fillOpacity={0.1}
+          onClick={() => {
+            setVisible(false);
+            setTimeout(() => setVisible(true), 10_000);
+          }}
+        />
+      </Tooltip>
+      {node.maxShift > 0 && (
+        <Tooltip content={`${node.id} (${node.name}) shift`}>
+          <rect
+            x={node.x}
+            y={node.y - node.maxShift}
+            width={node.maxWidth}
+            height={node.maxShift}
+            strokeWidth={2}
+            strokeDasharray={"2,2"}
+            stroke={"red"}
+            fill="red"
+            fillOpacity={0.075}
+            onClick={() => {
+              setVisible(false);
+              setTimeout(() => setVisible(true), 10_000);
+            }}
+          />
+        </Tooltip>
+      )}
+    </>
   );
 }

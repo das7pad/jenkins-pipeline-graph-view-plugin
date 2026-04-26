@@ -2,6 +2,7 @@ import { LocalizedMessageKey, Messages } from "../../../common/i18n/index.ts";
 import {
   CompositeConnection,
   debugPipelineGraph,
+  GraphNode,
   LayoutInfo,
   NodeColumn,
   NodeInfo,
@@ -77,7 +78,8 @@ export function layoutGraph2(
   }
   graph.root.y = Math.max(
     layout.ypStart,
-    graph.root.maxShift + (showNames ? layout.labelOffsetV : 0),
+    graph.root.maxShift +
+      (showNames ? layout.nodeRadius + layout.labelOffsetV : 0),
   );
   graph.root.children.push({
     x: 0,
@@ -263,16 +265,17 @@ export function layoutGraph2(
       };
     });
 
-  const measuredWidth =
-    graph.root.x + graph.root.maxWidth - layout.nodeSpacingH / 2;
+  const measuredWidth = graph.root.maxWidth;
+  // TODO: refine maxDepth
   const measuredHeight =
-    graph.root.y + graph.root.maxDepth - (graph.root.y - layout.ypStart);
+    graph.root.y + graph.root.maxDepth + (graph.root.y - layout.ypStart);
 
   if (debugPipelineGraph) {
     printDebugInfo(newStages, graph, nodes, connections);
   }
   return {
     nodes: debugPipelineGraph ? nodes : visibleNodes,
+    allGraphNodes: [graph.root].concat(nodes),
     connections,
     smallLabels,
     bigLabels,
@@ -320,15 +323,6 @@ function printDebugInfo(
     })),
   );
 }
-
-type GraphNode = {
-  children: GraphNode[];
-  maxWidth: number;
-  maxShift: number;
-  maxDepth: number;
-  hasParallel?: boolean;
-  hasBranchLabel?: boolean;
-} & (({ type: "other" | "parallel" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 type Graph = {
   limit: number;
@@ -407,9 +401,11 @@ function collectNested(
     node.children.push(childNode);
   }
   if (node.hasParallel) {
+    // Move maxShift from first parallel child up one level.
+    node.maxShift = node.children[0].maxShift;
+    node.children[0].maxDepth -= node.children[0].maxShift;
     node.maxDepth = sumGraphNodeProp(node, "maxDepth");
     node.maxWidth = maxGraphNodeProp(node, "maxWidth");
-    node.maxShift = node.children[0].maxShift;
     if (node.children.some((child) => child.hasBranchLabel)) {
       // Make space for branch label
       node.maxWidth += layout.nodeSpacingH;
@@ -426,8 +422,8 @@ function collectNested(
       )
     ) {
       // Make space for big label
-      node.maxShift += layout.labelOffsetV;
-      node.maxDepth += layout.labelOffsetV;
+      node.maxShift += layout.nodeRadius + layout.labelOffsetV;
+      node.maxDepth += layout.nodeRadius + layout.labelOffsetV;
     }
   }
   const last = node.children[node.children.length - 1];

@@ -420,7 +420,6 @@ export class GraphConnections extends Component {
     const x2 = rightNode.x - rightNodeRadius + nodeStrokeWidth / 2;
     const y = leftNode.y;
 
-    console.log(leftNode.key, "->", rightNode.key);
     svgElements.push(
       <line
         {...this.getConnectorStroke(leftNode.isSkipped || rightNode.isSkipped)}
@@ -444,7 +443,6 @@ export class GraphConnections extends Component {
     midPointX: number,
     svgElements: SVGChildren,
   ) {
-    console.log(leftNode.key, "~>", rightNode.key);
     const { curveRadius } = this.props.layout;
     const leftNodeRadius = this.getNodeRadius(leftNode, "left");
     const rightNodeRadius = this.getNodeRadius(rightNode, "right");
