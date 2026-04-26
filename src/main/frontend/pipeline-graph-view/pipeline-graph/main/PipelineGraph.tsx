@@ -60,6 +60,7 @@ export function PipelineGraph({
       setSmallLabels(layout2.smallLabels);
       setBigLabels(layout2.bigLabels);
       setBranchLabels(layout2.branchLabels);
+      setTimings(layout2.timings);
       setMeasuredWidth(layout2.measuredWidth);
       setMeasuredHeight(layout2.measuredHeight);
 

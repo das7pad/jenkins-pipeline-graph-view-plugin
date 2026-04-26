@@ -242,7 +242,7 @@ export function layoutGraph2(
   const smallLabels: NodeLabelInfo[] = nodes
     .filter(() => !collapsed)
     .filter((node) => !node.isPlaceholder)
-    .filter((node) => node.type !== "parallel" || node.children.length === 0)
+    .filter((node) => !(node.type === "parallel" && node.children.length > 0))
     .filter((node) => !node.hasParallel)
     .map((node) => {
       return {
@@ -273,7 +273,7 @@ export function layoutGraph2(
     .filter(() => !(collapsed && !showNames))
     .filter((node) => node.type !== "counter")
     .filter((node) => node.type !== "stage-end")
-    .filter((node) => node.isPlaceholder || node.hasParallel)
+    .filter((node) => node.isPlaceholder || collapsed || node.hasParallel)
     .map((node) => {
       return {
         x: node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
@@ -282,6 +282,20 @@ export function layoutGraph2(
         node,
         stage: "stage" in node ? node.stage : undefined,
         text: node.name,
+      };
+    });
+
+  const timings: NodeLabelInfo[] = nodes
+    .filter(() => !(!collapsed || !showNames))
+    .filter((node) => !node.isPlaceholder)
+    .map((node) => {
+      return {
+        x: node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
+        y: node.y + 55,
+        node,
+        stage: node.stage,
+        text: "", // we take the duration from the stage itself at render time
+        key: `l_t_${node.key}`,
       };
     });
 
@@ -302,6 +316,7 @@ export function layoutGraph2(
     smallLabels,
     bigLabels,
     branchLabels,
+    timings,
     measuredWidth,
     measuredHeight,
   };
