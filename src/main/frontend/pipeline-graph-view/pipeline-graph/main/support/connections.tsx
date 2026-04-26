@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { Component, SVGAttributes } from "react";
 
 import {
   CompositeConnection,
@@ -22,6 +22,19 @@ interface Props {
 
 export class GraphConnections extends Component {
   declare props: Props;
+
+  getConnectorStroke(isSkipped?: boolean): SVGAttributes<any> {
+    if (isSkipped) {
+      return {
+        className: "PWGx-pipeline-connector-skipped",
+        strokeWidth: this.props.layout.connectorStrokeWidth,
+      };
+    }
+    return {
+      className: "PWGx-pipeline-connector",
+      strokeWidth: this.props.layout.connectorStrokeWidth,
+    };
+  }
 
   /**
    * Generate SVG for a composite connection, which may be to/from many nodes.
@@ -66,26 +79,16 @@ export class GraphConnections extends Component {
     svgElements: SVGChildren,
     hasBranchLabels: boolean,
   ) {
-    const { connectorStrokeWidth, nodeSpacingH } = this.props.layout;
+    const { nodeSpacingH } = this.props.layout;
     const halfSpacingH = nodeSpacingH / 2;
 
-    // Stroke props common to straight / curved connections
-    const connectorStroke = {
-      className: "PWGx-pipeline-connector",
-      strokeWidth: connectorStrokeWidth,
-    };
-
-    const sameBase = sourceNodes[0].y === destinationNodes[0].y;
-    if (sameBase) {
-      this.renderHorizontalConnection(
-        sourceNodes[0],
-        destinationNodes[0],
-        connectorStroke,
-        svgElements,
-      );
-      if (sourceNodes.length === 1 && destinationNodes.length === 1) {
-        return; // No curves needed.
-      }
+    this.renderHorizontalConnection(
+      sourceNodes[0],
+      destinationNodes[0],
+      svgElements,
+    );
+    if (sourceNodes.length === 1 && destinationNodes.length === 1) {
+      return; // No curves needed.
     }
 
     // Work out the extents of source and dest space
@@ -105,7 +108,7 @@ export class GraphConnections extends Component {
 
     // Collapse from previous node(s) to top column node
     const collapseMidPointX = Math.round(rightmostSource + halfSpacingH);
-    for (const previousNode of sourceNodes.slice(sameBase ? 1 : 0)) {
+    for (const previousNode of sourceNodes.slice(1)) {
       this.renderBasicCurvedConnection(
         previousNode,
         destinationNodes[0],
@@ -165,21 +168,9 @@ export class GraphConnections extends Component {
     svgElements: SVGChildren,
     hasBranchLabels: boolean,
   ) {
-    const { connectorStrokeWidth, curveRadius, nodeSpacingV, nodeSpacingH } =
-      this.props.layout;
+    const { curveRadius, nodeSpacingV, nodeSpacingH } = this.props.layout;
 
     const halfSpacingH = nodeSpacingH / 2;
-
-    // Stroke props common to straight / curved connections
-    const connectorStroke = {
-      className: "PWGx-pipeline-connector",
-      strokeWidth: connectorStrokeWidth,
-    };
-
-    const skipConnectorStroke = {
-      className: "PWGx-pipeline-connector-skipped",
-      strokeWidth: connectorStrokeWidth,
-    };
 
     const lastSkippedNode = skippedNodes[skippedNodes.length - 1];
     let leftNode, rightNode;
@@ -189,20 +180,10 @@ export class GraphConnections extends Component {
 
     leftNode = sourceNodes[0];
     for (rightNode of skippedNodes) {
-      this.renderHorizontalConnection(
-        leftNode,
-        rightNode,
-        skipConnectorStroke,
-        svgElements,
-      );
+      this.renderHorizontalConnection(leftNode, rightNode, svgElements);
       leftNode = rightNode;
     }
-    this.renderHorizontalConnection(
-      leftNode,
-      destinationNodes[0],
-      skipConnectorStroke,
-      svgElements,
-    );
+    this.renderHorizontalConnection(leftNode, destinationNodes[0], svgElements);
 
     //--------------------------------------------------------------------------
     //  Work out the extents of source and dest space
@@ -242,7 +223,12 @@ export class GraphConnections extends Component {
         this.svgBranchCurve(x1, y1, x2, y2, midPointX, curveRadius);
 
       svgElements.push(
-        <path {...connectorStroke} key={key} d={pathData} fill="none" />,
+        <path
+          {...this.getConnectorStroke(leftNode.isSkipped)}
+          key={key}
+          d={pathData}
+          fill="none"
+        />,
       );
     }
 
@@ -272,7 +258,12 @@ export class GraphConnections extends Component {
         this.svgBranchCurve(x1, y1, x2, y2, expandMidPointX, curveRadius);
 
       svgElements.push(
-        <path {...connectorStroke} key={key} d={pathData} fill="none" />,
+        <path
+          {...this.getConnectorStroke(rightNode.isSkipped)}
+          key={key}
+          d={pathData}
+          fill="none"
+        />,
       );
     }
 
@@ -340,19 +331,48 @@ export class GraphConnections extends Component {
     const p8x = rightNode.x - rightNodeRadius + nodeStrokeWidth / 2;
     const p8y = rightNode.y;
 
+    // 1st horizontal
+    svgElements.push(
+      <line
+        {...this.getConnectorStroke(leftNode.isSkipped)}
+        key={key}
+        x1={p1x}
+        y1={p1y}
+        x2={p2x}
+        y2={p2y}
+        fill="none"
+      />,
+    );
+
     const pathData =
-      `M ${p1x} ${p1y}` +
-      `L ${p2x} ${p2y}` + // 1st horizontal
+      `M ${p2x} ${p2y}` +
       `C ${c1x} ${c1y} ${c2x} ${c2y} ${p3x} ${p3y}` + // Curve down (upper)
       `C ${c3x} ${c3y} ${c4x} ${c4y} ${p4x} ${p4y}` + // Curve down (lower)
       `L ${p5x} ${p5y}` + // 2nd horizontal
       `C ${c5x} ${c5y} ${c6x} ${c6y} ${p6x} ${p6y}` + // Curve up (lower)
       `C ${c7x} ${c7y} ${c8x} ${c8y} ${p7x} ${p7y}` + // Curve up (upper)
-      `L ${p8x} ${p8y}` + // Last horizontal
       "";
 
     svgElements.push(
-      <path {...connectorStroke} key={key} d={pathData} fill="none" />,
+      <path
+        {...this.getConnectorStroke(false)}
+        key={key}
+        d={pathData}
+        fill="none"
+      />,
+    );
+
+    // Last horizontal
+    svgElements.push(
+      <line
+        {...this.getConnectorStroke(rightNode.isSkipped)}
+        key={key}
+        x1={p7x}
+        y1={p7y}
+        x2={p8x}
+        y2={p8y}
+        fill="none"
+      />,
     );
   }
 
@@ -364,7 +384,6 @@ export class GraphConnections extends Component {
   private renderHorizontalConnection(
     leftNode: NodeInfo,
     rightNode: NodeInfo,
-    connectorStroke: Object,
     svgElements: SVGChildren,
   ) {
     const leftNodeRadius = this.getNodeRadius(leftNode, "left");
@@ -378,7 +397,14 @@ export class GraphConnections extends Component {
 
     console.log(leftNode.key, "->", rightNode.key);
     svgElements.push(
-      <line {...connectorStroke} key={key} x1={x1} y1={y} x2={x2} y2={y} />,
+      <line
+        {...this.getConnectorStroke(leftNode.isSkipped || rightNode.isSkipped)}
+        key={key}
+        x1={x1}
+        y1={y}
+        x2={x2}
+        y2={y}
+      />,
     );
   }
 
@@ -394,7 +420,7 @@ export class GraphConnections extends Component {
     svgElements: SVGChildren,
   ) {
     console.log(leftNode.key, "~>", rightNode.key);
-    const { curveRadius, connectorStrokeWidth } = this.props.layout;
+    const { curveRadius } = this.props.layout;
     const leftNodeRadius = this.getNodeRadius(leftNode, "left");
     const rightNodeRadius = this.getNodeRadius(rightNode, "right");
 
@@ -410,12 +436,6 @@ export class GraphConnections extends Component {
       y: rightNode.y,
     };
 
-    // Stroke props common to straight / curved connections
-    const connectorStroke = {
-      className: "PWGx-pipeline-connector",
-      strokeWidth: connectorStrokeWidth,
-    };
-
     const pathData =
       `M ${leftPos.x} ${leftPos.y}` +
       this.svgBranchCurve(
@@ -428,7 +448,12 @@ export class GraphConnections extends Component {
       );
 
     svgElements.push(
-      <path {...connectorStroke} key={key} d={pathData} fill="none" />,
+      <path
+        {...this.getConnectorStroke(leftNode.isSkipped || rightNode.isSkipped)}
+        key={key}
+        d={pathData}
+        fill="none"
+      />,
     );
   }
 

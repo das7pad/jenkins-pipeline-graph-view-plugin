@@ -135,52 +135,54 @@ export function layoutGraph2(
       return [node];
     }
     if (node.hasParallel) {
-      return (
-        node.children
-          .flatMap((child) => computeConnections(child))
-          // Honor skipped state per layer, but not across layers.
-          .map((node) => ({ ...node, isSkipped: false }))
-      );
+      return node.children.flatMap((child) => computeConnections(child));
     }
-    const skipped: Set<GraphNode> = new Set();
-    if (node.type !== "root") {
-      const destinationNodes = resolveDestination(node.children[0]);
-      if (destinationNodes.length === 1 && destinationNodes[0].isSkipped) {
-        skipped.add(node);
-        skipped.add(destinationNodes[0]);
-      } else {
-        connections.push({
-          sourceNodes: [node],
-          destinationNodes,
-          skippedNodes: [],
-          hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
-        });
+    // Collect nodes in a Set. With two skipped nodes next to each other, we need to deduplicate them.
+    const sourceNodes = new Set<GraphNode>();
+    const skippedNodes = new Set<GraphNode>();
+    const connect = (
+      tailNodes: GraphNode[],
+      destination: GraphNode,
+      ignoreSkipped?: boolean,
+    ) => {
+      for (const node of tailNodes) {
+        if (ignoreSkipped || !node.isSkipped) {
+          sourceNodes.add(node);
+        } else {
+          skippedNodes.add(node);
+        }
       }
+      const destinationNodes = resolveDestination(destination);
+      if (!destinationNodes.some((n) => !n.isSkipped)) {
+        for (const node of destinationNodes) {
+          skippedNodes.add(node);
+        }
+        return;
+      }
+      connections.push({
+        sourceNodes: Array.from(sourceNodes),
+        destinationNodes,
+        skippedNodes: Array.from(skippedNodes),
+        hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
+      });
+      sourceNodes.clear();
+      skippedNodes.clear();
+    };
+    if (node.type !== "root") {
+      connect([node], node.children[0], true);
     }
     for (let i = 0; i < node.children.length - 1; i++) {
       const childA = node.children[i];
       const childB = node.children[i + 1];
-      const destinationNodes = resolveDestination(childB);
-      if (!destinationNodes.some((n) => !n.isSkipped)) {
-        for (const node of computeConnections(childA)) {
-          skipped.add(node);
-        }
-        for (const node of destinationNodes) {
-          skipped.add(node);
-        }
-        continue;
-      }
-      const nodes = Array.from(skipped).concat(computeConnections(childA));
-      connections.push({
-        sourceNodes: nodes.filter((n) => !n.isSkipped),
-        destinationNodes,
-        skippedNodes: nodes.filter((n) => n.isSkipped),
-        hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
-      });
-      skipped.clear();
+      connect(
+        computeConnections(childA),
+        childB,
+        // Honor skipped state per layer, but not across layers.
+        childA.hasParallel,
+      );
     }
     const last = node.children[node.children.length - 1];
-    if (last.isSkipped || skipped.size > 0) {
+    if (last.isSkipped || skippedNodes.size > 0 || sourceNodes.size > 0) {
       throw new Error("bug: collectNested did not add trailing dummy node");
     }
     return computeConnections(last);
@@ -304,12 +306,13 @@ function printDebugInfo(
       "name",
     ],
   );
-  const flatten = (v: NodeInfo[]) => v.map((n) => `${n.key} (${n.name})`);
+  const joinNodeInfo = (v: NodeInfo[]) =>
+    v.map((n) => `${n.key} (${n.name})`).join(",");
   console.table(
     connections.map((c) => ({
-      sourceNodes: flatten(c.sourceNodes),
-      destinationNodes: flatten(c.destinationNodes),
-      skippedNodes: flatten(c.skippedNodes),
+      sourceNodes: joinNodeInfo(c.sourceNodes),
+      destinationNodes: joinNodeInfo(c.destinationNodes),
+      skippedNodes: joinNodeInfo(c.skippedNodes),
       hasBranchLabels: c.hasBranchLabels,
     })),
   );
@@ -404,6 +407,7 @@ function collectNested(
     ) {
       // Make space for big label, do not extend depth: we skip the small label.
       childNode.maxShift += layout.labelOffsetV;
+      childNode.maxDepth -= layout.smallLabelOffsetV;
     }
     collectNested(childNode, stage.children, layout, showNames);
     node.children.push(childNode);
