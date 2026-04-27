@@ -264,8 +264,7 @@ export function layoutGraph2(
 
   const measuredWidth = graph.root.maxWidth;
   // TODO: refine maxDepth
-  const measuredHeight =
-    graph.root.y + graph.root.maxDepth + (graph.root.y - layout.ypStart);
+  const measuredHeight = graph.root.y + graph.root.maxDepth;
 
   if (debugPipelineGraph) {
     printDebugInfo(newStages, graph, nodes, connections);
@@ -390,6 +389,7 @@ function collectNested(
 ) {
   if (node.isSkipped || stages.length === 0) return;
   for (const stage of stages) {
+    // TODO: turn PARALLEL -> PARALLEL into PARALLEL -> STAGE -> PARALLEL
     const hasBranchLabel =
       stage.type === "PARALLEL" && stage.children.length > 0;
     const hasParallel =
@@ -416,7 +416,6 @@ function collectNested(
   if (node.hasParallel) {
     // Move maxShift from first parallel child up one level.
     node.maxShift = node.children[0].maxShift;
-    node.children[0].maxDepth -= node.children[0].maxShift;
     node.maxDepth = sumGraphNodeProp(node, "maxDepth");
     node.maxWidth = maxGraphNodeProp(node, "maxWidth");
     if (node.children.some((c) => c.hasBranchLabel)) {
@@ -429,8 +428,9 @@ function collectNested(
     node.maxShift = maxGraphNodeProp(node, "maxShift");
     if (node.children.some((child) => child.hasBigLabel)) {
       // Make space for big label
-      node.maxShift += layout.nodeRadius + layout.labelOffsetV;
-      node.maxDepth += layout.nodeRadius + layout.labelOffsetV;
+      const bigLabelHeight = layout.labelOffsetV;
+      node.maxShift += bigLabelHeight;
+      node.maxDepth += bigLabelHeight;
     }
   }
   const last = node.children[node.children.length - 1];
