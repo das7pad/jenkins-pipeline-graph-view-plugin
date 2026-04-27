@@ -97,7 +97,10 @@ export type GraphNode = {
   maxDepth: number;
   hasParallel?: boolean;
   hasBranchLabel?: boolean;
-} & (({ type: "other" | "parallel" } & StageNodeInfo) | PlaceholderNodeInfo);
+  hasBigLabel?: boolean;
+  hasSmallLabel?: boolean;
+  hasTiming?: boolean;
+} & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 export interface NodeColumn {
   topStage?: StageInfo; // Top-most stage for this column, which will have no rendered nodes if it's parallel
