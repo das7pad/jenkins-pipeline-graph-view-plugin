@@ -113,12 +113,10 @@ export function layoutGraph2(
       if (node.hasParallel) {
         if (i > 0) child.y += child.maxShift;
         yP += child.maxDepth;
-        childExtraXp =
-          Math.floor(
-            (node.maxWidth - extraXp - child.maxWidth) /
-              2 /
-              layout.nodeSpacingH,
-          ) * layout.nodeSpacingH;
+        childExtraXp = toMultipleOf(
+          (node.maxWidth - extraXp - child.maxWidth) / 2,
+          layout.nodeSpacingH,
+        );
         if (child.children.length === 0) {
           child.x += childExtraXp;
           childExtraXp = 0;
@@ -242,7 +240,12 @@ export function layoutGraph2(
     )
     .map((node) => {
       return {
-        x: node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
+        x:
+          node.x +
+          toMultipleOf(
+            (node.maxWidth - layout.nodeSpacingH) / 2,
+            layout.nodeSpacingH / 2,
+          ),
         y: node.y - (node.isSkipped ? 0 : node.maxShift),
         key: "l_big_" + node.key,
         node,
@@ -256,7 +259,12 @@ export function layoutGraph2(
     .filter((node) => !node.isPlaceholder)
     .map((node) => {
       return {
-        x: node.x + (node.maxWidth - layout.nodeSpacingH) / 2,
+        x:
+          node.x +
+          toMultipleOf(
+            (node.maxWidth - layout.nodeSpacingH) / 2,
+            layout.nodeSpacingH / 2,
+          ),
         y: node.y + 55,
         node,
         stage: node.stage,
@@ -329,6 +337,10 @@ type Graph = {
   root: GraphNode;
   counterNode: GraphNode & CounterNodeInfo;
 };
+
+function toMultipleOf(n: number, multiple: number): number {
+  return Math.floor(n / multiple) * multiple;
+}
 
 function sumGraphNodeProp(
   node: GraphNode,
