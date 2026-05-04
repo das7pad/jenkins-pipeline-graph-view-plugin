@@ -100,6 +100,7 @@ export type GraphNode = {
   hasBigLabel?: boolean;
   hasSmallLabel?: boolean;
   hasTiming?: boolean;
+  hasChildWithBranchLabel?: boolean;
 } & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 export interface NodeColumn {

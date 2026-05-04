@@ -101,7 +101,7 @@ export function layoutGraph2(
 
   const computePositions = (node: GraphNode, extraXp: number) => {
     if (node.children.length === 0) return;
-    if (node.hasParallel && node.children.some((c) => c.hasBranchLabel)) {
+    if (node.hasChildWithBranchLabel) {
       extraXp += layout.nodeSpacingH;
     }
     let xP = node.x + extraXp;
@@ -114,7 +114,10 @@ export function layoutGraph2(
       }
       let childExtraXp = 0;
       if (node.hasParallel) {
-        if (i > 0) child.y += child.maxShift;
+        if (i > 0) {
+          child.y += child.maxShift;
+          yP += child.maxShift;
+        }
         yP += child.maxDepth;
         childExtraXp = toMultipleOf(
           (node.maxWidth - extraXp - child.maxWidth) / 2,
@@ -232,11 +235,12 @@ export function layoutGraph2(
       return {
         x:
           node.x +
+          (node.hasChildWithBranchLabel ? layout.nodeSpacingH : 0) +
           toMultipleOf(
             (node.maxWidth - layout.nodeSpacingH) / 2,
             layout.nodeSpacingH / 2,
           ),
-        y: node.y - (node.isSkipped ? 0 : node.maxShift),
+        y: node.y - (node.maxShift - layout.labelOffsetV),
         key: "l_big_" + node.key,
         node,
         stage: "stage" in node ? node.stage : undefined,
@@ -263,7 +267,6 @@ export function layoutGraph2(
     });
 
   const measuredWidth = graph.root.maxWidth;
-  // TODO: refine maxDepth
   const measuredHeight = graph.root.y + graph.root.maxDepth;
 
   if (debugPipelineGraph) {
@@ -411,14 +414,21 @@ function collectNested(
       children: [],
     };
     collectNested(childNode, stage.children, layout, showNames);
+    if (hasBigLabel) childNode.maxShift += layout.labelOffsetV;
     node.children.push(childNode);
   }
   if (node.hasParallel) {
     // Move maxShift from first parallel child up one level.
-    node.maxShift = node.children[0].maxShift;
-    node.maxDepth = sumGraphNodeProp(node, "maxDepth");
+    const inheritedShift = node.children[0].maxShift;
+    node.maxShift = inheritedShift;
     node.maxWidth = maxGraphNodeProp(node, "maxWidth");
-    if (node.children.some((c) => c.hasBranchLabel)) {
+    node.maxDepth =
+      sumGraphNodeProp(node, "maxDepth") +
+      sumGraphNodeProp(node, "maxShift") -
+      inheritedShift;
+
+    node.hasChildWithBranchLabel = node.children.some((c) => c.hasBranchLabel);
+    if (node.hasChildWithBranchLabel) {
       // Make space for branch label
       node.maxWidth += layout.nodeSpacingH;
     }
@@ -426,12 +436,6 @@ function collectNested(
     node.maxWidth = sumGraphNodeProp(node, "maxWidth");
     node.maxDepth = maxGraphNodeProp(node, "maxDepth");
     node.maxShift = maxGraphNodeProp(node, "maxShift");
-    if (node.children.some((child) => child.hasBigLabel)) {
-      // Make space for big label
-      const bigLabelHeight = layout.labelOffsetV;
-      node.maxShift += bigLabelHeight;
-      node.maxDepth += bigLabelHeight;
-    }
   }
   const last = node.children[node.children.length - 1];
   if (!node.hasParallel && (last.isSkipped || last.hasParallel)) {
