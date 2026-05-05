@@ -243,8 +243,8 @@ function DebugOutline({ node }: { node: GraphNode }) {
         <rect
           x={node.x}
           y={node.y}
-          width={node.maxWidth || 1}
-          height={node.maxDepth}
+          width={node.width || 1}
+          height={node.height}
           strokeWidth={2}
           stroke={"red"}
           fill="red"
@@ -255,13 +255,13 @@ function DebugOutline({ node }: { node: GraphNode }) {
           }}
         />
       </Tooltip>
-      {node.maxShift > 0 && (
+      {node.shiftY > 0 && (
         <Tooltip content={`${node.id} (${node.name}) shiftX`}>
           <rect
             x={node.x}
             y={node.y}
             width={node.shiftX}
-            height={node.maxDepth}
+            height={node.height}
             strokeWidth={2}
             strokeDasharray={"2,2"}
             stroke={"red"}
@@ -274,13 +274,13 @@ function DebugOutline({ node }: { node: GraphNode }) {
           />
         </Tooltip>
       )}
-      {node.maxShift > 0 && (
+      {node.shiftY > 0 && (
         <Tooltip content={`${node.id} (${node.name}) shiftY`}>
           <rect
             x={node.x}
-            y={node.y - node.maxShift}
-            width={node.maxWidth}
-            height={node.maxShift}
+            y={node.y - node.shiftY}
+            width={node.width}
+            height={node.shiftY}
             strokeWidth={2}
             strokeDasharray={"2,2"}
             stroke={"red"}

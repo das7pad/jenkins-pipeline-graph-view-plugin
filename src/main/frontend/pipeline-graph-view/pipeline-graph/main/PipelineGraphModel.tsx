@@ -93,9 +93,9 @@ export type NodeInfo = StageNodeInfo | PlaceholderNodeInfo;
 export type GraphNode = {
   children: GraphNode[];
   shiftX: number;
-  maxWidth: number;
-  maxShift: number;
-  maxDepth: number;
+  width: number;
+  shiftY: number;
+  height: number;
   hasParallel?: boolean;
   hasBranchLabel?: boolean;
   hasBigLabel?: boolean;

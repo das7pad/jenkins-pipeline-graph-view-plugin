@@ -31,9 +31,9 @@ export function newLayoutGraph(
       x: layout.nodeSpacingH / 2,
       y: 0,
       shiftX: 0,
-      maxWidth: layout.nodeSpacingH,
-      maxDepth: layout.nodeSpacingV,
-      maxShift: 0,
+      width: layout.nodeSpacingH,
+      height: layout.nodeSpacingV,
+      shiftY: 0,
       name: "Root",
       id: -42,
       key: "root",
@@ -44,9 +44,9 @@ export function newLayoutGraph(
           x: 0,
           y: 0,
           shiftX: 0,
-          maxWidth: layout.nodeSpacingH,
-          maxDepth: layout.nodeSpacingV,
-          maxShift: layout.labelOffsetV,
+          width: layout.nodeSpacingH,
+          height: layout.nodeSpacingV,
+          shiftY: layout.labelOffsetV,
           name: messages.format(LocalizedMessageKey.start),
           id: -1,
           isPlaceholder: true,
@@ -61,9 +61,9 @@ export function newLayoutGraph(
       x: 0,
       y: 0,
       shiftX: 0,
-      maxWidth: layout.nodeSpacingH,
-      maxDepth: layout.nodeSpacingV,
-      maxShift: layout.labelOffsetV,
+      width: layout.nodeSpacingH,
+      height: layout.nodeSpacingV,
+      shiftY: layout.labelOffsetV,
       name: "Counter",
       id: -2,
       isPlaceholder: true,
@@ -78,23 +78,23 @@ export function newLayoutGraph(
     if (graph.counterNode.stages.length > 0) {
       graph.root.children.push(graph.counterNode);
     }
-    graph.root.maxWidth = sumGraphNodeProp(graph.root, "maxWidth");
+    graph.root.width = sumGraphNodeProp(graph.root, "width");
   } else {
     collectNested(graph.root, newStages, layout, showNames);
   }
   graph.root.y = Math.max(
     layout.ypStart,
-    graph.root.maxShift +
+    graph.root.shiftY +
       (showNames ? layout.nodeRadius + layout.labelOffsetV : 0),
   );
-  graph.root.maxWidth += layout.nodeSpacingH;
+  graph.root.width += layout.nodeSpacingH;
   graph.root.children.push({
     x: 0,
     y: 0,
     shiftX: 0,
-    maxWidth: layout.nodeSpacingH,
-    maxDepth: layout.nodeSpacingV,
-    maxShift: layout.labelOffsetV,
+    width: layout.nodeSpacingH,
+    height: layout.nodeSpacingV,
+    shiftY: layout.labelOffsetV,
     name: messages.format(LocalizedMessageKey.end),
     id: -3,
     isPlaceholder: true,
@@ -118,13 +118,13 @@ export function newLayoutGraph(
       let childExtraXp = 0;
       if (node.hasParallel) {
         if (i > 0) {
-          // Skip first child: The entire node has been moved already by children[0].maxShift.
-          child.y += child.maxShift;
-          yP += child.maxShift;
+          // Skip first child: The entire node has been moved already by children[0].shiftY.
+          child.y += child.shiftY;
+          yP += child.shiftY;
         }
-        yP += child.maxDepth;
+        yP += child.height;
         childExtraXp = toMultipleOf(
-          (node.maxWidth - extraXp - child.maxWidth) / 2,
+          (node.width - extraXp - child.width) / 2,
           layout.nodeSpacingH,
         );
         if (child.children.length === 0) {
@@ -132,7 +132,7 @@ export function newLayoutGraph(
           childExtraXp = 0;
         }
       } else {
-        xP += child.maxWidth;
+        xP += child.width;
       }
       computePositions(child, childExtraXp);
     }
@@ -243,10 +243,10 @@ export function newLayoutGraph(
         x:
           node.x +
           toMultipleOf(
-            node.maxWidth > layout.nodeSpacingH ? node.maxWidth / 2 : 0,
+            node.width > layout.nodeSpacingH ? node.width / 2 : 0,
             layout.nodeSpacingH / 2,
           ),
-        y: node.y - (node.maxShift - layout.labelOffsetV),
+        y: node.y - (node.shiftY - layout.labelOffsetV),
         key: "l_big_" + node.key,
         node,
         stage: "stage" in node ? node.stage : undefined,
@@ -261,7 +261,7 @@ export function newLayoutGraph(
         x:
           node.x +
           toMultipleOf(
-            (node.maxWidth - layout.nodeSpacingH) / 2,
+            (node.width - layout.nodeSpacingH) / 2,
             layout.nodeSpacingH / 2,
           ),
         y: node.y + 55,
@@ -272,8 +272,8 @@ export function newLayoutGraph(
       };
     });
 
-  const measuredWidth = graph.root.maxWidth;
-  const measuredHeight = graph.root.y + graph.root.maxDepth;
+  const measuredWidth = graph.root.width;
+  const measuredHeight = graph.root.y + graph.root.height;
 
   const debug = debugPipelineGraph();
   if (debug) {
@@ -306,9 +306,9 @@ function printDebugInfo(
       .concat(nodes)
       .map((n) => ({ ...n, stage: "stage" in n && n.stage.type })),
     [
-      "maxWidth",
-      "maxDepth",
-      "maxShift",
+      "width",
+      "height",
+      "shiftY",
       "shiftX",
       "x",
       "y",
@@ -344,14 +344,14 @@ function toMultipleOf(n: number, multiple: number): number {
 
 function sumGraphNodeProp(
   node: GraphNode,
-  prop: "maxWidth" | "maxShift" | "maxDepth" | "shiftX",
+  prop: "width" | "shiftY" | "height" | "shiftX",
 ): number {
   return node.children.reduce((sum, c) => sum + c[prop], 0);
 }
 
 function maxGraphNodeProp(
   node: GraphNode,
-  prop: "maxWidth" | "maxShift" | "maxDepth" | "shiftX",
+  prop: "width" | "shiftY" | "height" | "shiftX",
 ): number {
   return Math.max(node[prop], ...node.children.map((c) => c[prop]));
 }
@@ -382,9 +382,9 @@ function collectCollapsed(
           ...makeNodeForStage(stage),
           type: "other",
           shiftX: 0,
-          maxWidth: layout.nodeSpacingH,
-          maxDepth: layout.nodeSpacingV,
-          maxShift: layout.labelOffsetV,
+          width: layout.nodeSpacingH,
+          height: layout.nodeSpacingV,
+          shiftY: layout.labelOffsetV,
           children: [],
           hasBigLabel: showNames,
           hasTiming: showDurations,
@@ -455,14 +455,14 @@ function collectNested(
       hasBranchLabel,
       hasBigLabel,
       hasSmallLabel,
-      maxWidth: layout.nodeSpacingH,
-      maxDepth: layout.nodeSpacingV,
-      maxShift: 0,
+      width: layout.nodeSpacingH,
+      height: layout.nodeSpacingV,
+      shiftY: 0,
       shiftX: 0,
       children: [],
     };
     collectNested(childNode, stage.children, layout, showNames);
-    if (hasBigLabel) childNode.maxShift += layout.labelOffsetV;
+    if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;
     if (
       childNode.hasParallel &&
       (node.hasParallel ||
@@ -470,30 +470,30 @@ function collectNested(
         childNode.children.some((c) => c.hasBranchLabel))
     ) {
       childNode.shiftX += layout.nodeSpacingH;
-      childNode.maxWidth += layout.nodeSpacingH;
+      childNode.width += layout.nodeSpacingH;
     }
     node.children.push(childNode);
   }
   if (node.hasParallel) {
-    // Move maxShift from first parallel child up one level.
-    const inheritedShift = node.children[0].maxShift;
-    node.maxShift = inheritedShift;
-    node.maxWidth = maxGraphNodeProp(node, "maxWidth");
-    node.maxDepth =
-      sumGraphNodeProp(node, "maxDepth") +
-      sumGraphNodeProp(node, "maxShift") -
+    // Move shiftY from first parallel child up one level.
+    const inheritedShift = node.children[0].shiftY;
+    node.shiftY = inheritedShift;
+    node.width = maxGraphNodeProp(node, "width");
+    node.height =
+      sumGraphNodeProp(node, "height") +
+      sumGraphNodeProp(node, "shiftY") -
       inheritedShift;
   } else {
-    node.maxWidth = sumGraphNodeProp(node, "maxWidth");
-    node.maxDepth = maxGraphNodeProp(node, "maxDepth");
-    node.maxShift = maxGraphNodeProp(node, "maxShift");
+    node.width = sumGraphNodeProp(node, "width");
+    node.height = maxGraphNodeProp(node, "height");
+    node.shiftY = maxGraphNodeProp(node, "shiftY");
   }
   const last = node.children[node.children.length - 1];
   if (!node.hasParallel && (last.isSkipped || last.hasParallel)) {
     // - Add a dummy node to "close" the skipped curve before closing the stage.
     // - Add a dummy node to "close" the parallel curve of the child.
     // In both cases, the dummy node will be the new stage end that is connected to the next node.
-    node.maxWidth += layout.nodeSpacingH / 2;
+    node.width += layout.nodeSpacingH / 2;
     node.children.push({
       isPlaceholder: true,
       type: "stage-end",
@@ -503,9 +503,9 @@ function collectNested(
       shiftX: 0,
       name: `Stage end (${node.name})`,
       id: 1_000_000 + node.id,
-      maxWidth: 0,
-      maxDepth: layout.nodeSpacingV,
-      maxShift: 0,
+      width: 0,
+      height: layout.nodeSpacingV,
+      shiftY: 0,
       children: [],
     });
   }
