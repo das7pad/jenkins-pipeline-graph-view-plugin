@@ -256,7 +256,26 @@ function DebugOutline({ node }: { node: GraphNode }) {
         />
       </Tooltip>
       {node.maxShift > 0 && (
-        <Tooltip content={`${node.id} (${node.name}) shift`}>
+        <Tooltip content={`${node.id} (${node.name}) shiftX`}>
+          <rect
+            x={node.x - node.shiftX}
+            y={node.y}
+            width={node.shiftX}
+            height={node.maxDepth}
+            strokeWidth={2}
+            strokeDasharray={"2,2"}
+            stroke={"red"}
+            fill="red"
+            fillOpacity={0.075}
+            onClick={() => {
+              setVisible(false);
+              setTimeout(() => setVisible(true), 10_000);
+            }}
+          />
+        </Tooltip>
+      )}
+      {node.maxShift > 0 && (
+        <Tooltip content={`${node.id} (${node.name}) shiftY`}>
           <rect
             x={node.x}
             y={node.y - node.maxShift}

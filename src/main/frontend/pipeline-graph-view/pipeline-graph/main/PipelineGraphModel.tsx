@@ -92,6 +92,7 @@ export type NodeInfo = StageNodeInfo | PlaceholderNodeInfo;
 
 export type GraphNode = {
   children: GraphNode[];
+  shiftX: number;
   maxWidth: number;
   maxShift: number;
   maxDepth: number;

@@ -29,6 +29,7 @@ export function layoutGraph2(
     root: {
       x: layout.nodeSpacingH / 2,
       y: 0,
+      shiftX: 0,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
@@ -41,6 +42,7 @@ export function layoutGraph2(
         {
           x: 0,
           y: 0,
+          shiftX: 0,
           maxWidth: layout.nodeSpacingH,
           maxDepth: layout.nodeSpacingV,
           maxShift: 0,
@@ -57,6 +59,7 @@ export function layoutGraph2(
     counterNode: {
       x: 0,
       y: 0,
+      shiftX: 0,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
@@ -87,6 +90,7 @@ export function layoutGraph2(
   graph.root.children.push({
     x: 0,
     y: 0,
+    shiftX: 0,
     maxWidth: layout.nodeSpacingH,
     maxDepth: layout.nodeSpacingV,
     maxShift: 0,
@@ -101,9 +105,7 @@ export function layoutGraph2(
 
   const computePositions = (node: GraphNode, extraXp: number) => {
     if (node.children.length === 0) return;
-    if (node.hasChildWithBranchLabel) {
-      extraXp += layout.nodeSpacingH;
-    }
+    extraXp += node.shiftX;
     let xP = node.x + extraXp;
     let yP = node.y;
     for (const [i, child] of node.children.entries()) {
@@ -123,6 +125,7 @@ export function layoutGraph2(
           (node.maxWidth - extraXp - child.maxWidth) / 2,
           layout.nodeSpacingH,
         );
+        console.log({ childExtraXp }, node.name, child.name);
         if (child.children.length === 0) {
           child.x += childExtraXp;
           childExtraXp = 0;
@@ -235,7 +238,7 @@ export function layoutGraph2(
       return {
         x:
           node.x +
-          (node.hasChildWithBranchLabel ? layout.nodeSpacingH : 0) +
+          node.shiftX +
           toMultipleOf(
             (node.maxWidth - layout.nodeSpacingH) / 2,
             layout.nodeSpacingH / 2,
@@ -302,11 +305,13 @@ function printDebugInfo(
       "maxWidth",
       "maxDepth",
       "maxShift",
+      "shiftX",
       "x",
       "y",
       "key",
       "type",
       "hasParallel",
+      "hasBranchLabel",
       "stage",
       "name",
     ],
@@ -342,7 +347,7 @@ function sumGraphNodeProp(
 
 function maxGraphNodeProp(
   node: GraphNode,
-  prop: "maxWidth" | "maxShift" | "maxDepth",
+  prop: "maxWidth" | "maxShift" | "maxDepth" | "shiftX",
 ): number {
   return Math.max(node[prop], ...node.children.map((c) => c[prop]));
 }
@@ -365,6 +370,7 @@ function collectCollapsed(
       graph.root.children.push({
         ...makeNodeForStage(stage),
         type: "other",
+        shiftX: 0,
         maxWidth: layout.nodeSpacingH,
         maxDepth: layout.nodeSpacingV,
         maxShift: 0,
@@ -391,15 +397,27 @@ function collectNested(
   showNames: boolean,
 ) {
   if (node.isSkipped || stages.length === 0) return;
-  for (const stage of stages) {
-    // TODO: turn PARALLEL -> PARALLEL into PARALLEL -> STAGE -> PARALLEL
-    const hasBranchLabel =
-      stage.type === "PARALLEL" && stage.children.length > 0;
-    const hasParallel =
+  for (let stage of stages) {
+    let hasParallel =
       stage.children.length > 0 && stage.children[0].type === "PARALLEL";
+    let hasBranchLabel = stage.type === "PARALLEL" && stage.children.length > 0;
+    if (stage.type === "PARALLEL" && hasParallel) {
+      // turn PARALLEL -> PARALLEL into PARALLEL -> STAGE -> PARALLEL
+      // PARALLEL[PARALLEL] -> PARALLEL[STAGE[PARALLEL,stage-end]]
+      stage = {
+        ...stage,
+        id: -stage.id,
+        children: [{ ...stage, type: "STAGE" }],
+      };
+      hasParallel = false;
+      hasBranchLabel = false;
+    }
     const isSkipped = stage.state === Result.skipped;
     const hasBigLabel = hasParallel || (isSkipped && stage.type !== "PARALLEL");
     const hasSmallLabel = !hasBigLabel;
+    let shiftX = 0;
+    if (hasBranchLabel) shiftX += layout.nodeSpacingH;
+    if (stage.id < 0) shiftX += layout.nodeSpacingH; // TODO
     const childNode: GraphNode = {
       ...makeNodeForStage(stage),
       type: "other",
@@ -408,6 +426,7 @@ function collectNested(
       hasBranchLabel,
       hasBigLabel,
       hasSmallLabel,
+      shiftX,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
@@ -427,11 +446,7 @@ function collectNested(
       sumGraphNodeProp(node, "maxShift") -
       inheritedShift;
 
-    node.hasChildWithBranchLabel = node.children.some((c) => c.hasBranchLabel);
-    if (node.hasChildWithBranchLabel) {
-      // Make space for branch label
-      node.maxWidth += layout.nodeSpacingH;
-    }
+    node.maxWidth += maxGraphNodeProp(node, "shiftX");
   } else {
     node.maxWidth = sumGraphNodeProp(node, "maxWidth");
     node.maxDepth = maxGraphNodeProp(node, "maxDepth");
@@ -449,6 +464,7 @@ function collectNested(
       key: `stage_end_${node.key}`,
       x: 0,
       y: 0,
+      shiftX: 0,
       name: `Stage end (${node.name})`,
       id: 1_000_000 + node.id,
       maxWidth: 0,
