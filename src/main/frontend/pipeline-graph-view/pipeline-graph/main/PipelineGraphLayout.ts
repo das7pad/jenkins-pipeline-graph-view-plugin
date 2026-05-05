@@ -4,6 +4,7 @@ import {
   debugPipelineGraph,
   GraphNode,
   LayoutInfo,
+  NewPositionedGraph,
   NodeColumn,
   NodeInfo,
   NodeLabelInfo,
@@ -16,14 +17,14 @@ import {
 
 const maxColumnsWhenCollapsed = 13;
 
-export function layoutGraph2(
+export function newLayoutGraph(
   newStages: Array<StageInfo>,
   layout: LayoutInfo,
   collapsed: boolean,
   messages: Messages,
   showNames: boolean,
   showDurations: boolean,
-) {
+): NewPositionedGraph {
   const graph: Graph = {
     limit: collapsed ? maxColumnsWhenCollapsed : -1,
     root: {
@@ -45,7 +46,7 @@ export function layoutGraph2(
           shiftX: 0,
           maxWidth: layout.nodeSpacingH,
           maxDepth: layout.nodeSpacingV,
-          maxShift: 0,
+          maxShift: layout.labelOffsetV,
           name: messages.format(LocalizedMessageKey.start),
           id: -1,
           isPlaceholder: true,
@@ -62,7 +63,7 @@ export function layoutGraph2(
       shiftX: 0,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
-      maxShift: 0,
+      maxShift: layout.labelOffsetV,
       name: "Counter",
       id: -2,
       isPlaceholder: true,
@@ -73,7 +74,7 @@ export function layoutGraph2(
     },
   };
   if (collapsed) {
-    collectCollapsed(newStages, graph, layout, showNames, showDurations);
+    collectCollapsed(newStages, graph, layout, showNames, showDurations, 0);
     if (graph.counterNode.stages.length > 0) {
       graph.root.children.push(graph.counterNode);
     }
@@ -93,7 +94,7 @@ export function layoutGraph2(
     shiftX: 0,
     maxWidth: layout.nodeSpacingH,
     maxDepth: layout.nodeSpacingV,
-    maxShift: 0,
+    maxShift: layout.labelOffsetV,
     name: messages.format(LocalizedMessageKey.end),
     id: -3,
     isPlaceholder: true,
@@ -117,6 +118,7 @@ export function layoutGraph2(
       let childExtraXp = 0;
       if (node.hasParallel) {
         if (i > 0) {
+          // Skip first child: The entire node has been moved already by children[0].maxShift.
           child.y += child.maxShift;
           yP += child.maxShift;
         }
@@ -125,7 +127,6 @@ export function layoutGraph2(
           (node.maxWidth - extraXp - child.maxWidth) / 2,
           layout.nodeSpacingH,
         );
-        console.log({ childExtraXp }, node.name, child.name);
         if (child.children.length === 0) {
           child.x += childExtraXp;
           childExtraXp = 0;
@@ -204,7 +205,10 @@ export function layoutGraph2(
   const nodes = flattenGraph(graph.root);
   const visibleNodes = nodes.filter(
     (node) =>
-      node.type !== "stage-end" && !node.hasParallel && !node.hasBranchLabel,
+      node.type !== "stage-end" &&
+      !node.hasParallel &&
+      !node.hasBranchLabel &&
+      node.type !== "chained-parallel",
   );
 
   const smallLabels: NodeLabelInfo[] = visibleNodes
@@ -238,9 +242,8 @@ export function layoutGraph2(
       return {
         x:
           node.x +
-          node.shiftX +
           toMultipleOf(
-            (node.maxWidth - layout.nodeSpacingH) / 2,
+            node.maxWidth > layout.nodeSpacingH ? node.maxWidth / 2 : 0,
             layout.nodeSpacingH / 2,
           ),
         y: node.y - (node.maxShift - layout.labelOffsetV),
@@ -272,11 +275,12 @@ export function layoutGraph2(
   const measuredWidth = graph.root.maxWidth;
   const measuredHeight = graph.root.y + graph.root.maxDepth;
 
-  if (debugPipelineGraph) {
+  const debug = debugPipelineGraph();
+  if (debug) {
     printDebugInfo(newStages, graph, nodes, connections);
   }
   return {
-    nodes: debugPipelineGraph ? nodes : visibleNodes,
+    nodes: debug ? nodes : visibleNodes,
     allGraphNodes: [graph.root].concat(nodes),
     connections,
     smallLabels,
@@ -340,7 +344,7 @@ function toMultipleOf(n: number, multiple: number): number {
 
 function sumGraphNodeProp(
   node: GraphNode,
-  prop: "maxWidth" | "maxShift" | "maxDepth",
+  prop: "maxWidth" | "maxShift" | "maxDepth" | "shiftX",
 ): number {
   return node.children.reduce((sum, c) => sum + c[prop], 0);
 }
@@ -358,28 +362,43 @@ function collectCollapsed(
   layout: LayoutInfo,
   showNames: boolean,
   showDurations: boolean,
+  level: number,
 ) {
   for (const stage of stages) {
-    if (graph.limit === 0) {
-      graph.counterNode.stages.push(stage);
-      continue;
+    if (
+      (!(stage.children.length > 0 && stage.children[0].type === "PARALLEL") &&
+        !(stage.type === "PARALLEL" && stage.children.length > 0)) ||
+      (level > 1 && stage.type !== "PARALLEL_BLOCK")
+    ) {
+      // Mirror filtering of old layout:
+      // - Top level: Hide stages that wrap "PARALLEL" stages.
+      // - Top level: Hide "PARALLEL" stages with children.
+      // - Rest: Hide generic "PARALLEL_BLOCK" wrapper.
+      if (graph.limit === 0) {
+        graph.counterNode.stages.push(stage);
+      } else {
+        graph.limit--;
+        graph.root.children.push({
+          ...makeNodeForStage(stage),
+          type: "other",
+          shiftX: 0,
+          maxWidth: layout.nodeSpacingH,
+          maxDepth: layout.nodeSpacingV,
+          maxShift: layout.labelOffsetV,
+          children: [],
+          hasBigLabel: showNames,
+          hasTiming: showDurations,
+        });
+      }
     }
-    graph.limit--;
-    if (stage.type !== "PARALLEL_BLOCK") {
-      // Hide "Parallel" stages
-      graph.root.children.push({
-        ...makeNodeForStage(stage),
-        type: "other",
-        shiftX: 0,
-        maxWidth: layout.nodeSpacingH,
-        maxDepth: layout.nodeSpacingV,
-        maxShift: 0,
-        children: [],
-        hasBigLabel: showNames,
-        hasTiming: showDurations,
-      });
-    }
-    collectCollapsed(stage.children, graph, layout, showNames, showDurations);
+    collectCollapsed(
+      stage.children,
+      graph,
+      layout,
+      showNames,
+      showDurations,
+      level + 1,
+    );
   }
 }
 
@@ -397,11 +416,12 @@ function collectNested(
   showNames: boolean,
 ) {
   if (node.isSkipped || stages.length === 0) return;
-  for (let stage of stages) {
+  for (let [idx, stage] of stages.entries()) {
+    const isParallel = stage.type === "PARALLEL";
     let hasParallel =
       stage.children.length > 0 && stage.children[0].type === "PARALLEL";
-    let hasBranchLabel = stage.type === "PARALLEL" && stage.children.length > 0;
-    if (stage.type === "PARALLEL" && hasParallel) {
+    const isChainedParallel = isParallel && hasParallel;
+    if (isChainedParallel) {
       // turn PARALLEL -> PARALLEL into PARALLEL -> STAGE -> PARALLEL
       // PARALLEL[PARALLEL] -> PARALLEL[STAGE[PARALLEL,stage-end]]
       stage = {
@@ -410,30 +430,48 @@ function collectNested(
         children: [{ ...stage, type: "STAGE" }],
       };
       hasParallel = false;
-      hasBranchLabel = false;
     }
     const isSkipped = stage.state === Result.skipped;
-    const hasBigLabel = hasParallel || (isSkipped && stage.type !== "PARALLEL");
-    const hasSmallLabel = !hasBigLabel;
-    let shiftX = 0;
-    if (hasBranchLabel) shiftX += layout.nodeSpacingH;
-    if (stage.id < 0) shiftX += layout.nodeSpacingH; // TODO
+    let hasBigLabel = hasParallel || (isSkipped && stage.type !== "PARALLEL");
+    let hasSmallLabel = !hasBigLabel;
+    let hasBranchLabel = isParallel && stage.children.length > 0;
+    if (
+      isParallel &&
+      stage.children.length === 1 &&
+      stage.children[0].children.length > 0 &&
+      stage.children[0].children[0].type === "PARALLEL" &&
+      stage.name === stage.children[0].name
+    ) {
+      // Do not add any labels. Show a big label on the nested parallel block.
+      hasBigLabel = false;
+      hasSmallLabel = false;
+      hasBranchLabel = false;
+    }
     const childNode: GraphNode = {
       ...makeNodeForStage(stage),
-      type: "other",
+      type: isChainedParallel ? "chained-parallel" : "other",
       isSkipped,
       hasParallel,
       hasBranchLabel,
       hasBigLabel,
       hasSmallLabel,
-      shiftX,
       maxWidth: layout.nodeSpacingH,
       maxDepth: layout.nodeSpacingV,
       maxShift: 0,
+      shiftX: 0,
       children: [],
     };
     collectNested(childNode, stage.children, layout, showNames);
     if (hasBigLabel) childNode.maxShift += layout.labelOffsetV;
+    if (
+      childNode.hasParallel &&
+      (node.hasParallel ||
+        idx === 0 ||
+        childNode.children.some((c) => c.hasBranchLabel))
+    ) {
+      childNode.shiftX += layout.nodeSpacingH;
+      childNode.maxWidth += layout.nodeSpacingH;
+    }
     node.children.push(childNode);
   }
   if (node.hasParallel) {
@@ -445,8 +483,6 @@ function collectNested(
       sumGraphNodeProp(node, "maxDepth") +
       sumGraphNodeProp(node, "maxShift") -
       inheritedShift;
-
-    node.maxWidth += maxGraphNodeProp(node, "shiftX");
   } else {
     node.maxWidth = sumGraphNodeProp(node, "maxWidth");
     node.maxDepth = maxGraphNodeProp(node, "maxDepth");

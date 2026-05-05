@@ -258,7 +258,7 @@ function DebugOutline({ node }: { node: GraphNode }) {
       {node.maxShift > 0 && (
         <Tooltip content={`${node.id} (${node.name}) shiftX`}>
           <rect
-            x={node.x - node.shiftX}
+            x={node.x}
             y={node.y}
             width={node.shiftX}
             height={node.maxDepth}

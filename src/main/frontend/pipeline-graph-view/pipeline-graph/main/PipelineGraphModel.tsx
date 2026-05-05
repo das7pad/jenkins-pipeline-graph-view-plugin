@@ -102,7 +102,10 @@ export type GraphNode = {
   hasSmallLabel?: boolean;
   hasTiming?: boolean;
   hasChildWithBranchLabel?: boolean;
-} & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
+} & (
+  | ({ type: "other" | "chained-parallel" } & StageNodeInfo)
+  | PlaceholderNodeInfo
+);
 
 export interface NodeColumn {
   topStage?: StageInfo; // Top-most stage for this column, which will have no rendered nodes if it's parallel
@@ -144,5 +147,35 @@ export interface PositionedGraph {
   measuredHeight: number;
 }
 
-// Turn on debugging. Use a constant to let tree-shaking remove debug code.
-export const debugPipelineGraph = true;
+/**
+ * The result of the new graph layout algorithm
+ */
+export interface NewPositionedGraph {
+  nodes: Array<NodeInfo>;
+  allGraphNodes: Array<GraphNode>;
+  connections: Array<CompositeConnection>;
+  bigLabels: Array<NodeLabelInfo>;
+  timings: Array<NodeLabelInfo>;
+  smallLabels: Array<NodeLabelInfo>;
+  branchLabels: Array<NodeLabelInfo>;
+  measuredWidth: number;
+  measuredHeight: number;
+}
+
+export function isFlagEnabled(flag: string) {
+  const isEnabled = (v: string | null) =>
+    ["yes", "1", "true", "enabled"].includes(v?.toLowerCase() ?? "");
+
+  try {
+    const search = new URLSearchParams(window.location.search);
+    if (search.has(flag)) return isEnabled(search.get(flag));
+  } catch {}
+  try {
+    // LocalStorage access can throw, gracefully access the key.
+    return isEnabled(window.localStorage.getItem(flag));
+  } catch {}
+  return false;
+}
+export const tryNewLayout = () => isFlagEnabled("tryNewLayout");
+// Optionally turn on debugging for the graph. Once the new layout is stable, we could use a constant to let tree-shaking remove debug code in production bundles.
+export const debugPipelineGraph = () => isFlagEnabled("debugPipelineGraph");

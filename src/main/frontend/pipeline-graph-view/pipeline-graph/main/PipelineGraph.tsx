@@ -9,7 +9,7 @@ import {
 
 import { I18NContext } from "../../../common/i18n/index.ts";
 import { useUserPreferences } from "../../../common/user/user-preferences-provider.tsx";
-import { layoutGraph, layoutGraph2 } from "./PipelineGraphLayout";
+import { layoutGraph, newLayoutGraph } from "./PipelineGraphLayout";
 import {
   CompositeConnection,
   debugPipelineGraph,
@@ -19,6 +19,7 @@ import {
   NodeInfo,
   NodeLabelInfo,
   StageInfo,
+  tryNewLayout,
 } from "./PipelineGraphModel.tsx";
 import { GraphConnections } from "./support/connections.tsx";
 import {
@@ -56,8 +57,8 @@ export function PipelineGraph({
   const messages = useContext(I18NContext);
 
   useEffect(() => {
-    if (window.location.search.includes("new-layout=true")) {
-      const layout2 = layoutGraph2(
+    if (tryNewLayout()) {
+      const result = newLayoutGraph(
         stages,
         fullLayout,
         collapsed ?? false,
@@ -65,15 +66,15 @@ export function PipelineGraph({
         showNames || !collapsed,
         showDurations,
       );
-      setNodes(layout2.nodes);
-      setAllGraphNodes(layout2.allGraphNodes);
-      setConnections(layout2.connections);
-      setSmallLabels(layout2.smallLabels);
-      setBigLabels(layout2.bigLabels);
-      setBranchLabels(layout2.branchLabels);
-      setTimings(layout2.timings);
-      setMeasuredWidth(layout2.measuredWidth);
-      setMeasuredHeight(layout2.measuredHeight);
+      setNodes(result.nodes);
+      setAllGraphNodes(result.allGraphNodes);
+      setConnections(result.connections);
+      setSmallLabels(result.smallLabels);
+      setBigLabels(result.bigLabels);
+      setBranchLabels(result.branchLabels);
+      setTimings(result.timings);
+      setMeasuredWidth(result.measuredWidth);
+      setMeasuredHeight(result.measuredHeight);
       return;
     }
 
@@ -110,7 +111,7 @@ export function PipelineGraph({
     position: "relative",
     overflow: "visible",
   };
-  if (debugPipelineGraph) {
+  if (debugPipelineGraph()) {
     outerDivStyle.border = "1px dashed red";
   }
 
@@ -126,7 +127,7 @@ export function PipelineGraph({
             isStageSelected={stageIsSelected}
           />
 
-          {debugPipelineGraph && <DebugOutlines nodes={allGraphNodes} />}
+          {debugPipelineGraph() && <DebugOutlines nodes={allGraphNodes} />}
         </svg>
 
         {nodes.map((node) => (
