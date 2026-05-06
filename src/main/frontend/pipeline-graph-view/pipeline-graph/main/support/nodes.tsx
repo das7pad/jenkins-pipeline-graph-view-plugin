@@ -9,8 +9,8 @@ import {
 import Tooltip from "../../../../common/components/tooltip.tsx";
 import { classNames } from "../../../../common/utils/classnames.ts";
 import LiveTotal from "../../../../common/utils/live-total.tsx";
-import { CounterNodeInfo } from "../PipelineGraphLayout.ts";
 import {
+  CounterNodeInfo,
   GraphNode,
   LayoutInfo,
   NodeInfo,

@@ -88,6 +88,10 @@ export interface PlaceholderNodeInfo extends BaseNodeInfo {
   type: "start" | "end" | "counter" | "root" | "stage-end";
 }
 
+export interface CounterNodeInfo extends PlaceholderNodeInfo {
+  stages: StageInfo[];
+}
+
 export type NodeInfo = StageNodeInfo | PlaceholderNodeInfo;
 
 export type GraphNode = {
@@ -150,7 +154,7 @@ export interface PositionedGraph {
 /**
  * The result of the new graph layout algorithm
  */
-export interface NewPositionedGraph {
+export interface NestedPositionedGraph {
   nodes: Array<NodeInfo>;
   allGraphNodes: Array<GraphNode>;
   connections: Array<CompositeConnection>;
@@ -176,6 +180,7 @@ export function isFlagEnabled(flag: string) {
   } catch {}
   return false;
 }
-export const tryNewLayout = () => isFlagEnabled("tryNewLayout");
-// Optionally turn on debugging for the graph. Once the new layout is stable, we could use a constant to let tree-shaking remove debug code in production bundles.
+
+export const nestedLayout = () => isFlagEnabled("nestedLayout");
+// Optionally turn on debugging for the graph. Once the nested layout is stable, we could use a constant to let tree-shaking remove debug code in production bundles.
 export const debugPipelineGraph = () => isFlagEnabled("debugPipelineGraph");

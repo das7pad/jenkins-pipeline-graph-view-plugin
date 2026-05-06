@@ -9,17 +9,18 @@ import {
 
 import { I18NContext } from "../../../common/i18n/index.ts";
 import { useUserPreferences } from "../../../common/user/user-preferences-provider.tsx";
-import { layoutGraph, newLayoutGraph } from "./PipelineGraphLayout";
+import { nestedGraphLayout } from "./NestedPipelineGraphLayout.ts";
+import { layoutGraph } from "./PipelineGraphLayout";
 import {
   CompositeConnection,
   debugPipelineGraph,
   defaultLayout,
   GraphNode,
   LayoutInfo,
+  nestedLayout,
   NodeInfo,
   NodeLabelInfo,
   StageInfo,
-  tryNewLayout,
 } from "./PipelineGraphModel.tsx";
 import { GraphConnections } from "./support/connections.tsx";
 import {
@@ -57,8 +58,8 @@ export function PipelineGraph({
   const messages = useContext(I18NContext);
 
   useEffect(() => {
-    if (tryNewLayout()) {
-      const result = newLayoutGraph(
+    if (nestedLayout()) {
+      const result = nestedGraphLayout(
         stages,
         fullLayout,
         collapsed ?? false,
