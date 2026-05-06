@@ -437,11 +437,8 @@ function collectNested(
     if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;
     if (
       childNode.hasParallel &&
-      (node.hasParallel ||
-        idx === 0 ||
-        childNode.children.some((c) => c.hasBranchLabel))
+      (idx === 0 || childNode.children.some((c) => c.hasBranchLabel))
     ) {
-      // - Nested parallel child, TODO possible?
       // - First node and has parallel children, avoid collapsing curves.
       // - Any child has branch label, make space for branch label.
       childNode.shiftX += layout.nodeSpacingH;
