@@ -1,12 +1,12 @@
 import { LocalizedMessageKey, Messages } from "../../../common/i18n/index.ts";
 import {
   CompositeConnection,
+  ConnectionEdge,
   CounterNodeInfo,
   debugPipelineGraph,
   GraphNode,
   LayoutInfo,
   NestedPositionedGraph,
-  NodeInfo,
   NodeLabelInfo,
   Result,
   StageInfo,
@@ -190,34 +190,34 @@ export function nestedGraphLayout(
       node.type !== "chained-parallel",
   );
 
-  const smallLabels: NodeLabelInfo[] = visibleNodes
+  const smallLabels = visibleNodes
     .filter((node) => node.hasSmallLabel)
-    .map((node) => {
+    .map((node): NodeLabelInfo => {
       return {
         x: node.x,
         y: node.y,
         text: node.name,
         key: "l_small_" + node.key,
-        node,
+        isPlaceholder: node.isPlaceholder,
         stage: "stage" in node ? node.stage : undefined,
       };
     });
 
-  const branchLabels: NodeLabelInfo[] = nodes
+  const branchLabels = nodes
     .filter((node) => node.hasBranchLabel)
-    .map((node) => {
+    .map((node): NodeLabelInfo => {
       return {
         x: node.x - layout.nodeSpacingH,
         y: node.y,
         key: "l_branch_" + node.key,
-        node,
+        isPlaceholder: node.isPlaceholder,
         text: node.name,
       };
     });
 
-  const bigLabels: NodeLabelInfo[] = nodes
+  const bigLabels = nodes
     .filter((node) => node.hasBigLabel)
-    .map((node) => {
+    .map((node): NodeLabelInfo => {
       return {
         x:
           node.x +
@@ -227,15 +227,15 @@ export function nestedGraphLayout(
           ),
         y: node.y - (node.shiftY - layout.labelOffsetV),
         key: "l_big_" + node.key,
-        node,
+        isPlaceholder: node.isPlaceholder,
         stage: "stage" in node ? node.stage : undefined,
         text: node.name,
       };
     });
 
-  const timings: NodeLabelInfo[] = nodes
+  const timings = nodes
     .filter((node) => node.hasTiming)
-    .map((node) => {
+    .map((node): NodeLabelInfo => {
       return {
         x:
           node.x +
@@ -244,7 +244,7 @@ export function nestedGraphLayout(
             layout.nodeSpacingH / 2,
           ),
         y: node.y + 55,
-        node,
+        isPlaceholder: node.isPlaceholder,
         stage: "stage" in node ? node.stage : undefined,
         text: "", // we take the duration from the stage itself at render time
         key: `l_t_${node.key}`,
@@ -254,13 +254,14 @@ export function nestedGraphLayout(
   const measuredWidth = graph.root.width;
   const measuredHeight = graph.root.y + graph.root.height;
 
+  const allGraphNodes = [graph.root].concat(nodes);
   const debug = debugPipelineGraph();
   if (debug) {
-    printDebugInfo(newStages, graph, nodes, connections);
+    printDebugInfo(newStages, graph, allGraphNodes, connections);
   }
   return {
     nodes: debug ? nodes : visibleNodes,
-    allGraphNodes: [graph.root].concat(nodes),
+    allGraphNodes,
     connections,
     smallLabels,
     bigLabels,
@@ -278,12 +279,24 @@ function printDebugInfo(
   connections: CompositeConnection[],
 ) {
   console.log("JSON.stringify(newStages)", JSON.stringify(newStages));
+  console.log(
+    "For test snapshot",
+    JSON.stringify(
+      newStages.map(function forTestSnapshot(stage: StageInfo): any {
+        return {
+          name: stage.name,
+          state: stage.state,
+          id: stage.id,
+          type: stage.type,
+          children: stage.children.map(forTestSnapshot),
+        };
+      }),
+    ),
+  );
   console.log("newStages", newStages);
   console.log("graph", graph);
   console.table(
-    [graph.root]
-      .concat(nodes)
-      .map((n) => ({ ...n, stage: "stage" in n && n.stage.type })),
+    nodes.map((n) => ({ ...n, stage: "stage" in n && n.stage.type })),
     [
       "width",
       "height",
@@ -299,13 +312,19 @@ function printDebugInfo(
       "name",
     ],
   );
-  const joinNodeInfo = (v: NodeInfo[]) =>
-    v.map((n) => `${n.key} (${n.name})`).join(",");
+
+  const joinEdges = (ee: ConnectionEdge[]) =>
+    ee
+      .map((e) => {
+        const node = nodes.find((n) => n.key === e.key);
+        return `${e.key} (${node?.name})`;
+      })
+      .join(",");
   console.table(
     connections.map((c) => ({
-      sourceNodes: joinNodeInfo(c.sourceNodes),
-      destinationNodes: joinNodeInfo(c.destinationNodes),
-      skippedNodes: joinNodeInfo(c.skippedNodes),
+      sourceNodes: joinEdges(c.sourceNodes),
+      destinationNodes: joinEdges(c.destinationNodes),
+      skippedNodes: joinEdges(c.skippedNodes),
       hasBranchLabels: c.hasBranchLabels,
     })),
   );
@@ -392,8 +411,8 @@ function collectNested(
   if (node.isSkipped || stages.length === 0) return;
   for (let [idx, stage] of stages.entries()) {
     const isParallel = stage.type === "PARALLEL";
-    let hasParallel =
-      stage.children.length > 0 && stage.children[0].type === "PARALLEL";
+    const hasChildren = stage.children.length > 0;
+    let hasParallel = hasChildren && stage.children[0].type === "PARALLEL";
     if (isParallel && hasParallel) {
       // Turn PARALLEL -> PARALLEL into PARALLEL -> PARALLEL_BLOCK -> PARALLEL.
       // This allows for a stage-end node to be inserted after the parallel children.
@@ -405,16 +424,19 @@ function collectNested(
       };
       hasParallel = false;
     }
-    const isSkipped = stage.state === Result.skipped;
-    let hasBigLabel = hasParallel || (isSkipped && !isParallel);
-    let hasSmallLabel = !hasBigLabel;
-    let hasBranchLabel = isParallel && stage.children.length > 0;
     const isChainedParallel =
       isParallel &&
       stage.children.length === 1 &&
       stage.children[0].children.length > 0 &&
       stage.children[0].children[0].type === "PARALLEL" &&
       stage.name === stage.children[0].name;
+    const isSkipped = stage.state === Result.skipped;
+    const firstChildIsSkipped =
+      hasChildren && stage.children[0].state === Result.skipped;
+
+    let hasBigLabel = hasParallel || (isSkipped && !isParallel);
+    let hasSmallLabel = !hasBigLabel;
+    let hasBranchLabel = isParallel && hasChildren;
     if (isChainedParallel) {
       // Do not add any labels. Show a big label on the nested parallel block.
       hasBigLabel = false;
@@ -427,11 +449,13 @@ function collectNested(
         layout,
         isChainedParallel ? "chained-parallel" : "other",
       ),
+      isParallel,
       isSkipped,
       hasParallel,
       hasBranchLabel,
       hasBigLabel,
       hasSmallLabel,
+      firstChildIsSkipped,
     };
     collectNested(childNode, stage.children, layout, showNames);
     if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;

@@ -106,6 +106,8 @@ export type GraphNode = {
   hasSmallLabel?: boolean;
   hasTiming?: boolean;
   hasChildWithBranchLabel?: boolean;
+  isParallel?: boolean;
+  firstChildIsSkipped?: boolean;
 } & (
   | ({ type: "other" | "chained-parallel" } & StageNodeInfo)
   | PlaceholderNodeInfo
@@ -119,10 +121,21 @@ export interface NodeColumn {
   startX: number; // Where to put the branch labels, or if none, the center of the left-most node(s)
 }
 
+export interface ConnectionEdge {
+  x: number;
+  y: number;
+  key: string;
+  type?: string;
+  isPlaceholder?: boolean;
+  isParallel?: boolean;
+  isSkipped?: boolean;
+  firstChildIsSkipped?: boolean;
+}
+
 export interface CompositeConnection {
-  sourceNodes: Array<NodeInfo>;
-  destinationNodes: Array<NodeInfo>;
-  skippedNodes: Array<NodeInfo>;
+  sourceNodes: Array<ConnectionEdge>;
+  destinationNodes: Array<ConnectionEdge>;
+  skippedNodes: Array<ConnectionEdge>;
   hasBranchLabels: boolean;
 }
 
@@ -132,7 +145,7 @@ export interface NodeLabelInfo {
   text: string;
   key: string;
   stage?: StageInfo;
-  node: NodeInfo;
+  isPlaceholder?: boolean;
 }
 
 export type LayoutInfo = typeof defaultLayout;

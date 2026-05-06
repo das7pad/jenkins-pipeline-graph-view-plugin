@@ -2,16 +2,15 @@ import { Component, SVGAttributes } from "react";
 
 import {
   CompositeConnection,
+  ConnectionEdge,
   LayoutInfo,
-  NodeInfo,
-  Result,
 } from "../PipelineGraphModel.tsx";
 import { nodeStrokeWidth } from "../support/StatusIcons.tsx";
 
 type SVGChildren = Array<any>; // Fixme: Maybe refine this? Not sure what should go here, we have working code I can't make typecheck
 
 // Generate a react key for a connection
-function connectorKey(leftNode: NodeInfo, rightNode: NodeInfo) {
+function connectorKey(leftNode: ConnectionEdge, rightNode: ConnectionEdge) {
   return "c_" + leftNode.key + "_to_" + rightNode.key;
 }
 
@@ -74,8 +73,8 @@ export class GraphConnections extends Component {
    * Adds all the SVG components to the elements list.
    */
   private renderBasicConnections(
-    sourceNodes: Array<NodeInfo>,
-    destinationNodes: Array<NodeInfo>,
+    sourceNodes: Array<ConnectionEdge>,
+    destinationNodes: Array<ConnectionEdge>,
     svgElements: SVGChildren,
     hasBranchLabels: boolean,
   ) {
@@ -135,7 +134,7 @@ export class GraphConnections extends Component {
     }
   }
 
-  getNodeRadius(node: NodeInfo, edge: "left" | "right") {
+  getNodeRadius(node: ConnectionEdge, edge: "left" | "right") {
     const { nodeRadius, terminalRadius, nodeSpacingH } = this.props.layout;
     if (node.isPlaceholder) {
       if (node.type === "stage-end") {
@@ -143,16 +142,12 @@ export class GraphConnections extends Component {
       }
       return terminalRadius;
     }
-    if (
-      node.stage.type === "PARALLEL" &&
-      node.stage.children.length > 0 &&
-      node.stage.children[0].state === Result.skipped
-    ) {
+    if (node.isParallel && node.firstChildIsSkipped) {
       // Turn half of the regular connecting line into a skipped line.
       if (edge === "right") return nodeSpacingH / 2;
       if (edge === "left") return -nodeSpacingH / 2;
     }
-    if (node.stage.type === "PARALLEL") return 0;
+    if (node.isParallel) return 0;
     return nodeRadius;
   }
 
@@ -162,9 +157,9 @@ export class GraphConnections extends Component {
    * Adds all the SVG components to the elements list.
    */
   private renderSkippingConnections(
-    sourceNodes: Array<NodeInfo>,
-    destinationNodes: Array<NodeInfo>,
-    skippedNodes: Array<NodeInfo>,
+    sourceNodes: Array<ConnectionEdge>,
+    destinationNodes: Array<ConnectionEdge>,
+    skippedNodes: Array<ConnectionEdge>,
     svgElements: SVGChildren,
     hasBranchLabels: boolean,
   ) {
@@ -407,8 +402,8 @@ export class GraphConnections extends Component {
    * Adds all the SVG components to the elements list.
    */
   private renderHorizontalConnection(
-    leftNode: NodeInfo,
-    rightNode: NodeInfo,
+    leftNode: ConnectionEdge,
+    rightNode: ConnectionEdge,
     svgElements: SVGChildren,
   ) {
     const leftNodeRadius = this.getNodeRadius(leftNode, "left");
@@ -438,8 +433,8 @@ export class GraphConnections extends Component {
    * Adds all the SVG components to the elements list.
    */
   private renderBasicCurvedConnection(
-    leftNode: NodeInfo,
-    rightNode: NodeInfo,
+    leftNode: ConnectionEdge,
+    rightNode: ConnectionEdge,
     midPointX: number,
     svgElements: SVGChildren,
   ) {
