@@ -219,12 +219,7 @@ export function nestedGraphLayout(
     .filter((node) => node.hasBigLabel)
     .map((node): NodeLabelInfo => {
       return {
-        x:
-          node.x +
-          toMultipleOf(
-            node.width > layout.nodeSpacingH ? node.width / 2 : 0,
-            layout.nodeSpacingH / 2,
-          ),
+        x: node.x + node.width / 2 - layout.nodeSpacingH / 2,
         y: node.y - (node.shiftY - layout.labelOffsetV),
         key: "l_big_" + node.key,
         isPlaceholder: node.isPlaceholder,
@@ -237,12 +232,7 @@ export function nestedGraphLayout(
     .filter((node) => node.hasTiming)
     .map((node): NodeLabelInfo => {
       return {
-        x:
-          node.x +
-          toMultipleOf(
-            (node.width - layout.nodeSpacingH) / 2,
-            layout.nodeSpacingH / 2,
-          ),
+        x: node.x + node.width / 2 - layout.nodeSpacingH / 2,
         y: node.y + 55,
         isPlaceholder: node.isPlaceholder,
         stage: "stage" in node ? node.stage : undefined,
@@ -409,7 +399,7 @@ function collectNested(
   showNames: boolean,
 ) {
   if (node.isSkipped || stages.length === 0) return;
-  for (let [idx, stage] of stages.entries()) {
+  for (let stage of stages) {
     const isParallel = stage.type === "PARALLEL";
     const hasChildren = stage.children.length > 0;
     let hasParallel = hasChildren && stage.children[0].type === "PARALLEL";
@@ -434,15 +424,16 @@ function collectNested(
     const firstChildIsSkipped =
       hasChildren && stage.children[0].state === Result.skipped;
 
-    let hasBigLabel = hasParallel || (isSkipped && !isParallel);
-    let hasSmallLabel = !hasBigLabel;
-    let hasBranchLabel = isParallel && hasChildren;
-    if (isChainedParallel) {
-      // Do not add any labels. Show a big label on the nested parallel block.
-      hasBigLabel = false;
-      hasSmallLabel = false;
-      hasBranchLabel = false;
-    }
+    const hasBigLabel =
+      hasParallel ||
+      // Do not add a big label to parallel skipped stages. Only use one when we show a "skipped", curved connection.
+      (isSkipped && !isParallel);
+    const hasSmallLabel = !hasBigLabel;
+    const hasBranchLabel =
+      isParallel &&
+      hasChildren &&
+      // Do not add a branch label on the parent of a nested parallel. Instead, show a big label on the nested parallel block.
+      !isChainedParallel;
     const childNode: GraphNode = {
       ...makeNodeForStage(
         stage,
@@ -460,10 +451,11 @@ function collectNested(
     collectNested(childNode, stage.children, layout, showNames);
     if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;
     if (
-      childNode.hasParallel &&
-      (idx === 0 || childNode.children.some((c) => c.hasBranchLabel))
+      isChainedParallel ||
+      (childNode.hasParallel &&
+        childNode.children.some((c) => c.hasBranchLabel))
     ) {
-      // - First node and has parallel children, avoid collapsing curves.
+      // - Nested parallel children, avoid collapsing curves.
       // - Any child has branch label, make space for branch label.
       childNode.shiftX += layout.nodeSpacingH;
       childNode.width += layout.nodeSpacingH;

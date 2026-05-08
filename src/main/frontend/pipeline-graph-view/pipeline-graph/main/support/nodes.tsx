@@ -228,13 +228,22 @@ export function SelectionHighlight({
 
 interface DebugOutlinesProps {
   nodes: Array<GraphNode>;
+  layout: LayoutInfo;
 }
 
-export function DebugOutlines({ nodes }: DebugOutlinesProps) {
-  return nodes.map((node) => <DebugOutline node={node} key={node.id} />);
+export function DebugOutlines({ nodes, layout }: DebugOutlinesProps) {
+  return nodes.map((node) => (
+    <DebugOutline node={node} layout={layout} key={node.id} />
+  ));
 }
 
-function DebugOutline({ node }: { node: GraphNode }) {
+function DebugOutline({
+  node,
+  layout,
+}: {
+  node: GraphNode;
+  layout: LayoutInfo;
+}) {
   const [visible, setVisible] = useState(true);
   if (!visible) return null;
   return (
@@ -274,25 +283,23 @@ function DebugOutline({ node }: { node: GraphNode }) {
           />
         </Tooltip>
       )}
-      {node.shiftY > 0 && (
-        <Tooltip content={`${node.id} (${node.name}) shiftY`}>
-          <rect
-            x={node.x}
-            y={node.y - node.shiftY}
-            width={node.width}
-            height={node.shiftY}
-            strokeWidth={2}
-            strokeDasharray={"2,2"}
-            stroke={"red"}
-            fill="red"
-            fillOpacity={0.075}
-            onClick={() => {
-              setVisible(false);
-              setTimeout(() => setVisible(true), 10_000);
-            }}
-          />
-        </Tooltip>
-      )}
+      <Tooltip content={`${node.id} (${node.name}) center`}>
+        <rect
+          x={node.x + node.width / 2 - layout.nodeSpacingH / 2}
+          y={node.y - 5}
+          width={1}
+          height={5}
+          strokeWidth={2}
+          strokeDasharray={"2,2"}
+          stroke={"red"}
+          fill="red"
+          fillOpacity={0.075}
+          onClick={() => {
+            setVisible(false);
+            setTimeout(() => setVisible(true), 10_000);
+          }}
+        />
+      </Tooltip>
     </>
   );
 }

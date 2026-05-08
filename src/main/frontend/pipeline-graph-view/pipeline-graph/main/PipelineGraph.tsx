@@ -128,7 +128,9 @@ export function PipelineGraph({
             isStageSelected={stageIsSelected}
           />
 
-          {debugPipelineGraph() && <DebugOutlines nodes={allGraphNodes} />}
+          {debugPipelineGraph() && (
+            <DebugOutlines layout={fullLayout} nodes={allGraphNodes} />
+          )}
         </svg>
 
         {nodes.map((node) => (
