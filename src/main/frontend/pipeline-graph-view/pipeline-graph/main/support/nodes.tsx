@@ -286,9 +286,9 @@ function DebugOutline({
       <Tooltip content={`${node.id} (${node.name}) center`}>
         <rect
           x={node.x + node.width / 2 - layout.nodeSpacingH / 2}
-          y={node.y - 5}
+          y={node.y - layout.nodeRadius - 8}
           width={1}
-          height={5}
+          height={layout.nodeRadius + 8}
           strokeWidth={2}
           strokeDasharray={"2,2"}
           stroke={"red"}
