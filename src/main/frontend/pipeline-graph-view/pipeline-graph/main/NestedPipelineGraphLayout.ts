@@ -182,13 +182,7 @@ export function nestedGraphLayout(
     return node.children.concat(...node.children.map(flattenGraph));
   };
   const nodes = flattenGraph(graph.root);
-  const visibleNodes = nodes.filter(
-    (node) =>
-      node.type !== "stage-end" &&
-      !node.hasParallel &&
-      !node.hasBranchLabel &&
-      node.type !== "chained-parallel",
-  );
+  const visibleNodes = nodes.filter((node) => !node.isHidden);
 
   const smallLabels = visibleNodes
     .filter((node) => node.hasSmallLabel)
@@ -367,7 +361,7 @@ function collectCollapsed(
       } else {
         graph.limit--;
         graph.root.children.push({
-          ...makeNodeForStage(stage, layout, "other"),
+          ...makeNodeForStage(stage, layout),
           shiftY: layout.labelOffsetV,
           hasBigLabel: showNames,
           hasTiming: showDurations,
@@ -434,14 +428,12 @@ function collectNested(
       hasChildren &&
       // Do not add a branch label on the parent of a nested parallel. Instead, show a big label on the nested parallel block.
       !isChainedParallel;
+    const isHidden = hasBranchLabel || hasParallel || isChainedParallel;
     const childNode: GraphNode = {
-      ...makeNodeForStage(
-        stage,
-        layout,
-        isChainedParallel ? "chained-parallel" : "other",
-      ),
+      ...makeNodeForStage(stage, layout),
       isParallel,
       isSkipped,
+      isHidden,
       hasParallel,
       hasBranchLabel,
       hasBigLabel,
@@ -487,18 +479,14 @@ function collectNested(
     // In both cases, the dummy node will be the new stage end that is connected to the next node.
     node.width += layout.nodeSpacingH / 2;
     node.children.push({
+      ...baseGraphNode(layout),
+      width: 0,
       isPlaceholder: true,
       type: "stage-end",
       key: `stage_end_${node.key}`,
-      x: 0,
-      y: 0,
-      shiftX: 0,
       name: `Stage end (${node.name})`,
       id: 1_000_000 + node.id,
-      width: 0,
-      height: layout.nodeSpacingV,
-      shiftY: 0,
-      children: [],
+      isHidden: true,
     });
   }
 }
@@ -515,16 +503,12 @@ function baseGraphNode(layout: LayoutInfo) {
   };
 }
 
-function makeNodeForStage(
-  stage: StageInfo,
-  layout: LayoutInfo,
-  type: "other" | "chained-parallel",
-): GraphNode {
+function makeNodeForStage(stage: StageInfo, layout: LayoutInfo): GraphNode {
   return {
     ...baseGraphNode(layout),
     name: stage.name,
     id: stage.id,
-    type,
+    type: "other",
     stage,
     isPlaceholder: false,
     key: "n_" + stage.id,

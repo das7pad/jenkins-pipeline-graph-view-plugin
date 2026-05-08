@@ -137,9 +137,7 @@ export class GraphConnections extends Component {
   getNodeRadius(node: ConnectionEdge, edge: "left" | "right") {
     const { nodeRadius, terminalRadius, nodeSpacingH } = this.props.layout;
     if (node.isPlaceholder) {
-      if (node.type === "stage-end") {
-        return 0;
-      }
+      if (node.isHidden) return 0;
       return terminalRadius;
     }
     if (node.isParallel && node.firstChildIsSkipped) {
@@ -147,7 +145,7 @@ export class GraphConnections extends Component {
       if (edge === "right") return nodeSpacingH / 2;
       if (edge === "left") return -nodeSpacingH / 2;
     }
-    if (node.isParallel) return 0;
+    if (node.isHidden) return 0;
     return nodeRadius;
   }
 

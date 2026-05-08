@@ -74,10 +74,11 @@ function leanEdge(full: ConnectionEdge): ConnectionEdge {
     key: full.key,
     type: full.type,
   };
-  if (full.isPlaceholder) lean.isPlaceholder = true;
-  if (full.isParallel) lean.isParallel = true;
-  if (full.isSkipped) lean.isSkipped = true;
   if (full.firstChildIsSkipped) lean.firstChildIsSkipped = true;
+  if (full.isHidden) lean.isHidden = true;
+  if (full.isParallel) lean.isParallel = true;
+  if (full.isPlaceholder) lean.isPlaceholder = true;
+  if (full.isSkipped) lean.isSkipped = true;
   return lean;
 }
 /**

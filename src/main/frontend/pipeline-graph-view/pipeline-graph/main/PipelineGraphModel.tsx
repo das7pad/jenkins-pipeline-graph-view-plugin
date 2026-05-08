@@ -108,10 +108,8 @@ export type GraphNode = {
   hasChildWithBranchLabel?: boolean;
   isParallel?: boolean;
   firstChildIsSkipped?: boolean;
-} & (
-  | ({ type: "other" | "chained-parallel" } & StageNodeInfo)
-  | PlaceholderNodeInfo
-);
+  isHidden?: boolean;
+} & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 export interface NodeColumn {
   topStage?: StageInfo; // Top-most stage for this column, which will have no rendered nodes if it's parallel
@@ -126,10 +124,11 @@ export interface ConnectionEdge {
   y: number;
   key: string;
   type?: string;
-  isPlaceholder?: boolean;
-  isParallel?: boolean;
-  isSkipped?: boolean;
   firstChildIsSkipped?: boolean;
+  isHidden?: boolean;
+  isParallel?: boolean;
+  isPlaceholder?: boolean;
+  isSkipped?: boolean;
 }
 
 export interface CompositeConnection {
