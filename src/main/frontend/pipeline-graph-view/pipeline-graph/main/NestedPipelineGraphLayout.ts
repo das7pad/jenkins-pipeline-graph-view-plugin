@@ -442,18 +442,22 @@ function collectNested(
       // Do not add a branch label on the parent of a nested parallel. Instead, show a big label on the nested parallel block.
       !isChainedParallel;
     const isHidden = hasBranchLabel || hasParallel || isChainedParallel;
-    const childNode: GraphNode = {
-      ...makeNodeForStage(stage, layout),
-      isParallel,
-      isSkipped,
-      isHidden,
-      hasParallel,
-      hasBranchLabel,
-      hasBigLabel,
-      hasSmallLabel,
-      firstChildIsSkipped,
-    };
+
+    const childNode: GraphNode = makeNodeForStage(stage, layout);
+    // Avoid storing falsely values. It greatly improves debugging.
+    if (isParallel) childNode.isParallel = isParallel;
+    if (isSkipped) childNode.isSkipped = isSkipped;
+    if (isHidden) childNode.isHidden = isHidden;
+    if (hasParallel) childNode.hasParallel = hasParallel;
+    if (hasBranchLabel) childNode.hasBranchLabel = hasBranchLabel;
+    if (hasBigLabel) childNode.hasBigLabel = hasBigLabel;
+    if (hasSmallLabel) childNode.hasSmallLabel = hasSmallLabel;
+    if (firstChildIsSkipped) {
+      childNode.firstChildIsSkipped = firstChildIsSkipped;
+    }
+
     collectNested(childNode, stage.children, layout, showNames);
+
     if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;
     if (
       isChainedParallel ||
