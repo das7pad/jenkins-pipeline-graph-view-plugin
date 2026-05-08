@@ -173,22 +173,6 @@ export function layoutGraph(
   };
 }
 
-function makeNodeForStage(
-  stage: StageInfo,
-  seqContainerName: string | undefined = undefined,
-): StageNodeInfo {
-  return {
-    x: 0, // Layout is done later
-    y: 0,
-    name: stage.name,
-    id: stage.id,
-    stage,
-    seqContainerName,
-    isPlaceholder: false,
-    key: "n_" + stage.id,
-  };
-}
-
 /**
  * Generate an array of columns, based on the top-level stages
  */
@@ -196,6 +180,23 @@ export function createNodeColumns(
   topLevelStages: Array<StageInfo> = [],
 ): Array<NodeColumn> {
   const nodeColumns: Array<NodeColumn> = [];
+
+  const makeNodeForStage = (
+    stage: StageInfo,
+    seqContainerName: string | undefined = undefined,
+  ): NodeInfo => {
+    return {
+      x: 0, // Layout is done later
+      y: 0,
+      name: stage.name,
+      id: stage.id,
+      stage,
+      seqContainerName,
+      isPlaceholder: false,
+      key: "n_" + stage.id,
+    };
+  };
+
   const processTopStage = (topStage: StageInfo, willRecurse: boolean) => {
     // If stage has children, we don't draw a node for it, just its children
     const stagesForColumn =
@@ -285,7 +286,16 @@ function positionNodes(
 
     if (previousTopNode) {
       // Advance X position
-      xp += nodeSpacingH;
+      if (previousTopNode.isPlaceholder || topNode.isPlaceholder) {
+        // Don't space placeholder nodes (start/end) as wide as normal.
+        if (topNode.key === "counter-node") {
+          xp += nodeSpacingH;
+        } else {
+          xp += Math.floor(nodeSpacingH * 0.7);
+        }
+      } else {
+        xp += nodeSpacingH;
+      }
     }
 
     let widestRow = 0;

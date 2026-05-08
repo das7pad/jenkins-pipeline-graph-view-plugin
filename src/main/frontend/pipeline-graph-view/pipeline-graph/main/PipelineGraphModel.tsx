@@ -68,7 +68,6 @@ interface BaseNodeInfo {
 
   // -- Marker
   isPlaceholder: boolean;
-  isSkipped?: boolean;
 }
 
 export interface StageNodeInfo extends BaseNodeInfo {
@@ -100,15 +99,16 @@ export type GraphNode = {
   width: number;
   shiftY: number;
   height: number;
-  hasParallel?: boolean;
-  hasBranchLabel?: boolean;
+  isHidden?: boolean;
+  isParallel?: boolean;
+  isSkipped?: boolean;
+  firstChildIsSkipped?: boolean;
   hasBigLabel?: boolean;
+  hasBranchLabel?: boolean;
+  hasChildWithBranchLabel?: boolean;
+  hasParallel?: boolean;
   hasSmallLabel?: boolean;
   hasTiming?: boolean;
-  hasChildWithBranchLabel?: boolean;
-  isParallel?: boolean;
-  firstChildIsSkipped?: boolean;
-  isHidden?: boolean;
 } & (({ type: "other" } & StageNodeInfo) | PlaceholderNodeInfo);
 
 export interface NodeColumn {
