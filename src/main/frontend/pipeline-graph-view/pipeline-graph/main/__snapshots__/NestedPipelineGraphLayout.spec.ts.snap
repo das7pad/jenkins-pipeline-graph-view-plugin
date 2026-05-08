@@ -6108,7 +6108,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         "type": "STAGE",
       },
       "text": "Parallel Stage",
-      "x": 665,
+      "x": 700,
       "y": 56,
     },
     {
@@ -13027,7 +13027,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         "type": "STAGE",
       },
       "text": "Branch A",
-      "x": 455,
+      "x": 490,
       "y": 78,
     },
     {
@@ -13055,7 +13055,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         "type": "STAGE",
       },
       "text": "Branch B",
-      "x": 525,
+      "x": 560,
       "y": 332,
     },
     {

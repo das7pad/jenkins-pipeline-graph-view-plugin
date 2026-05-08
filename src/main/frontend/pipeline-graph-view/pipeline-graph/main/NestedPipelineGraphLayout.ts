@@ -102,7 +102,8 @@ export function nestedGraphLayout(
           yP += child.shiftY;
         }
         yP += child.height;
-        childExtraXp = toMultipleOf(
+        // Shift child close to center, prefer closer to start than end.
+        childExtraXp = prevMultipleOf(
           (node.width - extraXp - child.width) / 2,
           layout.nodeSpacingH,
         );
@@ -213,7 +214,7 @@ export function nestedGraphLayout(
     .filter((node) => node.hasBigLabel)
     .map((node): NodeLabelInfo => {
       return {
-        x: node.x + node.width / 2 - layout.nodeSpacingH / 2,
+        x: centerOfNode(node, layout),
         y: node.y - (node.shiftY - layout.labelOffsetV),
         key: "l_big_" + node.key,
         isPlaceholder: node.isPlaceholder,
@@ -226,7 +227,7 @@ export function nestedGraphLayout(
     .filter((node) => node.hasTiming)
     .map((node): NodeLabelInfo => {
       return {
-        x: node.x + node.width / 2 - layout.nodeSpacingH / 2,
+        x: centerOfNode(node, layout),
         y: node.y + 55,
         isPlaceholder: node.isPlaceholder,
         stage: "stage" in node ? node.stage : undefined,
@@ -320,8 +321,20 @@ type Graph = {
   counterNode: GraphNode & CounterNodeInfo;
 };
 
-function toMultipleOf(n: number, multiple: number): number {
+function prevMultipleOf(n: number, multiple: number): number {
   return Math.floor(n / multiple) * multiple;
+}
+
+function closestMultipleOf(n: number, multiple: number): number {
+  return Math.round(n / multiple) * multiple;
+}
+
+function centerOfNode(node: GraphNode, layout: LayoutInfo) {
+  return (
+    node.x +
+    closestMultipleOf(node.width / 2, layout.nodeSpacingH / 2) -
+    layout.nodeSpacingH / 2
+  );
 }
 
 function sumGraphNodeProp(
