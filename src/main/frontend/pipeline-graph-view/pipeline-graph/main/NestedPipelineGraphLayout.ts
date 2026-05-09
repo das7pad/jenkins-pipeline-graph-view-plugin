@@ -319,13 +319,6 @@ function collectCollapsed(
   }
 }
 
-function resolveDestination(node: GraphNode): GraphNode[] {
-  if (node.hasParallel) {
-    return node.children.flatMap((child) => resolveDestination(child));
-  }
-  return [node];
-}
-
 function computeConnections(
   connections: CompositeConnection[],
   node: GraphNode,
@@ -353,7 +346,9 @@ function computeConnections(
         skippedNodes.add(node);
       }
     }
-    const destinationNodes = resolveDestination(destination);
+    const destinationNodes = destination.isParallel
+      ? destination.children // Connect directly to parallel children
+      : [destination];
     if (!destinationNodes.some((n) => !n.isSkipped)) {
       for (const node of destinationNodes) skippedNodes.add(node);
       return;
