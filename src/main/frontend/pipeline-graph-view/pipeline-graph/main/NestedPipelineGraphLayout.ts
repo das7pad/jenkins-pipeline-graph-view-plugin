@@ -122,10 +122,9 @@ export function nestedGraphLayout(
   const connections: CompositeConnection[] = [];
   computeConnections(connections, root);
 
-  const flattenGraph = (node: GraphNode): GraphNode[] => {
-    return node.children.concat(...node.children.map(flattenGraph));
-  };
-  const nodes = flattenGraph(root);
+  const nodes = root.children.flatMap(function flatten(node): GraphNode[] {
+    return [node].concat(...node.children.map(flatten));
+  });
   const visibleNodes = nodes.filter((node) => !node.isHidden);
 
   const smallLabels = visibleNodes
@@ -346,7 +345,7 @@ function computeConnections(
         skippedNodes.add(node);
       }
     }
-    const destinationNodes = destination.isParallel
+    const destinationNodes = destination.hasParallel
       ? destination.children // Connect directly to parallel children
       : [destination];
     if (!destinationNodes.some((n) => !n.isSkipped)) {
