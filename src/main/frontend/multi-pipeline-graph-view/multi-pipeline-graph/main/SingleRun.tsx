@@ -49,6 +49,17 @@ export default function SingleRun({ run, currentJobPath }: SingleRunProps) {
       layout.nodeSpacingH = 90;
     }
 
+    if (!showNames) {
+      // Do not reserve space for big label.
+      layout.ypStart -= layout.labelOffsetV;
+    }
+    if (!showDurations) {
+      // Do not reserve space for small label.
+      layout.nodeSpacingV -= layout.labelOffsetV;
+    }
+    // Do not reserve space for big label on next row.
+    layout.nodeSpacingV -= layout.labelOffsetV;
+
     return layout;
   }
 
