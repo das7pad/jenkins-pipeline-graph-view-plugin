@@ -160,20 +160,6 @@ export type LayoutInfo = typeof defaultLayout;
  */
 export interface PositionedGraph {
   nodes: Array<NodeInfo>;
-  connections: Array<CompositeConnection>;
-  bigLabels: Array<NodeLabelInfo>;
-  timings: Array<NodeLabelInfo>;
-  smallLabels: Array<NodeLabelInfo>;
-  branchLabels: Array<NodeLabelInfo>;
-  measuredWidth: number;
-  measuredHeight: number;
-}
-
-/**
- * The result of the new graph layout algorithm
- */
-export interface NestedPositionedGraph {
-  nodes: Array<NodeInfo>;
   allNodes: Array<GraphNode>;
   connections: Array<CompositeConnection>;
   bigLabels: Array<NodeLabelInfo>;

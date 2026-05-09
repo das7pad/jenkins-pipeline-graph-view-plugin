@@ -5,8 +5,8 @@ import {
   debugPipelineGraph,
   GraphNode,
   LayoutInfo,
-  NestedPositionedGraph,
   NodeLabelInfo,
+  PositionedGraph,
   Result,
   StageInfo,
 } from "./PipelineGraphModel.tsx";
@@ -20,7 +20,7 @@ export function nestedGraphLayout(
   messages: Messages,
   showNames: boolean,
   showDurations: boolean,
-): NestedPositionedGraph {
+): PositionedGraph {
   const root: GraphNode = {
     ...baseGraphNode(layout),
     shiftX: layout.nodeSpacingH / 2,
