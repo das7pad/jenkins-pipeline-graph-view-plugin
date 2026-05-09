@@ -72,6 +72,7 @@ function leanEdge(full: ConnectionEdge): ConnectionEdge {
     key: full.key,
     type: full.type,
   };
+  // Cherry-pick truely fields that are relevant for connections.
   if (full.firstChildIsSkipped) lean.firstChildIsSkipped = true;
   if (full.isHidden) lean.isHidden = true;
   if (full.isParallel) lean.isParallel = true;
@@ -81,18 +82,29 @@ function leanEdge(full: ConnectionEdge): ConnectionEdge {
 }
 
 /**
- * Lean stage view on GraphNode to make test snapshots easier to read.
+ * Trim verbose fields on GraphNode to make test snapshots easier to read.
  */
-function trimStageChildrenFromGraphNode(node: GraphNode) {
+function trimGraphNode(node: GraphNode) {
   if ("stage" in node && node.stage) {
+    // Hide verbose input data.
     node.stage.children = [];
   }
+  // Hide falsely boolean fields.
+  if (!node.isParallel) delete node.isParallel;
+  if (!node.isSkipped) delete node.isSkipped;
+  if (!node.isHidden) delete node.isHidden;
+  if (!node.hasParallel) delete node.hasParallel;
+  if (!node.hasBranchLabel) delete node.hasBranchLabel;
+  if (!node.hasBigLabel) delete node.hasBigLabel;
+  if (!node.hasSmallLabel) delete node.hasSmallLabel;
+  if (!node.firstChildIsSkipped) delete node.firstChildIsSkipped;
 }
 
 /**
  * Lean stage view on NodeLabelInfo to make test snapshots easier to read.
  */
 function trimNodeInfoOnLabel(label: NodeLabelInfo) {
+  // Hide NodeInfo fields that are not relevant for labels.
   label.node = { isPlaceholder: label.node.isPlaceholder } as NodeInfo;
 }
 
@@ -122,7 +134,7 @@ function shouldMatchSnapshot(raw: string, collapsed: boolean) {
     c.skippedNodes = c.skippedNodes.map(leanEdge);
   }
   for (const node of graph.allGraphNodes) {
-    trimStageChildrenFromGraphNode(node);
+    trimGraphNode(node);
   }
   expect(graph).toMatchSnapshot();
 }
