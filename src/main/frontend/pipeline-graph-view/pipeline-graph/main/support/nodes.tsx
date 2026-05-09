@@ -270,8 +270,8 @@ function DebugOutline({
             height={node.height - 4}
             strokeWidth={2}
             strokeDasharray={"5,5"}
-            stroke={"red"}
-            fill="red"
+            stroke={"blue"}
+            fill="blue"
             fillOpacity={0.075}
             onClick={() => {
               setVisible(false);
@@ -307,8 +307,8 @@ function DebugOutline({
           height={layout.nodeRadius + 8}
           strokeWidth={2}
           strokeDasharray={"2,2"}
-          stroke={"blue"}
-          fill="blue"
+          stroke={"black"}
+          fill="black"
           fillOpacity={0.075}
           onClick={() => {
             setVisible(false);
