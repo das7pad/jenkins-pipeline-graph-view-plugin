@@ -103,7 +103,7 @@ export function nestedGraphLayout(
         }
         yP += child.height;
         // Shift child close to center, prefer closer to start than end.
-        childExtraXp = prevMultipleOf(
+        childExtraXp = floorToMultipleOf(
           (node.width - extraXp - child.width) / 2,
           layout.nodeSpacingH,
         );
@@ -321,18 +321,18 @@ type Graph = {
   counterNode: GraphNode & CounterNodeInfo;
 };
 
-function prevMultipleOf(n: number, multiple: number): number {
+function floorToMultipleOf(n: number, multiple: number): number {
   return Math.floor(n / multiple) * multiple;
 }
 
-function closestMultipleOf(n: number, multiple: number): number {
+function roundToMultipleOf(n: number, multiple: number): number {
   return Math.round(n / multiple) * multiple;
 }
 
 function centerOfNode(node: GraphNode, layout: LayoutInfo) {
   return (
     node.x +
-    closestMultipleOf(node.width / 2, layout.nodeSpacingH / 2) -
+    roundToMultipleOf(node.width / 2, layout.nodeSpacingH / 2) -
     layout.nodeSpacingH / 2
   );
 }
