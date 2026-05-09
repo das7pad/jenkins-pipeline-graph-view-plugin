@@ -87,11 +87,7 @@ export function PipelineGraph({
       showNames,
       showDurations,
     );
-    setNodes(
-      newLayout.nodeColumns.flatMap((column) => {
-        return column.rows.flatMap((row) => row);
-      }),
-    );
+    setNodes(newLayout.nodes);
     setConnections(newLayout.connections);
     setBigLabels(newLayout.bigLabels);
     setSmallLabels(newLayout.smallLabels);
