@@ -1,6 +1,5 @@
 import { Component, SVGAttributes } from "react";
 
-import { sequentialStagesLabelOffset } from "../PipelineGraphLayout.ts";
 import {
   CompositeConnection,
   ConnectionEdge,
@@ -122,7 +121,7 @@ export class GraphConnections extends Component {
 
     if (hasBranchLabels) {
       // Shift curve midpoint so that there's room for the labels
-      expandMidPointX -= sequentialStagesLabelOffset;
+      expandMidPointX -= nodeSpacingH;
     }
 
     for (const destNode of destinationNodes.slice(1)) {
@@ -234,7 +233,7 @@ export class GraphConnections extends Component {
 
     if (hasBranchLabels) {
       // Shift curve midpoint so that there's room for the labels
-      expandMidPointX -= sequentialStagesLabelOffset;
+      expandMidPointX -= nodeSpacingH;
     }
 
     for (rightNode of destinationNodes.slice(1)) {

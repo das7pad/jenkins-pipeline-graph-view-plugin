@@ -13,8 +13,6 @@ import {
   StageNodeInfo,
 } from "./PipelineGraphModel.tsx";
 
-export const sequentialStagesLabelOffset = 80;
-
 export const DEFAULT_MAX_COLUMNS_WHEN_COLLAPSED = 13;
 
 /**
@@ -135,7 +133,12 @@ export function layoutGraph(
 
   positionNodes(allNodeColumns, layout);
 
-  const bigLabels = createBigLabels(allNodeColumns, collapsed, showNames);
+  const bigLabels = createBigLabels(
+    allNodeColumns,
+    collapsed,
+    showNames,
+    layout,
+  );
   const timings = createTimings(allNodeColumns, collapsed, showDurations);
   const smallLabels = createSmallLabels(allNodeColumns, collapsed);
   const branchLabels = createBranchLabels(allNodeColumns, collapsed);
@@ -300,7 +303,7 @@ function positionNodes(
 
     // Make room for row labels
     if (column.hasBranchLabels) {
-      xp += sequentialStagesLabelOffset;
+      xp += nodeSpacingH;
     }
 
     let maxX = xp;
@@ -336,6 +339,7 @@ function createBigLabels(
   columns: Array<NodeColumn>,
   collapsed: boolean,
   showNames: boolean,
+  layout: LayoutInfo,
 ): Array<NodeLabelInfo> {
   const labels: Array<NodeLabelInfo> = [];
 
@@ -356,7 +360,7 @@ function createBigLabels(
     // bigLabel is located above center of column, but offset if there's branch labels
     let x = column.centerX;
     if (column.hasBranchLabels) {
-      x += Math.floor(sequentialStagesLabelOffset / 2);
+      x += Math.floor(layout.nodeSpacingH / 2);
     }
 
     labels.push({
