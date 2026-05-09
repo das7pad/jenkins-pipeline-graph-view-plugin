@@ -25,6 +25,7 @@ export function nestedGraphLayout(
     ...baseGraphNode(layout),
     shiftX: layout.nodeSpacingH / 2,
     isPlaceholder: true,
+    isHidden: true,
     type: "root",
     name: "Root",
     key: "root",
@@ -40,39 +41,17 @@ export function nestedGraphLayout(
       },
     ],
   };
+
   if (collapsed) {
-    const collapsedStages: StageInfo[] = [];
-    collectCollapsed(collapsedStages, newStages, 0);
-    const breakPoint =
-      collapsedStages.length > maxColumnsWhenCollapsed
-        ? maxColumnsWhenCollapsed - 1 // Make space for counter node.
-        : collapsedStages.length;
-    root.children.push(
-      ...collapsedStages.slice(0, breakPoint).map((stage: StageInfo) => ({
-        ...makeNodeForStage(stage, layout, showNames),
-        hasTiming: showDurations,
-      })),
-    );
-    if (collapsedStages.length > breakPoint) {
-      root.children.push({
-        ...baseGraphNode(layout),
-        isPlaceholder: true,
-        type: "counter",
-        name: "Counter",
-        key: "counter-node",
-        id: -2,
-        stages: collapsedStages.slice(breakPoint),
-      });
-    }
-    root.width = sumGraphNodeProp(root, "width");
+    buildGraphCollapsed(newStages, root, layout, showNames, showDurations);
   } else {
-    collectNested(root, newStages, layout, showNames);
+    buildGraphNested(root, newStages, layout);
   }
+
   root.y = Math.max(
     layout.ypStart,
     root.shiftY + (showNames ? layout.nodeRadius + layout.labelOffsetV : 0),
   );
-
   root.width += layout.nodeSpacingH;
   root.children.push({
     ...baseGraphNode(layout, showNames),
@@ -82,52 +61,337 @@ export function nestedGraphLayout(
     key: "end-node",
     id: -3,
   });
+  const measuredWidth = root.width;
+  const measuredHeight = root.y + root.height;
 
-  const computePositions = (node: GraphNode, extraXp: number) => {
-    if (node.children.length === 0) return;
-    extraXp += node.shiftX;
-    let xP = node.x + extraXp;
-    let yP = node.y;
-    for (const [i, child] of node.children.entries()) {
-      child.x = xP;
-      child.y = yP;
-      if (child.type === "stage-end") {
-        child.x -= layout.nodeSpacingH / 2;
-      }
-      let childExtraXp = 0;
-      if (node.hasParallel) {
-        if (i > 0) {
-          // Skip first child: The entire node has been moved already by children[0].shiftY.
-          child.y += child.shiftY;
-          yP += child.shiftY;
-        }
-        yP += child.height;
-        // Shift small childrean close to center, prefer closer to start than end.
-        childExtraXp = floorToMultipleOf(
-          (node.width - extraXp - child.width) / 2,
-          layout.nodeSpacingH,
-        );
-        if (child.children.length === 0) {
-          child.x += childExtraXp;
-          childExtraXp = 0;
-        }
-      } else {
-        xP += child.width;
-      }
-      computePositions(child, childExtraXp);
-    }
-  };
-  computePositions(root, 0);
-
-  const connections: CompositeConnection[] = [];
-  computeConnections(connections, root);
-
-  const nodes = root.children.flatMap(function flatten(node): GraphNode[] {
-    return [node].concat(...node.children.map(flatten));
-  });
+  computePositions(root, 0, layout);
+  const connections = computeConnections(root);
+  const nodes = flattenGraph(root);
   const visibleNodes = nodes.filter((node) => !node.isHidden);
+  const smallLabels = computeSmallLabels(nodes);
+  const branchLabels = computeBranchLabels(nodes, layout);
+  const bigLabels = computeBigLabels(nodes, layout);
+  const timings = computeTimingsLabels(nodes, layout);
 
-  const smallLabels = visibleNodes
+  const debug = debugPipelineGraph();
+  if (debug) printDebugInfo(newStages, root, nodes, connections);
+  return {
+    nodes: debug ? nodes : visibleNodes,
+    allNodes: nodes,
+    connections,
+    smallLabels,
+    bigLabels,
+    branchLabels,
+    timings,
+    measuredWidth,
+    measuredHeight,
+  };
+}
+
+function flattenGraph(node: GraphNode): GraphNode[] {
+  return [node, ...node.children.flatMap(flattenGraph)];
+}
+
+function floorToMultipleOf(n: number, multiple: number): number {
+  return Math.floor(n / multiple) * multiple;
+}
+
+function roundToMultipleOf(n: number, multiple: number): number {
+  return Math.round(n / multiple) * multiple;
+}
+
+function centerOfNode(node: GraphNode, layout: LayoutInfo) {
+  return (
+    node.x +
+    roundToMultipleOf(node.width / 2, layout.nodeSpacingH / 2) -
+    layout.nodeSpacingH / 2
+  );
+}
+
+function sumGraphNodeProp(
+  node: GraphNode,
+  prop: "width" | "shiftY" | "height" | "shiftX",
+): number {
+  return node.children.reduce((sum, c) => sum + c[prop], 0);
+}
+
+function maxGraphNodeProp(
+  node: GraphNode,
+  prop: "width" | "shiftY" | "height" | "shiftX",
+): number {
+  return Math.max(node[prop], ...node.children.map((c) => c[prop]));
+}
+
+function collectCollapsedStages(
+  collapsedStages: StageInfo[],
+  stages: StageInfo[],
+  level: number,
+) {
+  for (const stage of stages) {
+    if (
+      (!(stage.children.length > 0 && stage.children[0].type === "PARALLEL") &&
+        !(stage.type === "PARALLEL" && stage.children.length > 0)) ||
+      (level > 1 && stage.type !== "PARALLEL_BLOCK")
+    ) {
+      // Mirror filtering of old layout:
+      // - Top level: Hide stages that wrap "PARALLEL" stages.
+      // - Top level: Hide "PARALLEL" stages with children.
+      // - Rest: Hide generic "PARALLEL_BLOCK" wrapper.
+      collapsedStages.push(stage);
+    }
+    collectCollapsedStages(collapsedStages, stage.children, level + 1);
+  }
+}
+
+function buildGraphCollapsed(
+  stages: StageInfo[],
+  root: GraphNode,
+  layout: LayoutInfo,
+  showNames: boolean,
+  showDurations: boolean,
+) {
+  const collapsedStages: StageInfo[] = [];
+  collectCollapsedStages(collapsedStages, stages, 0);
+
+  const breakPoint =
+    collapsedStages.length > maxColumnsWhenCollapsed
+      ? maxColumnsWhenCollapsed - 1 // Make space for counter node.
+      : collapsedStages.length;
+  root.children.push(
+    ...collapsedStages.slice(0, breakPoint).map((stage: StageInfo) => ({
+      ...makeNodeForStage(stage, layout, showNames),
+      hasTiming: showDurations,
+    })),
+  );
+  if (collapsedStages.length > breakPoint) {
+    root.children.push({
+      ...baseGraphNode(layout),
+      isPlaceholder: true,
+      type: "counter",
+      name: "Counter",
+      key: "counter-node",
+      id: -2,
+      stages: collapsedStages.slice(breakPoint),
+    });
+  }
+  root.width = sumGraphNodeProp(root, "width");
+}
+
+function buildGraphNested(
+  node: GraphNode,
+  stages: StageInfo[],
+  layout: LayoutInfo,
+) {
+  if (node.isSkipped || stages.length === 0) return;
+  for (let stage of stages) {
+    const isParallel = stage.type === "PARALLEL";
+    const hasChildren = stage.children.length > 0;
+    let hasParallel = hasChildren && stage.children[0].type === "PARALLEL";
+    if (isParallel && hasParallel) {
+      // Turn PARALLEL -> PARALLEL into PARALLEL -> PARALLEL_BLOCK -> PARALLEL.
+      // This allows for a stage-end node to be inserted after the parallel children.
+      // PARALLEL[PARALLEL, ...] -> PARALLEL[PARALLEL_BLOCK[PARALLEL, ...],stage-end]
+      // Which in turn lets us connect the nested parallel children together before connecting the stage-end to the parents next node.
+      stage = {
+        ...stage,
+        id: -stage.id,
+        children: [{ ...stage, type: "PARALLEL_BLOCK" }],
+      };
+      hasParallel = false;
+    }
+    const isChainedParallel =
+      isParallel &&
+      stage.children.length === 1 &&
+      stage.children[0].children.length > 0 &&
+      stage.children[0].children[0].type === "PARALLEL" &&
+      stage.name === stage.children[0].name;
+    const isSkipped = stage.state === Result.skipped;
+    const firstChildIsSkipped =
+      hasChildren && stage.children[0].state === Result.skipped;
+
+    const hasBranchLabel =
+      isParallel &&
+      hasChildren &&
+      // Do not add a branch label on the parent of a nested parallel. Instead, show a big label on the nested parallel block.
+      !isChainedParallel;
+    const isHidden = hasBranchLabel || hasParallel || isChainedParallel;
+    const hasBigLabel =
+      hasParallel ||
+      // Do not add a big label to parallel skipped stages. Only use one when we show a "skipped", curved connection.
+      (isSkipped && !isParallel);
+    const hasSmallLabel = !isHidden && !hasBigLabel;
+    const childNode: GraphNode = {
+      ...makeNodeForStage(stage, layout),
+      isParallel,
+      isSkipped,
+      isHidden,
+      hasParallel,
+      hasBranchLabel,
+      hasBigLabel,
+      hasSmallLabel,
+      firstChildIsSkipped,
+    };
+    buildGraphNested(childNode, stage.children, layout);
+    if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;
+    if (
+      isChainedParallel ||
+      (childNode.hasParallel &&
+        childNode.children.some((c) => c.hasBranchLabel))
+    ) {
+      // - Nested parallel children, avoid collapsing curves.
+      // - Any child has branch label, make space for branch label.
+      childNode.shiftX += layout.nodeSpacingH;
+      childNode.width += layout.nodeSpacingH;
+    }
+    node.children.push(childNode);
+  }
+  if (node.hasParallel) {
+    // Move shiftY from first parallel child up one level.
+    const inheritedShift = node.children[0].shiftY;
+    node.shiftY = inheritedShift;
+    node.width = maxGraphNodeProp(node, "width");
+    node.height =
+      sumGraphNodeProp(node, "height") +
+      sumGraphNodeProp(node, "shiftY") -
+      inheritedShift;
+  } else {
+    node.width = sumGraphNodeProp(node, "width");
+    node.height = maxGraphNodeProp(node, "height");
+    node.shiftY = maxGraphNodeProp(node, "shiftY");
+  }
+  const last = node.children[node.children.length - 1];
+  if (
+    !node.hasParallel &&
+    (last.isSkipped || last.hasParallel) &&
+    node.type !== "root"
+  ) {
+    // - Add a dummy node to "close" the skipped curve before closing the stage.
+    // - Add a dummy node to "close" the parallel curve of the child.
+    // In both cases, the dummy node will be the new stage end that is connected to the next node.
+    node.width += layout.nodeSpacingH / 2;
+    node.children.push({
+      ...baseGraphNode(layout),
+      width: 0,
+      isPlaceholder: true,
+      type: "stage-end",
+      key: `stage_end_${node.key}`,
+      name: `Stage end (${node.name})`,
+      id: 1_000_000 + node.id,
+      isHidden: true,
+    });
+  }
+}
+
+function computePositions(
+  node: GraphNode,
+  extraXp: number,
+  layout: LayoutInfo,
+) {
+  if (node.children.length === 0) return;
+  extraXp += node.shiftX;
+  let xP = node.x + extraXp;
+  let yP = node.y;
+  for (const [i, child] of node.children.entries()) {
+    child.x = xP;
+    child.y = yP;
+    if (child.type === "stage-end") {
+      child.x -= layout.nodeSpacingH / 2;
+    }
+    let childExtraXp = 0;
+    if (node.hasParallel) {
+      if (i > 0) {
+        // Skip first child: The entire node has been moved already by children[0].shiftY.
+        child.y += child.shiftY;
+        yP += child.shiftY;
+      }
+      yP += child.height;
+      // Shift small childrean close to center, prefer closer to start than end.
+      childExtraXp = floorToMultipleOf(
+        (node.width - extraXp - child.width) / 2,
+        layout.nodeSpacingH,
+      );
+      if (child.children.length === 0) {
+        child.x += childExtraXp;
+        childExtraXp = 0;
+      }
+    } else {
+      xP += child.width;
+    }
+    computePositions(child, childExtraXp, layout);
+  }
+}
+
+function computeConnections(node: GraphNode): CompositeConnection[] {
+  const connections: CompositeConnection[] = [];
+  computeTailNodes(connections, node);
+  return connections;
+}
+
+function computeTailNodes(
+  connections: CompositeConnection[],
+  node: GraphNode,
+): GraphNode[] {
+  if (node.children.length === 0) {
+    return [node];
+  }
+  if (node.hasParallel) {
+    return node.children.flatMap((child) =>
+      computeTailNodes(connections, child),
+    );
+  }
+  // Collect nodes in a Set. With two skipped nodes next to each other, we need to deduplicate them.
+  const sourceNodes = new Set<GraphNode>();
+  const skippedNodes = new Set<GraphNode>();
+  const connect = (
+    tailNodes: GraphNode[],
+    destination: GraphNode,
+    ignoreSkipped?: boolean,
+  ) => {
+    for (const node of tailNodes) {
+      if (ignoreSkipped || !node.isSkipped) {
+        sourceNodes.add(node);
+      } else {
+        skippedNodes.add(node);
+      }
+    }
+    const destinationNodes = destination.hasParallel
+      ? destination.children // Connect directly to parallel children
+      : [destination];
+    if (!destinationNodes.some((n) => !n.isSkipped)) {
+      for (const node of destinationNodes) skippedNodes.add(node);
+      return;
+    }
+    connections.push({
+      sourceNodes: Array.from(sourceNodes),
+      destinationNodes,
+      skippedNodes: Array.from(skippedNodes),
+      hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
+    });
+    sourceNodes.clear();
+    skippedNodes.clear();
+  };
+  if (node.type !== "root") {
+    connect([node], node.children[0], true);
+  }
+  for (let i = 0; i < node.children.length - 1; i++) {
+    const childA = node.children[i];
+    const childB = node.children[i + 1];
+    connect(
+      computeTailNodes(connections, childA),
+      childB,
+      // Honor skipped state per layer, but not across layers.
+      childA.hasParallel,
+    );
+  }
+  const last = node.children[node.children.length - 1];
+  if (last.isSkipped || skippedNodes.size > 0 || sourceNodes.size > 0) {
+    throw new Error("bug: buildGraphNested did not add trailing dummy node");
+  }
+  return computeTailNodes(connections, last);
+}
+
+function computeSmallLabels(visibleNodes: GraphNode[]) {
+  return visibleNodes
     .filter((node) => node.hasSmallLabel)
     .map((node): NodeLabelInfo => {
       return {
@@ -139,8 +403,10 @@ export function nestedGraphLayout(
         stage: "stage" in node ? node.stage : undefined,
       };
     });
+}
 
-  const branchLabels = nodes
+function computeBranchLabels(nodes: GraphNode[], layout: LayoutInfo) {
+  return nodes
     .filter((node) => node.hasBranchLabel)
     .map((node): NodeLabelInfo => {
       return {
@@ -151,8 +417,10 @@ export function nestedGraphLayout(
         text: node.name,
       };
     });
+}
 
-  const bigLabels = nodes
+function computeBigLabels(nodes: GraphNode[], layout: LayoutInfo) {
+  return nodes
     .filter((node) => node.hasBigLabel)
     .map((node): NodeLabelInfo => {
       return {
@@ -164,8 +432,10 @@ export function nestedGraphLayout(
         text: node.name,
       };
     });
+}
 
-  const timings = nodes
+function computeTimingsLabels(nodes: GraphNode[], layout: LayoutInfo) {
+  return nodes
     .filter((node) => node.hasTiming)
     .map((node): NodeLabelInfo => {
       return {
@@ -177,25 +447,34 @@ export function nestedGraphLayout(
         key: `l_t_${node.key}`,
       };
     });
+}
 
-  const measuredWidth = root.width;
-  const measuredHeight = root.y + root.height;
-
-  const allGraphNodes = [root, ...nodes];
-  const debug = debugPipelineGraph();
-  if (debug) {
-    printDebugInfo(newStages, root, allGraphNodes, connections);
-  }
+function baseGraphNode(layout: LayoutInfo, hasBigLabel?: boolean) {
   return {
-    nodes: debug ? nodes : visibleNodes,
-    allGraphNodes,
-    connections,
-    smallLabels,
-    bigLabels,
-    branchLabels,
-    timings,
-    measuredWidth,
-    measuredHeight,
+    children: [],
+    x: 0,
+    y: 0,
+    shiftX: 0,
+    shiftY: 0,
+    width: layout.nodeSpacingH,
+    height: layout.nodeSpacingV,
+    ...(hasBigLabel ? { shiftY: layout.labelOffsetV, hasBigLabel: true } : {}),
+  };
+}
+
+function makeNodeForStage(
+  stage: StageInfo,
+  layout: LayoutInfo,
+  hasBigLabel?: boolean,
+): GraphNode {
+  return {
+    ...baseGraphNode(layout, hasBigLabel),
+    name: stage.name,
+    id: stage.id,
+    type: "stage",
+    stage,
+    isPlaceholder: false,
+    key: "n_" + stage.id,
   };
 }
 
@@ -265,252 +544,4 @@ export function removeFalselyGraphNodeFields(node: GraphNode) {
   if (!node.hasBigLabel) delete node.hasBigLabel;
   if (!node.hasSmallLabel) delete node.hasSmallLabel;
   if (!node.firstChildIsSkipped) delete node.firstChildIsSkipped;
-}
-
-function floorToMultipleOf(n: number, multiple: number): number {
-  return Math.floor(n / multiple) * multiple;
-}
-
-function roundToMultipleOf(n: number, multiple: number): number {
-  return Math.round(n / multiple) * multiple;
-}
-
-function centerOfNode(node: GraphNode, layout: LayoutInfo) {
-  return (
-    node.x +
-    roundToMultipleOf(node.width / 2, layout.nodeSpacingH / 2) -
-    layout.nodeSpacingH / 2
-  );
-}
-
-function sumGraphNodeProp(
-  node: GraphNode,
-  prop: "width" | "shiftY" | "height" | "shiftX",
-): number {
-  return node.children.reduce((sum, c) => sum + c[prop], 0);
-}
-
-function maxGraphNodeProp(
-  node: GraphNode,
-  prop: "width" | "shiftY" | "height" | "shiftX",
-): number {
-  return Math.max(node[prop], ...node.children.map((c) => c[prop]));
-}
-
-function collectCollapsed(
-  collapsedStages: StageInfo[],
-  stages: StageInfo[],
-  level: number,
-) {
-  for (const stage of stages) {
-    if (
-      (!(stage.children.length > 0 && stage.children[0].type === "PARALLEL") &&
-        !(stage.type === "PARALLEL" && stage.children.length > 0)) ||
-      (level > 1 && stage.type !== "PARALLEL_BLOCK")
-    ) {
-      // Mirror filtering of old layout:
-      // - Top level: Hide stages that wrap "PARALLEL" stages.
-      // - Top level: Hide "PARALLEL" stages with children.
-      // - Rest: Hide generic "PARALLEL_BLOCK" wrapper.
-      collapsedStages.push(stage);
-    }
-    collectCollapsed(collapsedStages, stage.children, level + 1);
-  }
-}
-
-function computeConnections(
-  connections: CompositeConnection[],
-  node: GraphNode,
-): GraphNode[] {
-  if (node.children.length === 0) {
-    return [node];
-  }
-  if (node.hasParallel) {
-    return node.children.flatMap((child) =>
-      computeConnections(connections, child),
-    );
-  }
-  // Collect nodes in a Set. With two skipped nodes next to each other, we need to deduplicate them.
-  const sourceNodes = new Set<GraphNode>();
-  const skippedNodes = new Set<GraphNode>();
-  const connect = (
-    tailNodes: GraphNode[],
-    destination: GraphNode,
-    ignoreSkipped?: boolean,
-  ) => {
-    for (const node of tailNodes) {
-      if (ignoreSkipped || !node.isSkipped) {
-        sourceNodes.add(node);
-      } else {
-        skippedNodes.add(node);
-      }
-    }
-    const destinationNodes = destination.hasParallel
-      ? destination.children // Connect directly to parallel children
-      : [destination];
-    if (!destinationNodes.some((n) => !n.isSkipped)) {
-      for (const node of destinationNodes) skippedNodes.add(node);
-      return;
-    }
-    connections.push({
-      sourceNodes: Array.from(sourceNodes),
-      destinationNodes,
-      skippedNodes: Array.from(skippedNodes),
-      hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
-    });
-    sourceNodes.clear();
-    skippedNodes.clear();
-  };
-  if (node.type !== "root") {
-    connect([node], node.children[0], true);
-  }
-  for (let i = 0; i < node.children.length - 1; i++) {
-    const childA = node.children[i];
-    const childB = node.children[i + 1];
-    connect(
-      computeConnections(connections, childA),
-      childB,
-      // Honor skipped state per layer, but not across layers.
-      childA.hasParallel,
-    );
-  }
-  const last = node.children[node.children.length - 1];
-  if (last.isSkipped || skippedNodes.size > 0 || sourceNodes.size > 0) {
-    throw new Error("bug: collectNested did not add trailing dummy node");
-  }
-  return computeConnections(connections, last);
-}
-
-function collectNested(
-  node: GraphNode,
-  stages: StageInfo[],
-  layout: LayoutInfo,
-  showNames: boolean,
-) {
-  if (node.isSkipped || stages.length === 0) return;
-  for (let stage of stages) {
-    const isParallel = stage.type === "PARALLEL";
-    const hasChildren = stage.children.length > 0;
-    let hasParallel = hasChildren && stage.children[0].type === "PARALLEL";
-    if (isParallel && hasParallel) {
-      // Turn PARALLEL -> PARALLEL into PARALLEL -> PARALLEL_BLOCK -> PARALLEL.
-      // This allows for a stage-end node to be inserted after the parallel children.
-      // PARALLEL[PARALLEL, ...] -> PARALLEL[PARALLEL_BLOCK[PARALLEL, ...],stage-end]
-      stage = {
-        ...stage,
-        id: -stage.id,
-        children: [{ ...stage, type: "PARALLEL_BLOCK" }],
-      };
-      hasParallel = false;
-    }
-    const isChainedParallel =
-      isParallel &&
-      stage.children.length === 1 &&
-      stage.children[0].children.length > 0 &&
-      stage.children[0].children[0].type === "PARALLEL" &&
-      stage.name === stage.children[0].name;
-    const isSkipped = stage.state === Result.skipped;
-    const firstChildIsSkipped =
-      hasChildren && stage.children[0].state === Result.skipped;
-
-    const hasBigLabel =
-      hasParallel ||
-      // Do not add a big label to parallel skipped stages. Only use one when we show a "skipped", curved connection.
-      (isSkipped && !isParallel);
-    const hasSmallLabel = !hasBigLabel;
-    const hasBranchLabel =
-      isParallel &&
-      hasChildren &&
-      // Do not add a branch label on the parent of a nested parallel. Instead, show a big label on the nested parallel block.
-      !isChainedParallel;
-    const isHidden = hasBranchLabel || hasParallel || isChainedParallel;
-    const childNode: GraphNode = {
-      ...makeNodeForStage(stage, layout),
-      isParallel,
-      isSkipped,
-      isHidden,
-      hasParallel,
-      hasBranchLabel,
-      hasBigLabel,
-      hasSmallLabel,
-      firstChildIsSkipped,
-    };
-    collectNested(childNode, stage.children, layout, showNames);
-    if (hasBigLabel) childNode.shiftY += layout.labelOffsetV;
-    if (
-      isChainedParallel ||
-      (childNode.hasParallel &&
-        childNode.children.some((c) => c.hasBranchLabel))
-    ) {
-      // - Nested parallel children, avoid collapsing curves.
-      // - Any child has branch label, make space for branch label.
-      childNode.shiftX += layout.nodeSpacingH;
-      childNode.width += layout.nodeSpacingH;
-    }
-    node.children.push(childNode);
-  }
-  if (node.hasParallel) {
-    // Move shiftY from first parallel child up one level.
-    const inheritedShift = node.children[0].shiftY;
-    node.shiftY = inheritedShift;
-    node.width = maxGraphNodeProp(node, "width");
-    node.height =
-      sumGraphNodeProp(node, "height") +
-      sumGraphNodeProp(node, "shiftY") -
-      inheritedShift;
-  } else {
-    node.width = sumGraphNodeProp(node, "width");
-    node.height = maxGraphNodeProp(node, "height");
-    node.shiftY = maxGraphNodeProp(node, "shiftY");
-  }
-  const last = node.children[node.children.length - 1];
-  if (
-    !node.hasParallel &&
-    (last.isSkipped || last.hasParallel) &&
-    node.type !== "root"
-  ) {
-    // - Add a dummy node to "close" the skipped curve before closing the stage.
-    // - Add a dummy node to "close" the parallel curve of the child.
-    // In both cases, the dummy node will be the new stage end that is connected to the next node.
-    node.width += layout.nodeSpacingH / 2;
-    node.children.push({
-      ...baseGraphNode(layout),
-      width: 0,
-      isPlaceholder: true,
-      type: "stage-end",
-      key: `stage_end_${node.key}`,
-      name: `Stage end (${node.name})`,
-      id: 1_000_000 + node.id,
-      isHidden: true,
-    });
-  }
-}
-
-function baseGraphNode(layout: LayoutInfo, hasBigLabel?: boolean) {
-  return {
-    children: [],
-    x: 0,
-    y: 0,
-    shiftX: 0,
-    shiftY: 0,
-    width: layout.nodeSpacingH,
-    height: layout.nodeSpacingV,
-    ...(hasBigLabel ? { shiftY: layout.labelOffsetV, hasBigLabel: true } : {}),
-  };
-}
-
-function makeNodeForStage(
-  stage: StageInfo,
-  layout: LayoutInfo,
-  hasBigLabel?: boolean,
-): GraphNode {
-  return {
-    ...baseGraphNode(layout, hasBigLabel),
-    name: stage.name,
-    id: stage.id,
-    type: "stage",
-    stage,
-    isPlaceholder: false,
-    key: "n_" + stage.id,
-  };
 }

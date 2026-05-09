@@ -174,7 +174,7 @@ export interface PositionedGraph {
  */
 export interface NestedPositionedGraph {
   nodes: Array<NodeInfo>;
-  allGraphNodes: Array<GraphNode>;
+  allNodes: Array<GraphNode>;
   connections: Array<CompositeConnection>;
   bigLabels: Array<NodeLabelInfo>;
   timings: Array<NodeLabelInfo>;

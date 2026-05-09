@@ -38,7 +38,7 @@ export function PipelineGraph({
   collapsed,
   onStageSelect,
 }: Props) {
-  const [allGraphNodes, setAllGraphNodes] = useState<GraphNode[]>([]);
+  const [allNodes, setAllNodes] = useState<GraphNode[]>([]);
   const [nodes, setNodes] = useState<NodeInfo[]>([]);
   const [connections, setConnections] = useState<CompositeConnection[]>([]);
   const [bigLabels, setBigLabels] = useState<NodeLabelInfo[]>([]);
@@ -68,7 +68,7 @@ export function PipelineGraph({
         showDurations,
       );
       setNodes(result.nodes);
-      setAllGraphNodes(result.allGraphNodes);
+      setAllNodes(result.allNodes);
       setConnections(result.connections);
       setSmallLabels(result.smallLabels);
       setBigLabels(result.bigLabels);
@@ -129,7 +129,7 @@ export function PipelineGraph({
           />
 
           {debugPipelineGraph() && (
-            <DebugOutlines layout={fullLayout} nodes={allGraphNodes} />
+            <DebugOutlines layout={fullLayout} nodes={allNodes} />
           )}
         </svg>
 

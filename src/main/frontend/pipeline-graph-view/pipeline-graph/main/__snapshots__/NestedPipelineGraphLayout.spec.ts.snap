@@ -2,7 +2,7 @@
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.jenkinsfile > should render collapsed layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -168,6 +168,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       ],
       "height": 70,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -753,7 +754,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.jenkinsfile > should render layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -889,7 +890,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 70,
               "id": "18",
               "isHidden": true,
@@ -975,6 +975,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       ],
       "height": 210,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -1118,7 +1119,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 70,
           "id": "18",
           "isHidden": true,
@@ -1257,7 +1257,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 70,
       "id": "18",
       "isHidden": true,
@@ -1828,7 +1827,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.jenkinsfile > should render collapsed layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -2163,6 +2162,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       ],
       "height": 70,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -3324,7 +3324,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.jenkinsfile > should render layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -3522,7 +3522,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 70,
               "id": "18",
               "isHidden": true,
@@ -3594,7 +3593,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
               ],
               "firstChildIsSkipped": true,
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 70,
               "id": "19",
               "isHidden": true,
@@ -3782,7 +3780,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 70,
               "id": "112",
               "isHidden": true,
@@ -3846,6 +3843,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       ],
       "height": 324,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -4051,7 +4049,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 70,
           "id": "18",
           "isHidden": true,
@@ -4123,7 +4120,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           ],
           "firstChildIsSkipped": true,
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 70,
           "id": "19",
           "isHidden": true,
@@ -4324,7 +4320,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 70,
       "id": "18",
       "isHidden": true,
@@ -4501,7 +4496,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       ],
       "firstChildIsSkipped": true,
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 70,
       "id": "19",
       "isHidden": true,
@@ -4711,7 +4705,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 70,
           "id": "112",
           "isHidden": true,
@@ -4852,7 +4845,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 70,
       "id": "112",
       "isHidden": true,
@@ -5972,7 +5964,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.jenkinsfile > should render collapsed layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -6270,6 +6262,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       ],
       "height": 70,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -7335,7 +7328,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.jenkinsfile > should render layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -7448,7 +7441,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                           "y": 100,
                         },
                       ],
-                      "hasSmallLabel": true,
                       "height": 140,
                       "id": -16,
                       "isHidden": true,
@@ -7533,7 +7525,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 210,
               "id": "7",
               "isHidden": true,
@@ -7671,7 +7662,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                         },
                       ],
                       "hasBranchLabel": true,
-                      "hasSmallLabel": true,
                       "height": 140,
                       "id": "21",
                       "isHidden": true,
@@ -7756,7 +7746,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 210,
               "id": "8",
               "isHidden": true,
@@ -7819,6 +7808,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       ],
       "height": 464,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -7939,7 +7929,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                       "y": 100,
                     },
                   ],
-                  "hasSmallLabel": true,
                   "height": 140,
                   "id": -16,
                   "isHidden": true,
@@ -8024,7 +8013,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 210,
           "id": "7",
           "isHidden": true,
@@ -8162,7 +8150,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                     },
                   ],
                   "hasBranchLabel": true,
-                  "hasSmallLabel": true,
                   "height": 140,
                   "id": "21",
                   "isHidden": true,
@@ -8247,7 +8234,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 210,
           "id": "8",
           "isHidden": true,
@@ -8385,7 +8371,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                   "y": 100,
                 },
               ],
-              "hasSmallLabel": true,
               "height": 140,
               "id": -16,
               "isHidden": true,
@@ -8470,7 +8455,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 210,
       "id": "7",
       "isHidden": true,
@@ -8583,7 +8567,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
               "y": 100,
             },
           ],
-          "hasSmallLabel": true,
           "height": 140,
           "id": -16,
           "isHidden": true,
@@ -8740,7 +8723,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "y": 100,
         },
       ],
-      "hasSmallLabel": true,
       "height": 140,
       "id": -16,
       "isHidden": true,
@@ -9048,7 +9030,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 140,
               "id": "21",
               "isHidden": true,
@@ -9133,7 +9114,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 210,
       "id": "8",
       "isHidden": true,
@@ -9269,7 +9249,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 140,
           "id": "21",
           "isHidden": true,
@@ -9449,7 +9428,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 140,
       "id": "21",
       "isHidden": true,
@@ -10452,7 +10430,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkinsfile > should render collapsed layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -10829,6 +10807,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       ],
       "height": 70,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -12074,7 +12053,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
 
 exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkinsfile > should render layout 1`] = `
 {
-  "allGraphNodes": [
+  "allNodes": [
     {
       "children": [
         {
@@ -12307,7 +12286,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 210,
               "id": "8",
               "isHidden": true,
@@ -12470,7 +12448,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 140,
               "id": "9",
               "isHidden": true,
@@ -12650,7 +12627,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
                 },
               ],
               "hasBranchLabel": true,
-              "hasSmallLabel": true,
               "height": 70,
               "id": "10",
               "isHidden": true,
@@ -12713,6 +12689,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       ],
       "height": 442,
       "id": -42,
+      "isHidden": true,
       "isPlaceholder": true,
       "key": "root",
       "name": "Root",
@@ -12953,7 +12930,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 210,
           "id": "8",
           "isHidden": true,
@@ -13116,7 +13092,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 140,
           "id": "9",
           "isHidden": true,
@@ -13296,7 +13271,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
             },
           ],
           "hasBranchLabel": true,
-          "hasSmallLabel": true,
           "height": 70,
           "id": "10",
           "isHidden": true,
@@ -13554,7 +13528,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 210,
       "id": "8",
       "isHidden": true,
@@ -14041,7 +14014,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 140,
       "id": "9",
       "isHidden": true,
@@ -14404,7 +14376,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
       ],
       "hasBranchLabel": true,
-      "hasSmallLabel": true,
       "height": 70,
       "id": "10",
       "isHidden": true,

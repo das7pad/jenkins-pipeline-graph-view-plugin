@@ -128,7 +128,7 @@ function shouldMatchSnapshot(raw: string, collapsed: boolean) {
     c.destinationNodes = c.destinationNodes.map(leanEdge);
     c.skippedNodes = c.skippedNodes.map(leanEdge);
   }
-  for (const node of graph.allGraphNodes) {
+  for (const node of graph.allNodes) {
     trimGraphNode(node);
   }
   expect(graph).toMatchSnapshot();
