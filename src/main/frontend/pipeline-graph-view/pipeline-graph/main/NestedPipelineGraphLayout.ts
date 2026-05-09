@@ -525,7 +525,7 @@ function makeNodeForStage(stage: StageInfo, layout: LayoutInfo): GraphNode {
     ...baseGraphNode(layout),
     name: stage.name,
     id: stage.id,
-    type: "other",
+    type: "stage",
     stage,
     isPlaceholder: false,
     key: "n_" + stage.id,

@@ -194,6 +194,7 @@ export function createNodeColumns(
       seqContainerName,
       isPlaceholder: false,
       key: "n_" + stage.id,
+      type: "stage",
     };
   };
 
