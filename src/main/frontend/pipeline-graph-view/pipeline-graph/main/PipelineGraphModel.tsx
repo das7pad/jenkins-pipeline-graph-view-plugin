@@ -129,7 +129,7 @@ export interface ConnectionEdge {
   x: number;
   y: number;
   key: string;
-  type?: string;
+  type: NodeInfo["type"];
   firstChildIsSkipped?: boolean;
   isHidden?: boolean;
   isParallel?: boolean;
