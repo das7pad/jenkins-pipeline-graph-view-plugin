@@ -26,7 +26,7 @@ export function nestedGraphLayout(
     limit: collapsed ? maxColumnsWhenCollapsed : -1,
     root: {
       ...baseGraphNode(layout),
-      x: layout.nodeSpacingH / 2,
+      shiftX: layout.nodeSpacingH / 2,
       isPlaceholder: true,
       type: "root",
       name: "Root",
