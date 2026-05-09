@@ -5,6 +5,8 @@ import {
   ConnectionEdge,
   defaultLayout,
   GraphNode,
+  NodeInfo,
+  NodeLabelInfo,
   StageInfo,
 } from "./PipelineGraphModel.tsx";
 
@@ -82,7 +84,16 @@ function leanEdge(full: ConnectionEdge): ConnectionEdge {
  * Lean stage view on GraphNode to make test snapshots easier to read.
  */
 function trimStageChildrenFromGraphNode(node: GraphNode) {
-  if ("stage" in node && node.stage) node.stage.children = [];
+  if ("stage" in node && node.stage) {
+    node.stage.children = [];
+  }
+}
+
+/**
+ * Lean stage view on NodeLabelInfo to make test snapshots easier to read.
+ */
+function trimNodeInfoOnLabel(label: NodeLabelInfo) {
+  label.node = { isPlaceholder: label.node.isPlaceholder } as NodeInfo;
 }
 
 function shouldMatchSnapshot(raw: string, collapsed: boolean) {
@@ -95,6 +106,16 @@ function shouldMatchSnapshot(raw: string, collapsed: boolean) {
     !collapsed,
     collapsed,
   );
+  for (const labels of [
+    graph.smallLabels,
+    graph.bigLabels,
+    graph.branchLabels,
+    graph.timings,
+  ]) {
+    for (const label of labels) {
+      trimNodeInfoOnLabel(label);
+    }
+  }
   for (const c of graph.connections) {
     c.sourceNodes = c.sourceNodes.map(leanEdge);
     c.destinationNodes = c.destinationNodes.map(leanEdge);

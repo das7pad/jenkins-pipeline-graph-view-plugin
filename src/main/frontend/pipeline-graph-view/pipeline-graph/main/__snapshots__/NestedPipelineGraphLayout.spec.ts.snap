@@ -676,8 +676,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
   "smallLabels": [],
   "timings": [
     {
-      "isPlaceholder": false,
       "key": "l_t_n_6",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "6",
@@ -690,8 +692,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -704,8 +708,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_17",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "17",
@@ -718,8 +724,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_26",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "26",
@@ -732,8 +740,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_42",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "42",
@@ -746,8 +756,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_54",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "54",
@@ -1376,16 +1388,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
   ],
   "bigLabels": [
     {
-      "isPlaceholder": true,
       "key": "l_big_start-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "Start",
       "x": 70,
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_12",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "12",
@@ -1398,8 +1414,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_54",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "54",
@@ -1412,8 +1430,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 56,
     },
     {
-      "isPlaceholder": true,
       "key": "l_big_end-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "End",
       "x": 910,
@@ -1422,8 +1442,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
   ],
   "branchLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_18",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "Branch C",
       "x": 350,
       "y": 196,
@@ -1744,8 +1766,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
   ],
   "smallLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_small_n_6",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "6",
@@ -1758,8 +1782,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -1772,8 +1798,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_17",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "17",
@@ -1786,8 +1814,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 126,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_26",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "26",
@@ -1800,8 +1830,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "y": 196,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_42",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "42",
@@ -3229,8 +3261,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
   "smallLabels": [],
   "timings": [
     {
-      "isPlaceholder": false,
       "key": "l_t_n_6",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "6",
@@ -3243,8 +3277,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -3257,8 +3293,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_17",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "17",
@@ -3271,8 +3309,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_31",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "31",
@@ -3285,8 +3325,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_49",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "49",
@@ -3299,8 +3341,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_60",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "60",
@@ -3313,8 +3357,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_65",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "65",
@@ -3327,8 +3373,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_33",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "33",
@@ -3341,8 +3389,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_46",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "46",
@@ -3355,8 +3405,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_76",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "76",
@@ -3369,8 +3421,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_91",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "91",
@@ -3383,8 +3437,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_110",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "110",
@@ -3397,8 +3453,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_111",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "111",
@@ -5028,16 +5086,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
   ],
   "bigLabels": [
     {
-      "isPlaceholder": true,
       "key": "l_big_start-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "Start",
       "x": 70,
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_11",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "11",
@@ -5050,8 +5112,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_76",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "76",
@@ -5064,8 +5128,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_91",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "91",
@@ -5078,8 +5144,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_106",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "106",
@@ -5092,16 +5160,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": true,
       "key": "l_big_end-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "End",
       "x": 1820,
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_60",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "60",
@@ -5114,8 +5186,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 218,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_65",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "65",
@@ -5128,8 +5202,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 218,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_33",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "33",
@@ -5144,22 +5220,28 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
   ],
   "branchLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_18",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "Branch C",
       "x": 350,
       "y": 218,
     },
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_19",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "Branch D",
       "x": 350,
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_112",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "Branch C",
       "x": 1400,
       "y": 196,
@@ -5874,8 +5956,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
   ],
   "smallLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_small_n_6",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "6",
@@ -5888,8 +5972,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -5902,8 +5988,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_17",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "17",
@@ -5916,8 +6004,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 126,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_31",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "31",
@@ -5930,8 +6020,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 218,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_49",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "49",
@@ -5944,8 +6036,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 218,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_46",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "46",
@@ -5958,8 +6052,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_110",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "110",
@@ -5972,8 +6068,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 56,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_111",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "111",
@@ -5986,8 +6084,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 126,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_122",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "122",
@@ -6000,8 +6100,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "y": 196,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_133",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "133",
@@ -7228,8 +7330,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
   "smallLabels": [],
   "timings": [
     {
-      "isPlaceholder": false,
       "key": "l_t_n_10",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "10",
@@ -7242,8 +7346,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -7256,8 +7362,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_33",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "33",
@@ -7270,8 +7378,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_34",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "34",
@@ -7284,8 +7394,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_17",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "17",
@@ -7298,8 +7410,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_12",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "12",
@@ -7312,8 +7426,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_21",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "21",
@@ -7326,8 +7442,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_28",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "28",
@@ -7340,8 +7458,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_55",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "55",
@@ -7354,8 +7474,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_60",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "60",
@@ -7368,8 +7490,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_61",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "61",
@@ -7382,8 +7506,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_22",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "22",
@@ -9747,16 +9873,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
   ],
   "bigLabels": [
     {
-      "isPlaceholder": true,
       "key": "l_big_start-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "Start",
       "x": 70,
       "y": 100,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_4",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "4",
@@ -9769,16 +9899,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 56,
     },
     {
-      "isPlaceholder": true,
       "key": "l_big_end-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "End",
       "x": 910,
       "y": 100,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_10",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "10",
@@ -9791,8 +9925,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -9805,8 +9941,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 100,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_12",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "12",
@@ -9819,8 +9957,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 332,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_55",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "55",
@@ -9835,22 +9975,28 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
   ],
   "branchLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_7",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "BranchA",
       "x": 210,
       "y": 100,
     },
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_8",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "BranchB",
       "x": 210,
       "y": 354,
     },
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_21",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "B-1",
       "x": 350,
       "y": 354,
@@ -10380,8 +10526,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
   ],
   "smallLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_small_n_17",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "17",
@@ -10394,8 +10542,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 240,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_33",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "33",
@@ -10408,8 +10558,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 100,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_34",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "34",
@@ -10422,8 +10574,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 170,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_22",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "22",
@@ -10436,8 +10590,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 494,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_28",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "28",
@@ -10450,8 +10606,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 354,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_60",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "60",
@@ -10464,8 +10622,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "y": 354,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_61",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "61",
@@ -12019,8 +12179,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
   "smallLabels": [],
   "timings": [
     {
-      "isPlaceholder": false,
       "key": "l_t_n_12",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "12",
@@ -12033,8 +12195,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_26",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "26",
@@ -12047,8 +12211,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_35",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "35",
@@ -12061,8 +12227,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_36",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "36",
@@ -12075,8 +12243,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_37",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "37",
@@ -12089,8 +12259,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_67",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "67",
@@ -12103,8 +12275,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_72",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "72",
@@ -12117,8 +12291,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_73",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "73",
@@ -12131,8 +12307,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_99",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "99",
@@ -12145,8 +12323,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_14",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "14",
@@ -12159,8 +12339,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_28",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "28",
@@ -12173,8 +12355,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_51",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "51",
@@ -12187,8 +12371,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 110,
     },
     {
-      "isPlaceholder": false,
       "key": "l_t_n_52",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "52",
@@ -14730,16 +14916,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
   ],
   "bigLabels": [
     {
-      "isPlaceholder": true,
       "key": "l_big_start-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "Start",
       "x": 70,
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_5",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "5",
@@ -14752,16 +14942,20 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 56,
     },
     {
-      "isPlaceholder": true,
       "key": "l_big_end-node",
+      "node": {
+        "isPlaceholder": true,
+      },
       "stage": undefined,
       "text": "End",
       "x": 1330,
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_26",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "26",
@@ -14774,8 +14968,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_67",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "67",
@@ -14788,8 +14984,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_big_n_49",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "49",
@@ -14804,22 +15002,28 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
   ],
   "branchLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_8",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "A",
       "x": 210,
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_9",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "B",
       "x": 210,
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_branch_n_10",
+      "node": {
+        "isPlaceholder": false,
+      },
       "text": "C",
       "x": 210,
       "y": 450,
@@ -15728,8 +15932,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
   ],
   "smallLabels": [
     {
-      "isPlaceholder": false,
       "key": "l_small_n_12",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "12",
@@ -15742,8 +15948,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_99",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "99",
@@ -15756,8 +15964,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_35",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "35",
@@ -15770,8 +15980,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_36",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "36",
@@ -15784,8 +15996,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 148,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_37",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "37",
@@ -15798,8 +16012,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 218,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_72",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "72",
@@ -15812,8 +16028,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 78,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_73",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "73",
@@ -15826,8 +16044,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 148,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_14",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "14",
@@ -15840,8 +16060,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_28",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "28",
@@ -15854,8 +16076,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_85",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "85",
@@ -15868,8 +16092,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_51",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "51",
@@ -15882,8 +16108,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 310,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_52",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "52",
@@ -15896,8 +16124,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 380,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_16",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "16",
@@ -15910,8 +16140,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 450,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_31",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "31",
@@ -15924,8 +16156,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 450,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_57",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "57",
@@ -15938,8 +16172,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 450,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_76",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "76",
@@ -15952,8 +16188,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 450,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_92",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "92",
@@ -15966,8 +16204,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 450,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_104",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "104",
@@ -15980,8 +16220,10 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "y": 450,
     },
     {
-      "isPlaceholder": false,
       "key": "l_small_n_111",
+      "node": {
+        "isPlaceholder": false,
+      },
       "stage": {
         "children": [],
         "id": "111",

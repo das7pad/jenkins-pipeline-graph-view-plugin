@@ -370,7 +370,7 @@ function createBigLabels(
     labels.push({
       x,
       y: node.y,
-      isPlaceholder: node.isPlaceholder,
+      node,
       stage,
       text,
       key,
@@ -404,7 +404,7 @@ function createTimings(
     labels.push({
       x: column.centerX,
       y: node.y + 55,
-      isPlaceholder: node.isPlaceholder,
+      node,
       stage,
       text: "", // we take the duration from the stage itself at render time
       key: `l_t_${node.key}`,
@@ -437,7 +437,7 @@ function createSmallLabels(
           y: node.y,
           text: node.name,
           key: "l_s_" + node.key,
-          isPlaceholder: node.isPlaceholder,
+          node,
         };
 
         if (!node.isPlaceholder) {
@@ -474,7 +474,7 @@ function createBranchLabels(
             x: column.startX,
             y: firstNode.y,
             key: `branchLabel-${++count}`,
-            isPlaceholder: firstNode.isPlaceholder,
+            node: firstNode,
             text: firstNode.seqContainerName,
           });
         }

@@ -193,7 +193,7 @@ export function nestedGraphLayout(
         y: node.y,
         text: node.name,
         key: "l_small_" + node.key,
-        isPlaceholder: node.isPlaceholder,
+        node,
         stage: "stage" in node ? node.stage : undefined,
       };
     });
@@ -205,7 +205,7 @@ export function nestedGraphLayout(
         x: node.x - layout.nodeSpacingH,
         y: node.y,
         key: "l_branch_" + node.key,
-        isPlaceholder: node.isPlaceholder,
+        node,
         text: node.name,
       };
     });
@@ -217,7 +217,7 @@ export function nestedGraphLayout(
         x: centerOfNode(node, layout),
         y: node.y - (node.shiftY - layout.labelOffsetV),
         key: "l_big_" + node.key,
-        isPlaceholder: node.isPlaceholder,
+        node,
         stage: "stage" in node ? node.stage : undefined,
         text: node.name,
       };
@@ -229,7 +229,7 @@ export function nestedGraphLayout(
       return {
         x: centerOfNode(node, layout),
         y: node.y + 55,
-        isPlaceholder: node.isPlaceholder,
+        node,
         stage: "stage" in node ? node.stage : undefined,
         text: "", // we take the duration from the stage itself at render time
         key: `l_t_${node.key}`,

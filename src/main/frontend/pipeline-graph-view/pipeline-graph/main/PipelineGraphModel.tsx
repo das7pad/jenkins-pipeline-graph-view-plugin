@@ -144,7 +144,7 @@ export interface NodeLabelInfo {
   text: string;
   key: string;
   stage?: StageInfo;
-  isPlaceholder?: boolean;
+  node: NodeInfo;
 }
 
 export type LayoutInfo = typeof defaultLayout;
