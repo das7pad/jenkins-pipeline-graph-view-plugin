@@ -23,13 +23,14 @@ import {
   StageInfo,
 } from "./PipelineGraphModel.tsx";
 import { GraphConnections } from "./support/connections.tsx";
+import { DebugOutline } from "./support/DebugOutline.tsx";
 import {
   BigLabel,
   SequentialContainerLabel,
   SmallLabel,
   TimingsLabel,
 } from "./support/labels.tsx";
-import { DebugOutlines, Node, SelectionHighlight } from "./support/nodes.tsx";
+import { Node, SelectionHighlight } from "./support/nodes.tsx";
 
 export function PipelineGraph({
   stages = [],
@@ -124,9 +125,10 @@ export function PipelineGraph({
             isStageSelected={stageIsSelected}
           />
 
-          {debugPipelineGraph() && (
-            <DebugOutlines layout={fullLayout} nodes={allNodes} />
-          )}
+          {debugPipelineGraph() &&
+            allNodes.map((node) => (
+              <DebugOutline node={node} layout={fullLayout} key={node.id} />
+            ))}
         </svg>
 
         {nodes.map((node) => (
