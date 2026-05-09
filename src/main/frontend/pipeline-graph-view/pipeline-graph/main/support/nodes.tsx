@@ -264,17 +264,36 @@ function DebugOutline({
           }}
         />
       </Tooltip>
-      {node.shiftY > 0 && (
+      {node.shiftX > 0 && (
         <Tooltip content={`${node.id} (${node.name}) shiftX`}>
           <rect
-            x={node.x}
-            y={node.y}
-            width={node.shiftX}
-            height={node.height}
+            x={node.x + 2}
+            y={node.y + 2}
+            width={node.shiftX - 4}
+            height={node.height - 4}
             strokeWidth={2}
-            strokeDasharray={"2,2"}
+            strokeDasharray={"5,5"}
             stroke={"red"}
             fill="red"
+            fillOpacity={0.075}
+            onClick={() => {
+              setVisible(false);
+              setTimeout(() => setVisible(true), 10_000);
+            }}
+          />
+        </Tooltip>
+      )}
+      {node.shiftY > 0 && (
+        <Tooltip content={`${node.id} (${node.name}) shiftY`}>
+          <rect
+            x={node.x + 2}
+            y={node.y - node.shiftY + 2}
+            width={node.width - 4}
+            height={node.shiftY - 4}
+            strokeWidth={2}
+            strokeDasharray={"3,3"}
+            stroke={"green"}
+            fill="green"
             fillOpacity={0.075}
             onClick={() => {
               setVisible(false);
@@ -291,8 +310,8 @@ function DebugOutline({
           height={layout.nodeRadius + 8}
           strokeWidth={2}
           strokeDasharray={"2,2"}
-          stroke={"red"}
-          fill="red"
+          stroke={"blue"}
+          fill="blue"
           fillOpacity={0.075}
           onClick={() => {
             setVisible(false);
