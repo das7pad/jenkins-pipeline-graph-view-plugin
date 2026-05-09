@@ -14,16 +14,18 @@ import {
 const maxColumnsWhenCollapsed = 13;
 
 export function nestedGraphLayout(
-  newStages: Array<StageInfo>,
+  stages: Array<StageInfo>,
   layout: LayoutInfo,
   collapsed: boolean,
   messages: Messages,
   showNames: boolean,
   showDurations: boolean,
 ): PositionedGraph {
+  const graphSpacingX = layout.nodeSpacingH / 2;
+  const startEndReducedSpacing = Math.floor(layout.nodeSpacingH * 0.3);
   const root: GraphNode = {
     ...baseGraphNode(layout),
-    shiftX: layout.nodeSpacingH / 2,
+    shiftX: graphSpacingX,
     isPlaceholder: true,
     isHidden: true,
     type: "root",
@@ -33,6 +35,7 @@ export function nestedGraphLayout(
     children: [
       {
         ...baseGraphNode(layout, showNames),
+        width: layout.nodeSpacingH - startEndReducedSpacing,
         isPlaceholder: true,
         type: "start",
         name: messages.format(LocalizedMessageKey.start),
@@ -43,24 +46,27 @@ export function nestedGraphLayout(
   };
 
   if (collapsed) {
-    buildGraphCollapsed(newStages, root, layout, showNames, showDurations);
+    buildGraphCollapsed(stages, root, layout, showNames, showDurations);
   } else {
-    buildGraphNested(root, newStages, layout);
+    buildGraphNested(root, stages, layout);
   }
 
   root.y = Math.max(
     layout.ypStart,
     root.shiftY + (showNames ? layout.nodeRadius + layout.labelOffsetV : 0),
   );
-  root.width += layout.nodeSpacingH;
   root.children.push({
     ...baseGraphNode(layout, showNames),
+    width: graphSpacingX,
+    shiftX: -startEndReducedSpacing,
     isPlaceholder: true,
     type: "end",
     name: messages.format(LocalizedMessageKey.end),
     key: "end-node",
     id: -3,
   });
+  root.width =
+    root.shiftX + sumGraphNodeProp(root, "width") - startEndReducedSpacing;
   const measuredWidth = root.width;
   const measuredHeight = root.y + root.height;
 
@@ -74,7 +80,7 @@ export function nestedGraphLayout(
   const timings = computeTimingsLabels(nodes, layout);
 
   const debug = debugPipelineGraph();
-  if (debug) printDebugInfo(newStages, root, nodes, connections);
+  if (debug) printDebugInfo(stages, root, nodes, connections);
   return {
     nodes: debug ? nodes : visibleNodes,
     allNodes: nodes,
@@ -174,7 +180,6 @@ function buildGraphCollapsed(
       stages: collapsedStages.slice(breakPoint),
     });
   }
-  root.width = sumGraphNodeProp(root, "width");
 }
 
 function buildGraphNested(
@@ -271,7 +276,8 @@ function buildGraphNested(
     node.width += layout.nodeSpacingH / 2;
     node.children.push({
       ...baseGraphNode(layout),
-      width: 0,
+      shiftX: -layout.nodeSpacingH / 2,
+      width: layout.nodeSpacingH,
       isPlaceholder: true,
       type: "stage-end",
       key: `stage_end_${node.key}`,
@@ -294,9 +300,6 @@ function computePositions(
   for (const [i, child] of node.children.entries()) {
     child.x = xP;
     child.y = yP;
-    if (child.type === "stage-end") {
-      child.x -= layout.nodeSpacingH / 2;
-    }
     let childExtraXp = 0;
     if (node.hasParallel) {
       if (i > 0) {
@@ -316,6 +319,10 @@ function computePositions(
       }
     } else {
       xP += child.width;
+      if (child.shiftX < 0) {
+        xP += child.shiftX;
+        child.x += child.shiftX;
+      }
     }
     computePositions(child, childExtraXp, layout);
   }
