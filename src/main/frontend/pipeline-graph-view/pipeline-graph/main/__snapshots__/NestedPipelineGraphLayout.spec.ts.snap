@@ -7,14 +7,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "children": [
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -1,
           "isPlaceholder": true,
           "key": "start-node",
           "name": "Start",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "start",
           "width": 140,
           "x": 70,
@@ -22,7 +21,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "6",
@@ -30,7 +28,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
           "key": "n_6",
           "name": "Non-Parallel Stage",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "6",
@@ -45,7 +43,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "16",
@@ -53,7 +50,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
           "key": "n_16",
           "name": "Branch A",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "16",
@@ -68,7 +65,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "17",
@@ -76,7 +72,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
           "key": "n_17",
           "name": "Branch B",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "17",
@@ -91,7 +87,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "26",
@@ -99,7 +94,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
           "key": "n_26",
           "name": "Nested 1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "26",
@@ -114,7 +109,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "42",
@@ -122,7 +116,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
           "key": "n_42",
           "name": "Nested 2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "42",
@@ -137,7 +131,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "54",
@@ -145,7 +138,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
           "key": "n_54",
           "name": "Skipped stage",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "54",
@@ -160,14 +153,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -3,
           "isPlaceholder": true,
           "key": "end-node",
           "name": "End",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "end",
           "width": 140,
           "x": 1050,
@@ -188,14 +180,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -203,7 +194,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "6",
@@ -211,7 +201,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_6",
       "name": "Non-Parallel Stage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "6",
@@ -226,7 +216,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "16",
@@ -234,7 +223,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_16",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "16",
@@ -249,7 +238,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "17",
@@ -257,7 +245,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_17",
       "name": "Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "17",
@@ -272,7 +260,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "26",
@@ -280,7 +267,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_26",
       "name": "Nested 1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "26",
@@ -295,7 +282,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "42",
@@ -303,7 +289,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_42",
       "name": "Nested 2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "42",
@@ -318,7 +304,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "54",
@@ -326,7 +311,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_54",
       "name": "Skipped stage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "54",
@@ -341,14 +326,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 1050,
@@ -506,14 +490,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
   "nodes": [
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -521,7 +504,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "6",
@@ -529,7 +511,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_6",
       "name": "Non-Parallel Stage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "6",
@@ -544,7 +526,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "16",
@@ -552,7 +533,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_16",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "16",
@@ -567,7 +548,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "17",
@@ -575,7 +555,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_17",
       "name": "Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "17",
@@ -590,7 +570,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "26",
@@ -598,7 +577,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_26",
       "name": "Nested 1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "26",
@@ -613,7 +592,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "42",
@@ -621,7 +599,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_42",
       "name": "Nested 2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "42",
@@ -636,7 +614,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "54",
@@ -644,7 +621,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
       "key": "n_54",
       "name": "Skipped stage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "54",
@@ -659,14 +636,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > complexParallelSmokes.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 1050,
@@ -1857,14 +1833,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "children": [
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -1,
           "isPlaceholder": true,
           "key": "start-node",
           "name": "Start",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "start",
           "width": 140,
           "x": 70,
@@ -1872,7 +1847,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "6",
@@ -1880,7 +1854,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_6",
           "name": "Non-Parallel Stage",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "6",
@@ -1895,7 +1869,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "16",
@@ -1903,7 +1876,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_16",
           "name": "Branch A",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "16",
@@ -1918,7 +1891,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "17",
@@ -1926,7 +1898,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_17",
           "name": "Skipped Branch B",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "17",
@@ -1941,7 +1913,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "31",
@@ -1949,7 +1920,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_31",
           "name": "Nested 1 C",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "31",
@@ -1964,7 +1935,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "49",
@@ -1972,7 +1942,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_49",
           "name": "Nested 2 C",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "49",
@@ -1987,7 +1957,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "60",
@@ -1995,7 +1964,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_60",
           "name": "Skipped stage c nested 3",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "60",
@@ -2010,7 +1979,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "65",
@@ -2018,7 +1986,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_65",
           "name": "Skipped stage c nested 4",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "65",
@@ -2033,7 +2001,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "33",
@@ -2041,7 +2008,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_33",
           "name": "Skipped stage d nested 1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "33",
@@ -2056,7 +2023,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "46",
@@ -2064,7 +2030,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_46",
           "name": "Nested 2 D",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "46",
@@ -2079,7 +2045,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "76",
@@ -2087,7 +2052,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_76",
           "name": "Skipped stage 1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "76",
@@ -2102,7 +2067,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "91",
@@ -2110,7 +2074,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_91",
           "name": "Skipped stage 2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "91",
@@ -2125,7 +2089,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "110",
@@ -2133,7 +2096,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_110",
           "name": "Branch A",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "110",
@@ -2148,7 +2111,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "111",
@@ -2156,7 +2118,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "n_111",
           "name": "Branch B",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "111",
@@ -2177,7 +2139,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
           "key": "counter-node",
           "name": "Counter",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stages": [
             {
               "children": [],
@@ -2201,14 +2163,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -3,
           "isPlaceholder": true,
           "key": "end-node",
           "name": "End",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "end",
           "width": 140,
           "x": 2170,
@@ -2229,14 +2190,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -2244,7 +2204,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "6",
@@ -2252,7 +2211,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_6",
       "name": "Non-Parallel Stage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "6",
@@ -2267,7 +2226,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "16",
@@ -2275,7 +2233,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_16",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "16",
@@ -2290,7 +2248,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "17",
@@ -2298,7 +2255,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_17",
       "name": "Skipped Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "17",
@@ -2313,7 +2270,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "31",
@@ -2321,7 +2277,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_31",
       "name": "Nested 1 C",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "31",
@@ -2336,7 +2292,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "49",
@@ -2344,7 +2299,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_49",
       "name": "Nested 2 C",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "49",
@@ -2359,7 +2314,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "60",
@@ -2367,7 +2321,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_60",
       "name": "Skipped stage c nested 3",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "60",
@@ -2382,7 +2336,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "65",
@@ -2390,7 +2343,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_65",
       "name": "Skipped stage c nested 4",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "65",
@@ -2405,7 +2358,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "33",
@@ -2413,7 +2365,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_33",
       "name": "Skipped stage d nested 1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "33",
@@ -2428,7 +2380,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "46",
@@ -2436,7 +2387,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_46",
       "name": "Nested 2 D",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "46",
@@ -2451,7 +2402,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "76",
@@ -2459,7 +2409,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_76",
       "name": "Skipped stage 1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "76",
@@ -2474,7 +2424,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "91",
@@ -2482,7 +2431,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_91",
       "name": "Skipped stage 2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "91",
@@ -2497,7 +2446,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "110",
@@ -2505,7 +2453,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_110",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "110",
@@ -2520,7 +2468,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "111",
@@ -2528,7 +2475,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_111",
       "name": "Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "111",
@@ -2549,7 +2496,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "counter-node",
       "name": "Counter",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stages": [
         {
           "children": [],
@@ -2573,14 +2520,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 2170,
@@ -2900,14 +2846,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
   "nodes": [
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -2915,7 +2860,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "6",
@@ -2923,7 +2867,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_6",
       "name": "Non-Parallel Stage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "6",
@@ -2938,7 +2882,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "16",
@@ -2946,7 +2889,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_16",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "16",
@@ -2961,7 +2904,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "17",
@@ -2969,7 +2911,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_17",
       "name": "Skipped Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "17",
@@ -2984,7 +2926,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "31",
@@ -2992,7 +2933,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_31",
       "name": "Nested 1 C",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "31",
@@ -3007,7 +2948,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "49",
@@ -3015,7 +2955,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_49",
       "name": "Nested 2 C",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "49",
@@ -3030,7 +2970,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "60",
@@ -3038,7 +2977,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_60",
       "name": "Skipped stage c nested 3",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "60",
@@ -3053,7 +2992,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "65",
@@ -3061,7 +2999,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_65",
       "name": "Skipped stage c nested 4",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "65",
@@ -3076,7 +3014,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "33",
@@ -3084,7 +3021,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_33",
       "name": "Skipped stage d nested 1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "33",
@@ -3099,7 +3036,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "46",
@@ -3107,7 +3043,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_46",
       "name": "Nested 2 D",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "46",
@@ -3122,7 +3058,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "76",
@@ -3130,7 +3065,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_76",
       "name": "Skipped stage 1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "76",
@@ -3145,7 +3080,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "91",
@@ -3153,7 +3087,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_91",
       "name": "Skipped stage 2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "91",
@@ -3168,7 +3102,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "110",
@@ -3176,7 +3109,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_110",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "110",
@@ -3191,7 +3124,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "111",
@@ -3199,7 +3131,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "n_111",
       "name": "Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "111",
@@ -3220,7 +3152,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
       "key": "counter-node",
       "name": "Counter",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stages": [
         {
           "children": [],
@@ -3244,14 +3176,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_complexSmokes.je
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 2170,
@@ -6127,14 +6058,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "children": [
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -1,
           "isPlaceholder": true,
           "key": "start-node",
           "name": "Start",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "start",
           "width": 140,
           "x": 70,
@@ -6142,7 +6072,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "10",
@@ -6150,7 +6079,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_10",
           "name": "Branch A",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "10",
@@ -6165,7 +6094,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "16",
@@ -6173,7 +6101,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_16",
           "name": "A-1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "16",
@@ -6188,7 +6116,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "33",
@@ -6196,7 +6123,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_33",
           "name": "A-1-1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "33",
@@ -6211,7 +6138,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "34",
@@ -6219,7 +6145,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_34",
           "name": "A-1-2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "34",
@@ -6234,7 +6160,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "17",
@@ -6242,7 +6167,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_17",
           "name": "A-2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "17",
@@ -6257,7 +6182,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "12",
@@ -6265,7 +6189,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_12",
           "name": "Branch B",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "12",
@@ -6280,7 +6204,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "21",
@@ -6288,7 +6211,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_21",
           "name": "B-1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "21",
@@ -6303,7 +6226,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "28",
@@ -6311,7 +6233,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_28",
           "name": "B-1-1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "28",
@@ -6326,7 +6248,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "55",
@@ -6334,7 +6255,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_55",
           "name": "B-1-2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "55",
@@ -6349,7 +6270,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "60",
@@ -6357,7 +6277,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_60",
           "name": "B-1-2-1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "60",
@@ -6372,7 +6292,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "61",
@@ -6380,7 +6299,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_61",
           "name": "B-1-2-2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "61",
@@ -6395,7 +6314,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "22",
@@ -6403,7 +6321,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
           "key": "n_22",
           "name": "B-2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "22",
@@ -6418,14 +6336,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -3,
           "isPlaceholder": true,
           "key": "end-node",
           "name": "End",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "end",
           "width": 140,
           "x": 1890,
@@ -6446,14 +6363,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -6461,7 +6377,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "10",
@@ -6469,7 +6384,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_10",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "10",
@@ -6484,7 +6399,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "16",
@@ -6492,7 +6406,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_16",
       "name": "A-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "16",
@@ -6507,7 +6421,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "33",
@@ -6515,7 +6428,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_33",
       "name": "A-1-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "33",
@@ -6530,7 +6443,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "34",
@@ -6538,7 +6450,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_34",
       "name": "A-1-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "34",
@@ -6553,7 +6465,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "17",
@@ -6561,7 +6472,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_17",
       "name": "A-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "17",
@@ -6576,7 +6487,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "12",
@@ -6584,7 +6494,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_12",
       "name": "Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "12",
@@ -6599,7 +6509,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "21",
@@ -6607,7 +6516,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_21",
       "name": "B-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "21",
@@ -6622,7 +6531,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "28",
@@ -6630,7 +6538,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_28",
       "name": "B-1-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "28",
@@ -6645,7 +6553,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "55",
@@ -6653,7 +6560,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_55",
       "name": "B-1-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "55",
@@ -6668,7 +6575,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "60",
@@ -6676,7 +6582,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_60",
       "name": "B-1-2-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "60",
@@ -6691,7 +6597,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "61",
@@ -6699,7 +6604,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_61",
       "name": "B-1-2-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "61",
@@ -6714,7 +6619,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "22",
@@ -6722,7 +6626,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_22",
       "name": "B-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "22",
@@ -6737,14 +6641,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 1890,
@@ -7022,14 +6925,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
   "nodes": [
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -7037,7 +6939,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "10",
@@ -7045,7 +6946,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_10",
       "name": "Branch A",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "10",
@@ -7060,7 +6961,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "16",
@@ -7068,7 +6968,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_16",
       "name": "A-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "16",
@@ -7083,7 +6983,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "33",
@@ -7091,7 +6990,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_33",
       "name": "A-1-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "33",
@@ -7106,7 +7005,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "34",
@@ -7114,7 +7012,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_34",
       "name": "A-1-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "34",
@@ -7129,7 +7027,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "17",
@@ -7137,7 +7034,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_17",
       "name": "A-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "17",
@@ -7152,7 +7049,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "12",
@@ -7160,7 +7056,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_12",
       "name": "Branch B",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "12",
@@ -7175,7 +7071,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "21",
@@ -7183,7 +7078,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_21",
       "name": "B-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "21",
@@ -7198,7 +7093,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "28",
@@ -7206,7 +7100,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_28",
       "name": "B-1-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "28",
@@ -7221,7 +7115,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "55",
@@ -7229,7 +7122,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_55",
       "name": "B-1-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "55",
@@ -7244,7 +7137,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "60",
@@ -7252,7 +7144,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_60",
       "name": "B-1-2-1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "60",
@@ -7267,7 +7159,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "61",
@@ -7275,7 +7166,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_61",
       "name": "B-1-2-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "61",
@@ -7290,7 +7181,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "22",
@@ -7298,7 +7188,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
       "key": "n_22",
       "name": "B-2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "22",
@@ -7313,14 +7203,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_nestedParallel.j
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 1890,
@@ -10649,14 +10538,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "children": [
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -1,
           "isPlaceholder": true,
           "key": "start-node",
           "name": "Start",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "start",
           "width": 140,
           "x": 70,
@@ -10664,7 +10552,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "12",
@@ -10672,7 +10559,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_12",
           "name": "Checkout",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "12",
@@ -10687,7 +10574,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "26",
@@ -10695,7 +10581,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_26",
           "name": "Test",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "26",
@@ -10710,7 +10596,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "35",
@@ -10718,7 +10603,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_35",
           "name": "A1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "35",
@@ -10733,7 +10618,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "36",
@@ -10741,7 +10625,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_36",
           "name": "A2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "36",
@@ -10756,7 +10640,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "37",
@@ -10764,7 +10647,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_37",
           "name": "A3",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "37",
@@ -10779,7 +10662,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "67",
@@ -10787,7 +10669,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_67",
           "name": "Test 2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "67",
@@ -10802,7 +10684,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "72",
@@ -10810,7 +10691,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_72",
           "name": "A1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "72",
@@ -10825,7 +10706,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "73",
@@ -10833,7 +10713,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_73",
           "name": "A2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "73",
@@ -10848,7 +10728,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "99",
@@ -10856,7 +10735,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_99",
           "name": "Coverage",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "99",
@@ -10871,7 +10750,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "14",
@@ -10879,7 +10757,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_14",
           "name": "Checkout",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "14",
@@ -10894,7 +10772,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "28",
@@ -10902,7 +10779,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_28",
           "name": "Build",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "28",
@@ -10917,7 +10794,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "51",
@@ -10925,7 +10801,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_51",
           "name": "B1",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "51",
@@ -10940,7 +10816,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "hasTiming": true,
           "height": 70,
           "id": "52",
@@ -10948,7 +10823,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "n_52",
           "name": "B2",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stage": {
             "children": [],
             "id": "52",
@@ -10969,7 +10844,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
           "key": "counter-node",
           "name": "Counter",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "stages": [
             {
               "children": [],
@@ -11035,14 +10910,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
         },
         {
           "children": [],
-          "hasBigLabel": false,
           "height": 70,
           "id": -3,
           "isPlaceholder": true,
           "key": "end-node",
           "name": "End",
           "shiftX": 0,
-          "shiftY": 22,
+          "shiftY": 0,
           "type": "end",
           "width": 140,
           "x": 2170,
@@ -11063,14 +10937,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -11078,7 +10951,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "12",
@@ -11086,7 +10958,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_12",
       "name": "Checkout",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "12",
@@ -11101,7 +10973,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "26",
@@ -11109,7 +10980,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_26",
       "name": "Test",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "26",
@@ -11124,7 +10995,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "35",
@@ -11132,7 +11002,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_35",
       "name": "A1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "35",
@@ -11147,7 +11017,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "36",
@@ -11155,7 +11024,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_36",
       "name": "A2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "36",
@@ -11170,7 +11039,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "37",
@@ -11178,7 +11046,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_37",
       "name": "A3",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "37",
@@ -11193,7 +11061,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "67",
@@ -11201,7 +11068,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_67",
       "name": "Test 2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "67",
@@ -11216,7 +11083,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "72",
@@ -11224,7 +11090,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_72",
       "name": "A1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "72",
@@ -11239,7 +11105,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "73",
@@ -11247,7 +11112,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_73",
       "name": "A2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "73",
@@ -11262,7 +11127,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "99",
@@ -11270,7 +11134,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_99",
       "name": "Coverage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "99",
@@ -11285,7 +11149,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "14",
@@ -11293,7 +11156,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_14",
       "name": "Checkout",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "14",
@@ -11308,7 +11171,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "28",
@@ -11316,7 +11178,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_28",
       "name": "Build",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "28",
@@ -11331,7 +11193,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "51",
@@ -11339,7 +11200,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_51",
       "name": "B1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "51",
@@ -11354,7 +11215,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "52",
@@ -11362,7 +11222,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_52",
       "name": "B2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "52",
@@ -11383,7 +11243,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "counter-node",
       "name": "Counter",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stages": [
         {
           "children": [],
@@ -11449,14 +11309,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 2170,
@@ -11776,14 +11635,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
   "nodes": [
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -1,
       "isPlaceholder": true,
       "key": "start-node",
       "name": "Start",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "start",
       "width": 140,
       "x": 70,
@@ -11791,7 +11649,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "12",
@@ -11799,7 +11656,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_12",
       "name": "Checkout",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "12",
@@ -11814,7 +11671,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "26",
@@ -11822,7 +11678,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_26",
       "name": "Test",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "26",
@@ -11837,7 +11693,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "35",
@@ -11845,7 +11700,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_35",
       "name": "A1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "35",
@@ -11860,7 +11715,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "36",
@@ -11868,7 +11722,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_36",
       "name": "A2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "36",
@@ -11883,7 +11737,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "37",
@@ -11891,7 +11744,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_37",
       "name": "A3",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "37",
@@ -11906,7 +11759,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "67",
@@ -11914,7 +11766,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_67",
       "name": "Test 2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "67",
@@ -11929,7 +11781,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "72",
@@ -11937,7 +11788,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_72",
       "name": "A1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "72",
@@ -11952,7 +11803,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "73",
@@ -11960,7 +11810,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_73",
       "name": "A2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "73",
@@ -11975,7 +11825,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "99",
@@ -11983,7 +11832,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_99",
       "name": "Coverage",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "99",
@@ -11998,7 +11847,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "14",
@@ -12006,7 +11854,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_14",
       "name": "Checkout",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "14",
@@ -12021,7 +11869,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "28",
@@ -12029,7 +11876,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_28",
       "name": "Build",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "28",
@@ -12044,7 +11891,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "51",
@@ -12052,7 +11898,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_51",
       "name": "B1",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "51",
@@ -12067,7 +11913,6 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "hasTiming": true,
       "height": 70,
       "id": "52",
@@ -12075,7 +11920,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "n_52",
       "name": "B2",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stage": {
         "children": [],
         "id": "52",
@@ -12096,7 +11941,7 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
       "key": "counter-node",
       "name": "Counter",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "stages": [
         {
           "children": [],
@@ -12162,14 +12007,13 @@ exports[`NestedPipelineGraphLayout > nestedGraphLayout > gh1155_smokeTest.jenkin
     },
     {
       "children": [],
-      "hasBigLabel": false,
       "height": 70,
       "id": -3,
       "isPlaceholder": true,
       "key": "end-node",
       "name": "End",
       "shiftX": 0,
-      "shiftY": 22,
+      "shiftY": 0,
       "type": "end",
       "width": 140,
       "x": 2170,

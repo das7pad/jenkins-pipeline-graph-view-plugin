@@ -31,14 +31,12 @@ export function nestedGraphLayout(
     id: -42,
     children: [
       {
-        ...baseGraphNode(layout),
-        shiftY: layout.labelOffsetV,
+        ...baseGraphNode(layout, showNames),
         isPlaceholder: true,
         type: "start",
         name: messages.format(LocalizedMessageKey.start),
         key: "start-node",
         id: -1,
-        hasBigLabel: showNames,
       },
     ],
   };
@@ -49,16 +47,13 @@ export function nestedGraphLayout(
       ...collapsedStages
         .slice(0, maxColumnsWhenCollapsed)
         .map((stage: StageInfo) => ({
-          ...makeNodeForStage(stage, layout),
-          shiftY: layout.labelOffsetV,
-          hasBigLabel: showNames,
+          ...makeNodeForStage(stage, layout, showNames),
           hasTiming: showDurations,
         })),
     );
     if (collapsedStages.length > maxColumnsWhenCollapsed) {
       root.children.push({
         ...baseGraphNode(layout),
-        shiftY: layout.labelOffsetV,
         isPlaceholder: true,
         type: "counter",
         name: "Counter",
@@ -78,14 +73,12 @@ export function nestedGraphLayout(
 
   root.width += layout.nodeSpacingH;
   root.children.push({
-    ...baseGraphNode(layout),
-    shiftY: layout.labelOffsetV,
+    ...baseGraphNode(layout, showNames),
     isPlaceholder: true,
     type: "end",
     name: messages.format(LocalizedMessageKey.end),
     key: "end-node",
     id: -3,
-    hasBigLabel: showNames,
   });
 
   const computePositions = (node: GraphNode, extraXp: number) => {
@@ -487,7 +480,7 @@ function collectNested(
   }
 }
 
-function baseGraphNode(layout: LayoutInfo) {
+function baseGraphNode(layout: LayoutInfo, hasBigLabel?: boolean) {
   return {
     children: [],
     x: 0,
@@ -496,12 +489,17 @@ function baseGraphNode(layout: LayoutInfo) {
     shiftY: 0,
     width: layout.nodeSpacingH,
     height: layout.nodeSpacingV,
+    ...(hasBigLabel ? { shiftY: layout.labelOffsetV, hasBigLabel: true } : {}),
   };
 }
 
-function makeNodeForStage(stage: StageInfo, layout: LayoutInfo): GraphNode {
+function makeNodeForStage(
+  stage: StageInfo,
+  layout: LayoutInfo,
+  hasBigLabel?: boolean,
+): GraphNode {
   return {
-    ...baseGraphNode(layout),
+    ...baseGraphNode(layout, hasBigLabel),
     name: stage.name,
     id: stage.id,
     type: "stage",
