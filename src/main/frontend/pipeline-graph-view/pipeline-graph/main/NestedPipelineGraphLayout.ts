@@ -279,6 +279,9 @@ function printDebugInfo(
     ),
   );
   console.log("newStages", newStages);
+  for (const node of nodes) {
+    removeFalselyGraphNodeFields(node);
+  }
   console.log("graph root", root);
   console.table(
     nodes.map((n) => ({ ...n, stage: "stage" in n && n.stage.type })),
@@ -313,6 +316,17 @@ function printDebugInfo(
       hasBranchLabels: c.hasBranchLabels,
     })),
   );
+}
+
+export function removeFalselyGraphNodeFields(node: GraphNode) {
+  if (!node.isParallel) delete node.isParallel;
+  if (!node.isSkipped) delete node.isSkipped;
+  if (!node.isHidden) delete node.isHidden;
+  if (!node.hasParallel) delete node.hasParallel;
+  if (!node.hasBranchLabel) delete node.hasBranchLabel;
+  if (!node.hasBigLabel) delete node.hasBigLabel;
+  if (!node.hasSmallLabel) delete node.hasSmallLabel;
+  if (!node.firstChildIsSkipped) delete node.firstChildIsSkipped;
 }
 
 function floorToMultipleOf(n: number, multiple: number): number {

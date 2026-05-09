@@ -1,6 +1,9 @@
 import { DEFAULT_LOCALE } from "../../../common/i18n/index.ts";
 import { defaultMessages } from "../../../common/i18n/messages.ts";
-import { nestedGraphLayout } from "./NestedPipelineGraphLayout.ts";
+import {
+  nestedGraphLayout,
+  removeFalselyGraphNodeFields,
+} from "./NestedPipelineGraphLayout.ts";
 import {
   ConnectionEdge,
   defaultLayout,
@@ -89,15 +92,7 @@ function trimGraphNode(node: GraphNode) {
     // Hide verbose input data.
     node.stage.children = [];
   }
-  // Hide falsely boolean fields.
-  if (!node.isParallel) delete node.isParallel;
-  if (!node.isSkipped) delete node.isSkipped;
-  if (!node.isHidden) delete node.isHidden;
-  if (!node.hasParallel) delete node.hasParallel;
-  if (!node.hasBranchLabel) delete node.hasBranchLabel;
-  if (!node.hasBigLabel) delete node.hasBigLabel;
-  if (!node.hasSmallLabel) delete node.hasSmallLabel;
-  if (!node.firstChildIsSkipped) delete node.firstChildIsSkipped;
+  removeFalselyGraphNodeFields(node);
 }
 
 /**
