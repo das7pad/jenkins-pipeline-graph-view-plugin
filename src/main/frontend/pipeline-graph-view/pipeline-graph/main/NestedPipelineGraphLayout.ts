@@ -2,7 +2,6 @@ import { LocalizedMessageKey, Messages } from "../../../common/i18n/index.ts";
 import {
   CompositeConnection,
   ConnectionEdge,
-  CounterNodeInfo,
   debugPipelineGraph,
   GraphNode,
   LayoutInfo,
@@ -22,57 +21,63 @@ export function nestedGraphLayout(
   showNames: boolean,
   showDurations: boolean,
 ): NestedPositionedGraph {
-  const graph: Graph = {
-    limit: collapsed ? maxColumnsWhenCollapsed : -1,
-    root: {
-      ...baseGraphNode(layout),
-      shiftX: layout.nodeSpacingH / 2,
-      isPlaceholder: true,
-      type: "root",
-      name: "Root",
-      key: "root",
-      id: -42,
-      children: [
-        {
-          ...baseGraphNode(layout),
-          shiftY: layout.labelOffsetV,
-          isPlaceholder: true,
-          type: "start",
-          name: messages.format(LocalizedMessageKey.start),
-          key: "start-node",
-          id: -1,
-          hasBigLabel: showNames,
-        },
-      ],
-    },
-    counterNode: {
-      ...baseGraphNode(layout),
-      shiftY: layout.labelOffsetV,
-      isPlaceholder: true,
-      type: "counter",
-      name: "Counter",
-      key: "counter-node",
-      id: -2,
-      stages: [],
-    },
+  const root: GraphNode = {
+    ...baseGraphNode(layout),
+    shiftX: layout.nodeSpacingH / 2,
+    isPlaceholder: true,
+    type: "root",
+    name: "Root",
+    key: "root",
+    id: -42,
+    children: [
+      {
+        ...baseGraphNode(layout),
+        shiftY: layout.labelOffsetV,
+        isPlaceholder: true,
+        type: "start",
+        name: messages.format(LocalizedMessageKey.start),
+        key: "start-node",
+        id: -1,
+        hasBigLabel: showNames,
+      },
+    ],
   };
   if (collapsed) {
-    collectCollapsed(newStages, graph, layout, showNames, showDurations, 0);
-    if (graph.counterNode.stages.length > 0) {
-      graph.root.children.push(graph.counterNode);
+    const collapsedStages: StageInfo[] = [];
+    collectCollapsed(collapsedStages, newStages, 0);
+    root.children.push(
+      ...collapsedStages
+        .slice(0, maxColumnsWhenCollapsed)
+        .map((stage: StageInfo) => ({
+          ...makeNodeForStage(stage, layout),
+          shiftY: layout.labelOffsetV,
+          hasBigLabel: showNames,
+          hasTiming: showDurations,
+        })),
+    );
+    if (collapsedStages.length > maxColumnsWhenCollapsed) {
+      root.children.push({
+        ...baseGraphNode(layout),
+        shiftY: layout.labelOffsetV,
+        isPlaceholder: true,
+        type: "counter",
+        name: "Counter",
+        key: "counter-node",
+        id: -2,
+        stages: collapsedStages.slice(maxColumnsWhenCollapsed),
+      });
     }
-    graph.root.width = sumGraphNodeProp(graph.root, "width");
+    root.width = sumGraphNodeProp(root, "width");
   } else {
-    collectNested(graph.root, newStages, layout, showNames);
+    collectNested(root, newStages, layout, showNames);
   }
-  graph.root.y = Math.max(
+  root.y = Math.max(
     layout.ypStart,
-    graph.root.shiftY +
-      (showNames ? layout.nodeRadius + layout.labelOffsetV : 0),
+    root.shiftY + (showNames ? layout.nodeRadius + layout.labelOffsetV : 0),
   );
 
-  graph.root.width += layout.nodeSpacingH;
-  graph.root.children.push({
+  root.width += layout.nodeSpacingH;
+  root.children.push({
     ...baseGraphNode(layout),
     shiftY: layout.labelOffsetV,
     isPlaceholder: true,
@@ -117,7 +122,7 @@ export function nestedGraphLayout(
       computePositions(child, childExtraXp);
     }
   };
-  computePositions(graph.root, 0);
+  computePositions(root, 0);
 
   const connections: CompositeConnection[] = [];
   const computeConnections = (node: GraphNode): GraphNode[] => {
@@ -177,12 +182,12 @@ export function nestedGraphLayout(
     }
     return computeConnections(last);
   };
-  computeConnections(graph.root);
+  computeConnections(root);
 
   const flattenGraph = (node: GraphNode): GraphNode[] => {
     return node.children.concat(...node.children.map(flattenGraph));
   };
-  const nodes = flattenGraph(graph.root);
+  const nodes = flattenGraph(root);
   const visibleNodes = nodes.filter((node) => !node.isHidden);
 
   const smallLabels = visibleNodes
@@ -236,13 +241,13 @@ export function nestedGraphLayout(
       };
     });
 
-  const measuredWidth = graph.root.width;
-  const measuredHeight = graph.root.y + graph.root.height;
+  const measuredWidth = root.width;
+  const measuredHeight = root.y + root.height;
 
-  const allGraphNodes = [graph.root].concat(nodes);
+  const allGraphNodes = [root, ...nodes];
   const debug = debugPipelineGraph();
   if (debug) {
-    printDebugInfo(newStages, graph, allGraphNodes, connections);
+    printDebugInfo(newStages, root, allGraphNodes, connections);
   }
   return {
     nodes: debug ? nodes : visibleNodes,
@@ -259,7 +264,7 @@ export function nestedGraphLayout(
 
 function printDebugInfo(
   newStages: Array<StageInfo>,
-  graph: Graph,
+  root: GraphNode,
   nodes: GraphNode[],
   connections: CompositeConnection[],
 ) {
@@ -279,7 +284,7 @@ function printDebugInfo(
     ),
   );
   console.log("newStages", newStages);
-  console.log("graph", graph);
+  console.log("graph root", root);
   console.table(
     nodes.map((n) => ({ ...n, stage: "stage" in n && n.stage.type })),
     [
@@ -315,12 +320,6 @@ function printDebugInfo(
   );
 }
 
-type Graph = {
-  limit: number;
-  root: GraphNode;
-  counterNode: GraphNode & CounterNodeInfo;
-};
-
 function floorToMultipleOf(n: number, multiple: number): number {
   return Math.floor(n / multiple) * multiple;
 }
@@ -352,11 +351,8 @@ function maxGraphNodeProp(
 }
 
 function collectCollapsed(
+  collapsedStages: StageInfo[],
   stages: StageInfo[],
-  graph: Graph,
-  layout: LayoutInfo,
-  showNames: boolean,
-  showDurations: boolean,
   level: number,
 ) {
   for (const stage of stages) {
@@ -369,26 +365,9 @@ function collectCollapsed(
       // - Top level: Hide stages that wrap "PARALLEL" stages.
       // - Top level: Hide "PARALLEL" stages with children.
       // - Rest: Hide generic "PARALLEL_BLOCK" wrapper.
-      if (graph.limit === 0) {
-        graph.counterNode.stages.push(stage);
-      } else {
-        graph.limit--;
-        graph.root.children.push({
-          ...makeNodeForStage(stage, layout),
-          shiftY: layout.labelOffsetV,
-          hasBigLabel: showNames,
-          hasTiming: showDurations,
-        });
-      }
+      collapsedStages.push(stage);
     }
-    collectCollapsed(
-      stage.children,
-      graph,
-      layout,
-      showNames,
-      showDurations,
-      level + 1,
-    );
+    collectCollapsed(collapsedStages, stage.children, level + 1);
   }
 }
 
