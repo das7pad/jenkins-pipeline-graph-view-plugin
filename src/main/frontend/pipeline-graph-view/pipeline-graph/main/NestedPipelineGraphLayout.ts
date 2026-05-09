@@ -43,15 +43,17 @@ export function nestedGraphLayout(
   if (collapsed) {
     const collapsedStages: StageInfo[] = [];
     collectCollapsed(collapsedStages, newStages, 0);
+    const breakPoint =
+      collapsedStages.length > maxColumnsWhenCollapsed
+        ? maxColumnsWhenCollapsed - 1 // Make space for counter node.
+        : collapsedStages.length;
     root.children.push(
-      ...collapsedStages
-        .slice(0, maxColumnsWhenCollapsed)
-        .map((stage: StageInfo) => ({
-          ...makeNodeForStage(stage, layout, showNames),
-          hasTiming: showDurations,
-        })),
+      ...collapsedStages.slice(0, breakPoint).map((stage: StageInfo) => ({
+        ...makeNodeForStage(stage, layout, showNames),
+        hasTiming: showDurations,
+      })),
     );
-    if (collapsedStages.length > maxColumnsWhenCollapsed) {
+    if (collapsedStages.length > breakPoint) {
       root.children.push({
         ...baseGraphNode(layout),
         isPlaceholder: true,
@@ -59,7 +61,7 @@ export function nestedGraphLayout(
         name: "Counter",
         key: "counter-node",
         id: -2,
-        stages: collapsedStages.slice(maxColumnsWhenCollapsed),
+        stages: collapsedStages.slice(breakPoint),
       });
     }
     root.width = sumGraphNodeProp(root, "width");
