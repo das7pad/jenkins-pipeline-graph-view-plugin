@@ -120,62 +120,7 @@ export function nestedGraphLayout(
   computePositions(root, 0);
 
   const connections: CompositeConnection[] = [];
-  const computeConnections = (node: GraphNode): GraphNode[] => {
-    if (node.children.length === 0) {
-      return [node];
-    }
-    if (node.hasParallel) {
-      return node.children.flatMap((child) => computeConnections(child));
-    }
-    // Collect nodes in a Set. With two skipped nodes next to each other, we need to deduplicate them.
-    const sourceNodes = new Set<GraphNode>();
-    const skippedNodes = new Set<GraphNode>();
-    const connect = (
-      tailNodes: GraphNode[],
-      destination: GraphNode,
-      ignoreSkipped?: boolean,
-    ) => {
-      for (const node of tailNodes) {
-        if (ignoreSkipped || !node.isSkipped) {
-          sourceNodes.add(node);
-        } else {
-          skippedNodes.add(node);
-        }
-      }
-      const destinationNodes = resolveDestination(destination);
-      if (!destinationNodes.some((n) => !n.isSkipped)) {
-        for (const node of destinationNodes) skippedNodes.add(node);
-        return;
-      }
-      connections.push({
-        sourceNodes: Array.from(sourceNodes),
-        destinationNodes,
-        skippedNodes: Array.from(skippedNodes),
-        hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
-      });
-      sourceNodes.clear();
-      skippedNodes.clear();
-    };
-    if (node.type !== "root") {
-      connect([node], node.children[0], true);
-    }
-    for (let i = 0; i < node.children.length - 1; i++) {
-      const childA = node.children[i];
-      const childB = node.children[i + 1];
-      connect(
-        computeConnections(childA),
-        childB,
-        // Honor skipped state per layer, but not across layers.
-        childA.hasParallel,
-      );
-    }
-    const last = node.children[node.children.length - 1];
-    if (last.isSkipped || skippedNodes.size > 0 || sourceNodes.size > 0) {
-      throw new Error("bug: collectNested did not add trailing dummy node");
-    }
-    return computeConnections(last);
-  };
-  computeConnections(root);
+  computeConnections(connections, root);
 
   const flattenGraph = (node: GraphNode): GraphNode[] => {
     return node.children.concat(...node.children.map(flattenGraph));
@@ -379,6 +324,67 @@ function resolveDestination(node: GraphNode): GraphNode[] {
     return node.children.flatMap((child) => resolveDestination(child));
   }
   return [node];
+}
+
+function computeConnections(
+  connections: CompositeConnection[],
+  node: GraphNode,
+): GraphNode[] {
+  if (node.children.length === 0) {
+    return [node];
+  }
+  if (node.hasParallel) {
+    return node.children.flatMap((child) =>
+      computeConnections(connections, child),
+    );
+  }
+  // Collect nodes in a Set. With two skipped nodes next to each other, we need to deduplicate them.
+  const sourceNodes = new Set<GraphNode>();
+  const skippedNodes = new Set<GraphNode>();
+  const connect = (
+    tailNodes: GraphNode[],
+    destination: GraphNode,
+    ignoreSkipped?: boolean,
+  ) => {
+    for (const node of tailNodes) {
+      if (ignoreSkipped || !node.isSkipped) {
+        sourceNodes.add(node);
+      } else {
+        skippedNodes.add(node);
+      }
+    }
+    const destinationNodes = resolveDestination(destination);
+    if (!destinationNodes.some((n) => !n.isSkipped)) {
+      for (const node of destinationNodes) skippedNodes.add(node);
+      return;
+    }
+    connections.push({
+      sourceNodes: Array.from(sourceNodes),
+      destinationNodes,
+      skippedNodes: Array.from(skippedNodes),
+      hasBranchLabels: destinationNodes.some((n) => n.hasBranchLabel),
+    });
+    sourceNodes.clear();
+    skippedNodes.clear();
+  };
+  if (node.type !== "root") {
+    connect([node], node.children[0], true);
+  }
+  for (let i = 0; i < node.children.length - 1; i++) {
+    const childA = node.children[i];
+    const childB = node.children[i + 1];
+    connect(
+      computeConnections(connections, childA),
+      childB,
+      // Honor skipped state per layer, but not across layers.
+      childA.hasParallel,
+    );
+  }
+  const last = node.children[node.children.length - 1];
+  if (last.isSkipped || skippedNodes.size > 0 || sourceNodes.size > 0) {
+    throw new Error("bug: collectNested did not add trailing dummy node");
+  }
+  return computeConnections(connections, last);
 }
 
 function collectNested(
