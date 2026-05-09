@@ -10,7 +10,6 @@ import Tooltip from "../../../../common/components/tooltip.tsx";
 import { classNames } from "../../../../common/utils/classnames.ts";
 import LiveTotal from "../../../../common/utils/live-total.tsx";
 import {
-  CounterNodeInfo,
   GraphNode,
   LayoutInfo,
   NodeInfo,
@@ -42,11 +41,9 @@ export function Node({
 
   if (node.isPlaceholder) {
     if (node.type === "counter") {
-      const mappedNode = node as CounterNodeInfo;
-
       const tooltip = (
         <ol className="pgv-node__counter-tooltip">
-          {mappedNode.stages.map((stage) => (
+          {node.stages.map((stage) => (
             <li key={stage.id}>
               <a
                 className={"jenkins-button jenkins-button--tertiary"}
@@ -80,7 +77,7 @@ export function Node({
             className={"PWGx-pipeline-node"}
           >
             <span className={"PWGx-pipeline-node-counter"}>
-              {mappedNode.stages.length}
+              {node.stages.length}
             </span>
           </div>
         </Tooltip>
