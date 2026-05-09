@@ -102,7 +102,7 @@ export function nestedGraphLayout(
           yP += child.shiftY;
         }
         yP += child.height;
-        // Shift child close to center, prefer closer to start than end.
+        // Shift small childrean close to center, prefer closer to start than end.
         childExtraXp = floorToMultipleOf(
           (node.width - extraXp - child.width) / 2,
           layout.nodeSpacingH,
@@ -144,9 +144,7 @@ export function nestedGraphLayout(
       }
       const destinationNodes = resolveDestination(destination);
       if (!destinationNodes.some((n) => !n.isSkipped)) {
-        for (const node of destinationNodes) {
-          skippedNodes.add(node);
-        }
+        for (const node of destinationNodes) skippedNodes.add(node);
         return;
       }
       connections.push({
@@ -301,13 +299,9 @@ function printDebugInfo(
     ],
   );
 
+  const byKey = new Map(nodes.map((n) => [n.key, n]));
   const joinEdges = (ee: ConnectionEdge[]) =>
-    ee
-      .map((e) => {
-        const node = nodes.find((n) => n.key === e.key);
-        return `${e.key} (${node?.name})`;
-      })
-      .join(",");
+    ee.map((e) => `${e.key} (${byKey.get(e.key)?.name})`).join(",");
   console.table(
     connections.map((c) => ({
       sourceNodes: joinEdges(c.sourceNodes),
