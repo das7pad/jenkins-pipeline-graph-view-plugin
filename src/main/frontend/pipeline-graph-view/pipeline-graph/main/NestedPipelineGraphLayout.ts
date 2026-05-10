@@ -1,4 +1,5 @@
 import { LocalizedMessageKey, Messages } from "../../../common/i18n/index.ts";
+import { sequentialStagesLabelOffset } from "./PipelineGraphLayout.ts";
 import {
   CompositeConnection,
   ConnectionEdge,
@@ -254,8 +255,8 @@ function buildGraphNested(
     ) {
       // - Nested parallel children, avoid collapsing curves.
       // - Any child has branch label, make space for branch label.
-      childNode.shiftX += layout.nodeSpacingH;
-      childNode.width += layout.nodeSpacingH;
+      childNode.shiftX += sequentialStagesLabelOffset;
+      childNode.width += sequentialStagesLabelOffset;
     }
     node.children.push(childNode);
   }
@@ -426,7 +427,7 @@ function computeBranchLabels(nodes: GraphNode[], layout: LayoutInfo) {
     .filter((node) => node.hasBranchLabel)
     .map((node): NodeLabelInfo => {
       return {
-        x: node.x - layout.nodeSpacingH,
+        x: node.x - sequentialStagesLabelOffset,
         y: node.y,
         key: "l_branch_" + node.key,
         node,
