@@ -270,6 +270,27 @@ export function PipelineGraph({
             allNodes.map((node) => (
               <DebugOutline node={node} layout={fullLayout} key={node.id} />
             ))}
+
+          {allNodes
+            .filter((n) => n.hasBigLabel && n.shiftY > fullLayout.labelOffsetV)
+            .map((node) => (
+              <rect
+                alt={node.key}
+                key={node.key + "_wrapper"}
+                x={node.x - fullLayout.nodeSpacingH / 2}
+                y={node.y - node.shiftY + 8}
+                width={
+                  node.width -
+                  (node.hasStageEnd ? fullLayout.nodeSpacingH / 2 : 0)
+                }
+                height={node.height + node.shiftY - 2 * fullLayout.labelOffsetV}
+                rx={fullLayout.curveRadius}
+                strokeWidth={2}
+                strokeDasharray={"3,7"}
+                stroke={"black"}
+                fill="none"
+              />
+            ))}
         </svg>
 
         {visibleNodes.map((node) => (

@@ -117,7 +117,10 @@ function roundToMultipleOf(n: number, multiple: number): number {
 function centerOfNode(node: GraphNode, layout: LayoutInfo) {
   return (
     node.x +
-    roundToMultipleOf(node.width / 2, layout.nodeSpacingH / 2) -
+    roundToMultipleOf(
+      (node.width - (node.hasStageEnd ? layout.nodeSpacingH / 2 : 0)) / 2,
+      layout.nodeSpacingH / 2,
+    ) -
     layout.nodeSpacingH / 2
   );
 }
@@ -274,11 +277,11 @@ function buildGraphNested(
     node.shiftY = maxGraphNodeProp(node, "shiftY");
   }
   const last = node.children[node.children.length - 1];
-  if (
+  node.hasStageEnd =
     !node.hasParallel &&
     (last.isSkipped || last.hasParallel) &&
-    node.type !== "root"
-  ) {
+    node.type !== "root";
+  if (node.hasStageEnd) {
     // - Add a dummy node to "close" the skipped curve before closing the stage.
     // - Add a dummy node to "close" the parallel curve of the child.
     // In both cases, the dummy node will be the new stage end that is connected to the next node.
