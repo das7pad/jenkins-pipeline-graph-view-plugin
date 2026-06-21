@@ -153,7 +153,11 @@ export function PipelineGraph({
   );
 
   const transform = useContext(TransformContext);
-  const [transformWidth, setTransformWidth] = useState<number>(0);
+  const [transformWidth, setTransformWidth] = useState<number>(() => {
+    if (!transform) return 0;
+    // Best-effort fallback while transform is not initialized.
+    return transform.wrapperComponent?.clientWidth || document.body.clientWidth;
+  });
   useEffect(() => {
     if (!transform?.wrapperComponent) return;
     const observer = new ResizeObserver((entries) => {
