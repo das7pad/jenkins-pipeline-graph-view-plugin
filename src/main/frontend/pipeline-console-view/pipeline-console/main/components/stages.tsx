@@ -214,8 +214,22 @@ function ZoomControls({
   } = useControls();
   const messages = useContext(I18NContext);
   const [scale, setScale] = useState(initialScale);
+  const [isCentered, setIsCentered] = useState(true);
   const handleTransformEffect = useCallback(
-    (ref: ReactZoomPanPinchContextState) => setScale(ref.state.scale),
+    (ref: ReactZoomPanPinchContextState) => {
+      setScale(ref.state.scale);
+      if (ref.instance.wrapperComponent && ref.instance.contentComponent) {
+        const center = getCenterPosition(
+          ref.state.scale,
+          ref.instance.wrapperComponent,
+          ref.instance.contentComponent,
+        );
+        setIsCentered(
+          Math.abs(center.positionX - ref.state.positionX) <= 1 &&
+            Math.abs(center.positionY - ref.state.positionY) <= 1,
+        );
+      }
+    },
     [],
   );
   useTransformEffect(handleTransformEffect);
@@ -301,7 +315,7 @@ function ZoomControls({
         <button
           className={"jenkins-button jenkins-button--tertiary"}
           onClick={reset}
-          disabled={scale === initialScale}
+          disabled={scale === initialScale && isCentered}
         >
           <svg className="ionicon" viewBox="0 0 512 512">
             <path
