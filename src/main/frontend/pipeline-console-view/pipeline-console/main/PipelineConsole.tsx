@@ -29,7 +29,14 @@ export default function PipelineConsole() {
   const previousRunPath = rootElement?.dataset.previousRunPath;
   const normalizedParentJobPath = rootElement?.dataset.normalizedParentJobPath!;
 
-  const { stageViewPosition, mainViewVisibility } = useLayoutPreferences();
+  const {
+    stageViewPosition,
+    mainViewVisibility,
+    defaultStageViewHeight,
+    setAutoStageViewHeight,
+    setDefaultStageViewHeight,
+    setPersistedStageViewHeight,
+  } = useLayoutPreferences();
   const {
     complete,
     tailLogs,
@@ -121,6 +128,10 @@ export default function PipelineConsole() {
                 stageViewPosition={stageViewPosition}
                 onStageSelect={handleStageSelect}
                 normalizedParentJobPath={normalizedParentJobPath}
+                defaultStageViewHeight={defaultStageViewHeight}
+                setAutoStageViewHeight={setAutoStageViewHeight}
+                setDefaultStageViewHeight={setDefaultStageViewHeight}
+                setPersistedStageViewHeight={setPersistedStageViewHeight}
               />
             ))}
 

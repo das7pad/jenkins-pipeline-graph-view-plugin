@@ -16,7 +16,8 @@ export default function SplitView(props: SplitViewNewProps) {
   const {
     setTreeViewWidth,
     setStageViewWidth,
-    setStageViewHeight,
+    setPersistedStageViewHeight,
+    defaultStageViewHeight,
     treeViewWidth,
     stageViewWidth,
     stageViewHeight,
@@ -69,7 +70,12 @@ export default function SplitView(props: SplitViewNewProps) {
 
     const clampedSize = Math.max(
       direction === "vertical" ? 100 : 200,
-      Math.min(newSize, 1500),
+      Math.min(
+        newSize,
+        storageKey === "graph" && direction === "vertical"
+          ? defaultStageViewHeight * 3 // maxZoom=3
+          : 1500,
+      ),
     );
     setPanelSize(clampedSize);
 
@@ -78,7 +84,7 @@ export default function SplitView(props: SplitViewNewProps) {
       setTreeViewWidth(clampedSize);
     } else if (storageKey === "graph") {
       if (direction === "vertical") {
-        setStageViewHeight(clampedSize);
+        setPersistedStageViewHeight(clampedSize);
       } else {
         setStageViewWidth(clampedSize);
       }
@@ -88,7 +94,9 @@ export default function SplitView(props: SplitViewNewProps) {
   const handleDoubleClick = () => {
     const resetSize = (() => {
       if (storageKey === "stages") return 300;
-      if (storageKey === "graph") return isVertical ? 250 : 600;
+      if (storageKey === "graph") {
+        return isVertical ? defaultStageViewHeight : 600;
+      }
       return 300;
     })();
 
@@ -98,7 +106,7 @@ export default function SplitView(props: SplitViewNewProps) {
       setTreeViewWidth(resetSize);
     } else if (storageKey === "graph") {
       if (direction === "vertical") {
-        setStageViewHeight(resetSize);
+        setPersistedStageViewHeight(0);
       } else {
         setStageViewWidth(resetSize);
       }

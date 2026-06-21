@@ -1,5 +1,7 @@
 import {
   CSSProperties,
+  Dispatch,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -55,6 +57,8 @@ export function PipelineGraph({
   onToggleCollapse,
   setMinScale,
   setInitialScale,
+  setAutoStageViewHeight,
+  setDefaultStageViewHeight,
 }: Props) {
   const fullLayout = useMemo(() => {
     return {
@@ -168,25 +172,46 @@ export function PipelineGraph({
     const minScale = initialScale * 0.75;
     setMinScale(minScale);
     setInitialScale(initialScale);
+    const containerSpacing = 10;
+    const defaultStageViewHeight = measuredHeight + containerSpacing;
+    setDefaultStageViewHeight?.(defaultStageViewHeight);
     if (fitToWidth) {
       // Don't scale too small by default.
       const autoScale = Math.max(initialScale, 0.5);
       const centerOffset = Math.max(0, (transformWidth - measuredWidth) / 2);
+      const autoHeight = measuredHeight * autoScale + containerSpacing;
+      setAutoStageViewHeight?.(autoHeight);
       if (
         transform.state.scale !== autoScale ||
         transform.state.positionX !== centerOffset
       ) {
-        transform.setState(autoScale, centerOffset, 0);
+        if (setAutoStageViewHeight) {
+          // The graph is "centered" by putting it at the top of a smaller wrapper.
+          transform.setState(autoScale, centerOffset, 0);
+        } else {
+          // We cannot resize the wrapper, shift it down to center it.
+          const diff = (defaultStageViewHeight * (1 - autoScale)) / 2;
+          transform.setState(autoScale, centerOffset, diff);
+        }
       }
-      return transform.onChange(() => setFitToWidth(false));
+      return transform.onChange(() => {
+        setFitToWidth(false);
+        setAutoStageViewHeight?.((prev) => {
+          if (prev !== autoHeight) return prev; // The user has resized.
+          return defaultStageViewHeight;
+        });
+      });
     }
   }, [
     transform,
     transformWidth,
     fitToWidth,
     measuredWidth,
+    measuredHeight,
     setMinScale,
     setInitialScale,
+    setAutoStageViewHeight,
+    setDefaultStageViewHeight,
   ]);
 
   // When inside a TransformWrapper, only mount the nodes/labels intersecting
@@ -391,4 +416,6 @@ interface Props {
   onToggleCollapse: (stageId: number) => void;
   setMinScale?: (value: number) => void;
   setInitialScale?: (value: number) => void;
+  setAutoStageViewHeight?: Dispatch<SetStateAction<number>>;
+  setDefaultStageViewHeight?: Dispatch<SetStateAction<number>>;
 }

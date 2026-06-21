@@ -1,7 +1,14 @@
 import "./stages.scss";
 
-import { useCallback, useContext, useState } from "react";
 import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
+import {
+  getCenterPosition,
   ReactZoomPanPinchContextState,
   TransformComponent,
   TransformWrapper,
@@ -34,6 +41,10 @@ export default function Stages({
   onStageSelect,
   onRunPage,
   normalizedParentJobPath,
+  setAutoStageViewHeight,
+  setPersistedStageViewHeight,
+  setDefaultStageViewHeight,
+  defaultStageViewHeight,
 }: StagesProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -133,6 +144,9 @@ export default function Stages({
           hasCollapsibleStages={hasCollapsibleStages}
           onCollapseAll={collapseAll}
           onExpandAll={expandAll}
+          defaultStageViewHeight={defaultStageViewHeight}
+          setAutoStageViewHeight={setAutoStageViewHeight}
+          setPersistedStageViewHeight={setPersistedStageViewHeight}
         />
 
         <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
@@ -144,6 +158,8 @@ export default function Stages({
             onToggleCollapse={toggleCollapseStage}
             setInitialScale={setInitialScale}
             setMinScale={setMinScale}
+            setAutoStageViewHeight={setAutoStageViewHeight}
+            setDefaultStageViewHeight={setDefaultStageViewHeight}
             {...(onStageSelect && { onStageSelect: handleStageSelect })}
           />
         </TransformComponent>
@@ -160,6 +176,10 @@ interface StagesProps {
   onStageSelect?: (nodeId: string) => void;
   onRunPage?: boolean;
   normalizedParentJobPath: string;
+  defaultStageViewHeight?: number;
+  setAutoStageViewHeight?: Dispatch<SetStateAction<number>>;
+  setDefaultStageViewHeight?: Dispatch<SetStateAction<number>>;
+  setPersistedStageViewHeight?: Dispatch<SetStateAction<number>>;
 }
 
 interface ZoomControlsProps {
@@ -169,6 +189,9 @@ interface ZoomControlsProps {
   hasCollapsibleStages: boolean;
   onCollapseAll: () => void;
   onExpandAll: () => void;
+  defaultStageViewHeight?: number;
+  setAutoStageViewHeight?: Dispatch<SetStateAction<number>>;
+  setPersistedStageViewHeight?: Dispatch<SetStateAction<number>>;
 }
 
 function ZoomControls({
@@ -178,8 +201,17 @@ function ZoomControls({
   hasCollapsibleStages,
   onCollapseAll,
   onExpandAll,
+  defaultStageViewHeight,
+  setAutoStageViewHeight,
+  setPersistedStageViewHeight,
 }: ZoomControlsProps) {
-  const { zoomIn, zoomOut, centerView } = useControls();
+  const {
+    zoomIn,
+    zoomOut,
+    centerView,
+    setTransform,
+    instance: transform,
+  } = useControls();
   const messages = useContext(I18NContext);
   const [scale, setScale] = useState(initialScale);
   const handleTransformEffect = useCallback(
@@ -187,6 +219,45 @@ function ZoomControls({
     [],
   );
   useTransformEffect(handleTransformEffect);
+
+  const reset = () => {
+    if (
+      setPersistedStageViewHeight &&
+      setAutoStageViewHeight &&
+      defaultStageViewHeight
+    ) {
+      // We need to perform three changes as part of a reset:
+      //   1. unset any user override for the height
+      //   2. reset the auto stage height
+      //   3. center the view
+      // 1+2. are asynchronous and 3. takes synchronous measurements of the DOM before animating asynchronously.
+      // We cannot reliably know when 1+2. have propagated to the DOM (unless we watch ALL DOM changes, which is overkill).
+      // Rather than fight with it, compute what 3. would do and adjust it for the diff vs 1/2.
+      // This has the nice side effect of making the reset incrementally and animated (shift to center then reduce the height).
+      setPersistedStageViewHeight((prevPersisted) => {
+        setAutoStageViewHeight((prevAuto) => {
+          const currentHeight = prevPersisted || prevAuto;
+          const diff = currentHeight - defaultStageViewHeight;
+          if (transform.wrapperComponent && transform.contentComponent) {
+            const center = getCenterPosition(
+              initialScale,
+              transform.wrapperComponent,
+              transform.contentComponent,
+            );
+            setTransform(
+              center.positionX,
+              center.positionY - diff / 2,
+              initialScale,
+            );
+          }
+          return defaultStageViewHeight * initialScale;
+        });
+        return 0;
+      });
+    } else {
+      centerView(initialScale);
+    }
+  };
 
   return (
     <div className="pgv-stages-graph__controls pgw-zoom-controls">
@@ -229,7 +300,7 @@ function ZoomControls({
       <Tooltip content={"Reset"}>
         <button
           className={"jenkins-button jenkins-button--tertiary"}
-          onClick={() => centerView(initialScale)}
+          onClick={reset}
           disabled={scale === initialScale}
         >
           <svg className="ionicon" viewBox="0 0 512 512">
