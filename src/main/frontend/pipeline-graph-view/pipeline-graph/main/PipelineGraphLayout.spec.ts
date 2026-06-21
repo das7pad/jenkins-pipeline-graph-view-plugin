@@ -365,6 +365,8 @@ describe("PipelineGraphLayout", () => {
       labelOffsetV: 22,
       smallLabelOffsetV: 15,
       ypStart: 55,
+      rootYExtra: 0,
+      rootYOffset: 0,
     };
 
     const makeSmallLabel = (stageName: string) => {

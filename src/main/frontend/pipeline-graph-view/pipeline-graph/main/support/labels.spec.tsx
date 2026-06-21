@@ -20,6 +20,8 @@ const layout: LayoutInfo = {
   labelOffsetV: 20,
   smallLabelOffsetV: 15,
   ypStart: 55,
+  rootYExtra: 0,
+  rootYOffset: 0,
 };
 
 function makeStage(overrides: Partial<StageInfo> = {}): StageInfo {

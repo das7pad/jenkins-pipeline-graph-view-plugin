@@ -115,6 +115,7 @@ export default function PipelineConsole() {
               <Skeleton />
             ) : (
               <Stages
+                layout={{}}
                 stages={stages}
                 selectedStage={openStage || undefined}
                 stageViewPosition={stageViewPosition}

@@ -68,6 +68,7 @@ export default function App() {
 
       {run.stages.length > 0 && !onlyQueuedPlaceholder && (
         <Stages
+          layout={{ rootYOffset: 26 + 10, rootYExtra: 0 }}
           stages={run.stages}
           stageViewPosition={StageViewPosition.TOP}
           onRunPage

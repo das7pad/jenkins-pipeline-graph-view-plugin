@@ -45,7 +45,7 @@ export default function SingleRun({
   const { showNames, showDurations } = useUserPreferences();
 
   function getLayout() {
-    const layout: LayoutInfo = { ...defaultLayout };
+    const layout: LayoutInfo = { ...defaultLayout, rootYOffset: 4 };
 
     if (!showNames && !showDurations) {
       layout.nodeSpacingH = 45;

@@ -22,6 +22,8 @@ export const defaultLayout = {
   connectorStrokeWidth: 2,
   labelOffsetV: 22,
   smallLabelOffsetV: 15,
+  rootYOffset: 18,
+  rootYExtra: 0,
   ypStart: 55,
 };
 

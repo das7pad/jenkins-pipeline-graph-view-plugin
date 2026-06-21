@@ -69,11 +69,11 @@ export function nestedGraphLayout(
     key: "end-node",
     id: -3,
   });
-  root.y = root.shiftY + layout.nodeRadius + 4;
+  root.y = root.shiftY + layout.nodeRadius + layout.rootYOffset;
   root.width =
     root.shiftX + sumGraphNodeProp(root, "width") - startEndReducedSpacing;
   const measuredWidth = root.width;
-  const measuredHeight = root.y + root.height;
+  const measuredHeight = root.y + root.height + layout.rootYExtra;
 
   computePositions(root, 0, layout);
   const connections = computeConnections(root);
