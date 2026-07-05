@@ -47,6 +47,8 @@ const VIEWPORT_MARGIN = 300;
 
 const MIN_COLUMNS_WHEN_COLLAPSED = 5;
 
+const DEFAULT_SCROLLBAR_WIDTH = 15;
+
 export function PipelineGraph({
   stages = [],
   layout,
@@ -168,14 +170,32 @@ export function PipelineGraph({
     [selectedStage],
   );
 
+  const scrollBarState = useRef({
+    width: DEFAULT_SCROLLBAR_WIDTH,
+    flipped: false,
+  });
   const transform = useContext(TransformContext);
   const [transformWidth, setTransformWidth] = useState(0);
   useEffect(() => {
     if (!transform?.wrapperComponent) return;
     const observer = new ResizeObserver((entries) => {
+      const lastScrollbarState = scrollBarState.current;
+      const scrollbarWidth = window.innerWidth - document.body.clientWidth;
+      const flipped = lastScrollbarState.width !== scrollbarWidth;
+      scrollBarState.current = { width: scrollbarWidth, flipped };
       for (const entry of entries) {
-        const { width } = entry.contentRect;
-        setTransformWidth(width);
+        let { width: transformWidth } = entry.contentRect;
+        if (flipped && lastScrollbarState.flipped) {
+          // Flipped because of scaling to fit within body w/ and w/o scrollbar.
+          // 1. Zoom-in -> page overflows and triggers scrollbar
+          // 2. Added scrollbar -> smaller transformWidth -> zoom-out
+          // 3. Zoom-out -> page no longer overflows and scrollbar disappears
+          // 4. Go to 1.
+          // Counter the loop by faking the width without the scrollbar spacing
+          // and thereby zooming-out a bit more than needed -> no scrollbar.
+          transformWidth -= lastScrollbarState.width;
+        }
+        setTransformWidth(transformWidth);
       }
     });
     observer.observe(transform.wrapperComponent);
