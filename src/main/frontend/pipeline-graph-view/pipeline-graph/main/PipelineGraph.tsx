@@ -4,7 +4,6 @@ import {
   SetStateAction,
   useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -175,8 +174,15 @@ export function PipelineGraph({
     flipped: false,
   });
   const transform = useContext(TransformContext);
-  const [transformWidth, setTransformWidth] = useState(0);
-  useEffect(() => {
+  const [transformWidth, setTransformWidth] = useState(() => {
+    if (!transform?.wrapperComponent) return 0;
+    return (
+      // ResizeObserverEntry.contentRect accounts for padding, getBoundingClientRect does not.
+      transform.wrapperComponent.getBoundingClientRect().width -
+      (fullLayout.graphSpacingLeft + fullLayout.graphSpacingRight)
+    );
+  });
+  useLayoutEffect(() => {
     if (!transform?.wrapperComponent) return;
     const observer = new ResizeObserver((entries) => {
       const lastScrollbarState = scrollBarState.current;
@@ -202,7 +208,7 @@ export function PipelineGraph({
     return () => observer.disconnect();
   }, [transform?.wrapperComponent]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!setMinScale || !setInitialScale || !transform) return;
     if (transformWidth <= 0 || measuredWidth <= 0 || measuredHeight <= 0) {
       return;
@@ -272,8 +278,8 @@ export function PipelineGraph({
   const [viewport, setViewport] = useState<Viewport | null>(null);
   const cachedViewport = useRef<Viewport | null>(null);
 
-  useEffect(() => {
-    if (!transform) return;
+  useLayoutEffect(() => {
+    if (!transform?.wrapperComponent) return;
     let raf = 0;
     const compute = () => {
       raf = 0;
@@ -305,32 +311,20 @@ export function PipelineGraph({
     };
     schedule();
     const unsubChange = transform.onChange(schedule);
-    const unsubInit = transform.wrapperComponent
-      ? undefined
-      : transform.onInit(() => schedule());
     const observer = new ResizeObserver(schedule);
-    const observed = transform.wrapperComponent;
-    if (observed) observer.observe(observed);
-    const unsubInitObserve = transform.wrapperComponent
-      ? undefined
-      : transform.onInit((ctx) => {
-          if (ctx.instance.wrapperComponent) {
-            observer.observe(ctx.instance.wrapperComponent);
-          }
-        });
+    observer.observe(transform.wrapperComponent);
     return () => {
       if (raf) cancelAnimationFrame(raf);
       unsubChange();
-      unsubInit?.();
-      unsubInitObserve?.();
       observer.disconnect();
     };
-  }, [transform]);
+  }, [transform, transform?.wrapperComponent]);
 
+  const ready = !!(!virtualize || (viewport && transformWidth > 0));
   const itemsInViewport = useCallback(
     <T extends { x: number; y: number }>(items: T[]): T[] => {
       if (!virtualize) return items;
-      if (!viewport) return [];
+      if (!ready || !viewport) return []; // No partial rendering until ready.
       return items.filter(({ x, y }) => {
         return (
           x >= viewport.x - VIEWPORT_MARGIN &&
@@ -340,13 +334,15 @@ export function PipelineGraph({
         );
       });
     },
-    [viewport, virtualize],
+    [viewport, virtualize, ready],
   );
 
   const selectedStageId = selectedStage?.id;
   const visibleNodes = useMemo(() => {
+    if (!virtualize) return nodes;
+    if (!ready) return []; // No partial rendering until ready.
     const filtered = itemsInViewport(nodes);
-    if (!virtualize || selectedStageId == null) return filtered;
+    if (selectedStageId == null) return filtered;
     if (
       filtered.some((n) => !n.isPlaceholder && n.stage?.id === selectedStageId)
     ) {
@@ -356,7 +352,7 @@ export function PipelineGraph({
       (n) => !n.isPlaceholder && n.stage?.id === selectedStageId,
     );
     return sel ? [...filtered, sel] : filtered;
-  }, [nodes, itemsInViewport, virtualize, selectedStageId]);
+  }, [nodes, itemsInViewport, virtualize, selectedStageId, ready]);
 
   const visibleBigLabels = useMemo(
     () => itemsInViewport(bigLabels),
@@ -389,20 +385,22 @@ export function PipelineGraph({
   return (
     <div ref={containerRef} className="PWGx-PipelineGraph-container">
       <div style={outerDivStyle} className="PWGx-PipelineGraph">
-        <svg width={measuredWidth} height={measuredHeight}>
-          <GraphConnections connections={connections} layout={fullLayout} />
+        {ready && (
+          <svg width={measuredWidth} height={measuredHeight}>
+            <GraphConnections connections={connections} layout={fullLayout} />
 
-          <SelectionHighlight
-            layout={fullLayout}
-            nodes={nodes}
-            isStageSelected={stageIsSelected}
-          />
+            <SelectionHighlight
+              layout={fullLayout}
+              nodes={nodes}
+              isStageSelected={stageIsSelected}
+            />
 
-          {debugPipelineGraph() &&
-            allNodes.map((node) => (
-              <DebugOutline node={node} layout={fullLayout} key={node.id} />
-            ))}
-        </svg>
+            {debugPipelineGraph() &&
+              allNodes.map((node) => (
+                <DebugOutline node={node} layout={fullLayout} key={node.id} />
+              ))}
+          </svg>
+        )}
 
         {visibleNodes.map((node) => (
           <Node

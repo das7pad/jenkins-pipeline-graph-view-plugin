@@ -71,6 +71,7 @@ export default function Stages({
     [onStageSelect],
   );
 
+  const [transformInitialized, setTransformInitialized] = useState(false);
   const [centerGraph, setCenterGraph] = useState(true);
   const [initialScale, setInitialScale] = useState(1);
   const [minScale, setMinScale] = useState(0.75);
@@ -148,6 +149,7 @@ export default function Stages({
         minScale={minScale}
         maxScale={MAX_SCALE}
         wheel={{ activationKeys: isExpanded ? [] : ["Control"] }}
+        onInit={() => setTransformInitialized(true)}
       >
         <ZoomControls
           defaultTransform={defaultTransform}
@@ -169,22 +171,24 @@ export default function Stages({
             paddingRight: layout.graphSpacingRight,
           }}
         >
-          <PipelineGraph
-            layout={layout}
-            stages={effectiveStages}
-            selectedStage={selectedStage}
-            currentRunPath={currentRunPath}
-            collapsedStageIds={collapsedStageIds}
-            onToggleCollapse={toggleCollapseStage}
-            setInitialScale={setInitialScale}
-            setMinScale={setMinScale}
-            setDefaultTransform={setDefaultTransform}
-            setAutoStageViewHeight={setAutoStageViewHeight}
-            setDefaultStageViewHeight={setDefaultStageViewHeight}
-            centerGraph={centerGraph}
-            setCenterGraph={setCenterGraph}
-            {...(onStageSelect && { onStageSelect: handleStageSelect })}
-          />
+          {transformInitialized && (
+            <PipelineGraph
+              layout={layout}
+              stages={effectiveStages}
+              selectedStage={selectedStage}
+              currentRunPath={currentRunPath}
+              collapsedStageIds={collapsedStageIds}
+              onToggleCollapse={toggleCollapseStage}
+              setInitialScale={setInitialScale}
+              setMinScale={setMinScale}
+              setDefaultTransform={setDefaultTransform}
+              setAutoStageViewHeight={setAutoStageViewHeight}
+              setDefaultStageViewHeight={setDefaultStageViewHeight}
+              centerGraph={centerGraph}
+              setCenterGraph={setCenterGraph}
+              {...(onStageSelect && { onStageSelect: handleStageSelect })}
+            />
+          )}
         </TransformComponent>
       </TransformWrapper>
     </div>
