@@ -17,7 +17,7 @@ import {
 const buildLayout: Partial<LayoutInfo> = {
   graphSpacingTop: 3 + 1 + 32, // spacing for "Stages" button (top+border+a)
   graphSpacingRight: 18, // spacing for expand button
-  graphSpacingBottom: 18, // spacing for zoom buttons
+  graphSpacingBottom: 32, // spacing for zoom buttons
   graphSpacingLeft: 18, // align with right spacing
 };
 

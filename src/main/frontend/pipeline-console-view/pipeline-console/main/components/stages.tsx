@@ -159,7 +159,16 @@ export default function Stages({
           setCenterGraph={setCenterGraph}
         />
 
-        <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
+        <TransformComponent
+          wrapperStyle={{
+            width: "100%",
+            height: "100%",
+            paddingTop: layout.graphSpacingTop,
+            paddingBottom: layout.graphSpacingBottom,
+            paddingLeft: layout.graphSpacingLeft,
+            paddingRight: layout.graphSpacingRight,
+          }}
+        >
           <PipelineGraph
             layout={layout}
             stages={effectiveStages}

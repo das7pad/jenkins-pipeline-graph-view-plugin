@@ -224,14 +224,18 @@ export function PipelineGraph({
       positionX: centerOffsetX,
       positionY: centerOffsetY,
     });
-    setDefaultStageViewHeight?.(measuredHeight);
+    // The graphSpacingXXX is applied outside the transform wrapper.
+    // They only affect the stage view height and _not_ the graph position/scale inside.
+    const verticalExtra =
+      fullLayout.graphSpacingTop + fullLayout.graphSpacingBottom;
+    setDefaultStageViewHeight?.(measuredHeight + verticalExtra);
     if (centerGraph) {
       // Don't scale too small by default.
       const autoHeight = Math.max(
         Math.min(measuredHeight, fullLayout.nodeSpacingH),
         measuredHeight * autoScale,
       );
-      setAutoStageViewHeight?.(autoHeight);
+      setAutoStageViewHeight?.(autoHeight + verticalExtra);
       if (
         transform.state.scale !== autoScale ||
         transform.state.positionX !== centerOffsetX ||
@@ -250,6 +254,8 @@ export function PipelineGraph({
     centerGraph,
     setCenterGraph,
     fullLayout.nodeSpacingH,
+    fullLayout.graphSpacingTop,
+    fullLayout.graphSpacingBottom,
     measuredWidth,
     measuredHeight,
     setMinScale,
@@ -363,7 +369,6 @@ export function PipelineGraph({
   const outerDivStyle: CSSProperties = {
     position: "relative",
     overflow: "visible",
-    boxSizing: "unset",
   };
   if (debugPipelineGraph()) {
     outerDivStyle.border = "1px dashed red";

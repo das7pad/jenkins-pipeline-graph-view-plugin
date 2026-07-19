@@ -30,7 +30,7 @@ import StageView from "./StageView.tsx";
 const stagesLayout: Partial<LayoutInfo> = {
   graphSpacingTop: 34, // spacing for expand button
   graphSpacingRight: 18, // spacing for expand button
-  graphSpacingBottom: 18, // spacing for zoom buttons
+  graphSpacingBottom: 32, // spacing for zoom buttons
   graphSpacingLeft: 18, // align with right spacing
 };
 
