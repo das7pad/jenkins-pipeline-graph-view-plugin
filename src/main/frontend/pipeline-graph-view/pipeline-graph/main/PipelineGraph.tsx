@@ -327,23 +327,25 @@ export function PipelineGraph({
     };
   }, [transform]);
 
-  const isInViewport = useCallback(
-    (x: number, y: number): boolean => {
-      if (!virtualize) return true;
-      if (!viewport) return false;
-      return (
-        x >= viewport.x - VIEWPORT_MARGIN &&
-        x <= viewport.x + viewport.w + VIEWPORT_MARGIN &&
-        y >= viewport.y - VIEWPORT_MARGIN &&
-        y <= viewport.y + viewport.h + VIEWPORT_MARGIN
-      );
+  const itemsInViewport = useCallback(
+    <T extends { x: number; y: number }>(items: T[]): T[] => {
+      if (!virtualize) return items;
+      if (!viewport) return [];
+      return items.filter(({ x, y }) => {
+        return (
+          x >= viewport.x - VIEWPORT_MARGIN &&
+          x <= viewport.x + viewport.w + VIEWPORT_MARGIN &&
+          y >= viewport.y - VIEWPORT_MARGIN &&
+          y <= viewport.y + viewport.h + VIEWPORT_MARGIN
+        );
+      });
     },
     [viewport, virtualize],
   );
 
   const selectedStageId = selectedStage?.id;
   const visibleNodes = useMemo(() => {
-    const filtered = nodes.filter((n) => isInViewport(n.x, n.y));
+    const filtered = itemsInViewport(nodes);
     if (!virtualize || selectedStageId == null) return filtered;
     if (
       filtered.some((n) => !n.isPlaceholder && n.stage?.id === selectedStageId)
@@ -354,16 +356,26 @@ export function PipelineGraph({
       (n) => !n.isPlaceholder && n.stage?.id === selectedStageId,
     );
     return sel ? [...filtered, sel] : filtered;
-  }, [nodes, isInViewport, virtualize, selectedStageId]);
+  }, [nodes, itemsInViewport, virtualize, selectedStageId]);
+
+  const visibleBigLabels = useMemo(
+    () => itemsInViewport(bigLabels),
+    [bigLabels, itemsInViewport],
+  );
 
   const visibleSmallLabels = useMemo(
-    () => smallLabels.filter((l) => isInViewport(l.x, l.y)),
-    [smallLabels, isInViewport],
+    () => itemsInViewport(smallLabels),
+    [smallLabels, itemsInViewport],
   );
 
   const visibleBranchLabels = useMemo(
-    () => branchLabels.filter((l) => isInViewport(l.x, l.y)),
-    [branchLabels, isInViewport],
+    () => itemsInViewport(branchLabels),
+    [branchLabels, itemsInViewport],
+  );
+
+  const visibleTimings = useMemo(
+    () => itemsInViewport(timings),
+    [timings, itemsInViewport],
   );
 
   const outerDivStyle: CSSProperties = {
@@ -404,7 +416,7 @@ export function PipelineGraph({
           />
         ))}
 
-        {bigLabels.map((label) => (
+        {visibleBigLabels.map((label) => (
           <BigLabel
             key={label.key}
             details={label}
@@ -418,7 +430,7 @@ export function PipelineGraph({
           />
         ))}
 
-        {timings.map((label) => (
+        {visibleTimings.map((label) => (
           <TimingsLabel
             key={label.key}
             details={label}
