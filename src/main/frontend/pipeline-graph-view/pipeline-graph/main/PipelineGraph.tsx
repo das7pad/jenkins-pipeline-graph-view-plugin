@@ -169,20 +169,13 @@ export function PipelineGraph({
   );
 
   const transform = useContext(TransformContext);
-  const [transformViewport, setTransformViewport] = useState({
-    width: 0,
-    height: 0,
-  });
+  const [transformWidth, setTransformWidth] = useState(0);
   useEffect(() => {
     if (!transform?.wrapperComponent) return;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        setTransformViewport((prev) =>
-          prev.width === width && prev.height === height
-            ? prev
-            : { width, height },
-        );
+        const { width } = entry.contentRect;
+        setTransformWidth(width);
       }
     });
     observer.observe(transform.wrapperComponent);
@@ -191,14 +184,7 @@ export function PipelineGraph({
 
   useEffect(() => {
     if (!setMinScale || !setInitialScale || !transform) return;
-    const { width: transformWidth, height: transformHeight } =
-      transformViewport;
-    if (
-      transformWidth <= 0 ||
-      transformHeight <= 0 ||
-      measuredWidth <= 0 ||
-      measuredHeight <= 0
-    ) {
+    if (transformWidth <= 0 || measuredWidth <= 0 || measuredHeight <= 0) {
       return;
     }
 
@@ -209,10 +195,8 @@ export function PipelineGraph({
       0,
       (transformWidth - measuredWidth * autoScale) / 2,
     );
-    const centerOffsetY = Math.max(
-      0,
-      (transformHeight - measuredHeight * autoScale) / 2,
-    );
+    // The stage height is adjusted to "fit the graph". The graph always sits at the "top".
+    const centerOffsetY = 0;
     setMinScale(minScale);
     setInitialScale(initialScale);
     setDefaultTransform?.({
@@ -242,7 +226,7 @@ export function PipelineGraph({
     }
   }, [
     transform,
-    transformViewport,
+    transformWidth,
     centerGraph,
     setCenterGraph,
     fullLayout.nodeSpacingH,
